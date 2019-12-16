@@ -65,7 +65,13 @@ class UserStore extends ChangeNotifier {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     _token = sharedPreferences.getString("token") ?? "";
     if (_token != "") {
-      _widget = MyHomePage();
+      Response response = await Config.dio.get("/user/valid");
+      Map<String, dynamic> result = response.data;
+      if (result["status"] == "ok") {
+        _widget = MyHomePage();
+      } else {
+        _widget = LoginPage();
+      }
     } else {
       _widget = LoginPage();
     }
@@ -101,11 +107,7 @@ class UserStore extends ChangeNotifier {
     };
     Response response = await Config.dio.post("/user/api", data: saveData);
     Map<String, dynamic> result = response.data;
-    if (result["status"] == "ok") {
-      _status = "success";
-    } else {
-      _status = "fail";
-    }
+    _status = result["status"];
     if (callback != null) {
       callback(_status, result["msg"] ?? "");
     }
@@ -127,13 +129,9 @@ class UserStore extends ChangeNotifier {
     Map<String, String> saveData = {"value": _webSession};
     try {
       Response response =
-      await Config.dio.post("/user/hbsession", data: saveData);
+          await Config.dio.post("/user/hbsession", data: saveData);
       Map<String, dynamic> result = response.data;
-      if (result["status"] == "ok") {
-        _status = "success";
-      } else {
-        _status = "fail";
-      }
+      _status = result["status"];
       if (callback != null) {
         callback(_status, result["msg"] ?? "");
       }

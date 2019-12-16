@@ -219,193 +219,284 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
           ),
         ));
 
-    return Container(
-      child: Column(
-        children: <Widget>[
-          Container(
-            height: 30,
-            padding: EdgeInsets.only(
-              left: 10,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      child: Icon(Icons.fullscreen,
-                          color: Colors.grey, size: 22),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Icon(Icons.settings,
-                          color: Colors.grey, size: 18),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(right: 10),
-                      child: Icon(Icons.lock_outline,
-                          color: Colors.grey, size: 19),
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          Container(
-            child: Expanded(
-                child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                        width: ScreenUtil.instance.setWidth(126),
-                        child: Container(
-                          margin: EdgeInsets.only(left: 10),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "开仓",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
-                          ),
-                        )),
-                    Switch(
-                      value: _contractStore.open_enable,
-                      onChanged: (bool value) {
-                        _contractStore.open_enable = value;
-                      },
-                    )
-                  ],
-                ),
-                Container(
-                  height: 80,
-                  child: Row(
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: ScreenUtil.instance.setHeight(60),
+              padding: EdgeInsets.only(
+                left: 10,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Row(
                     children: <Widget>[
-                      SizedBox(
-                          width: ScreenUtil.instance.setWidth(160),
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "实时",
-                              style: TextStyle(
-                                  color: Colors.blueGrey, fontSize: 16),
-                            ),
-                          )),
-                      CustomliderWidget(
-                        minValue: 0,
-                        maxValue: 100,
-                        defaultValue: 10,
-                        setup: 1.0,
-                        fixed: 2,
-                        onChange: (double oldValue, double newValue) => {},
+                      Container(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Icon(Icons.fullscreen,
+                            color: Colors.grey, size: 22),
                       ),
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 80,
-                  child: Row(
-                    children: <Widget>[
-                      SizedBox(
-                          width: ScreenUtil.instance.setWidth(160),
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "反弹",
-                              style: TextStyle(
-                                  color: Colors.blueGrey, fontSize: 16),
-                            ),
-                          )),
-                      CustomliderWidget(
-                        minValue: 0,
-                        maxValue: 50,
-                        defaultValue: 10,
-                        setup: 1.0,
-                        fixed: 2,
-                        onChange: (double oldValue, double newValue) => {},
+                      Container(
+                        padding: EdgeInsets.only(right: 10),
+                        child:
+                            Icon(Icons.settings, color: Colors.grey, size: 18),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(right: 10),
+                        child: Icon(Icons.lock_outline,
+                            color: Colors.grey, size: 19),
                       )
                     ],
-                  ),
-                ),
-                Container(
-                  height: 80,
-                  child: Row(
-                    children: <Widget>[
-                      SizedBox(
-                          width: ScreenUtil.instance.setWidth(160),
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "差价",
-                              style: TextStyle(
-                                  color: Colors.blueGrey, fontSize: 16),
-                            ),
-                          )),
-                      CustomliderWidget(
-                        minValue: 0,
-                        maxValue: 50,
-                        defaultValue: 10,
-                        setup: 1.0,
-                        fixed: 2,
-                        onChange: (double oldValue, double newValue) => {},
-                      )
-                    ],
-                  ),
-                ),
-                Container(
-                  height: 80,
-                  child: Row(
-                    children: <Widget>[
-                      SizedBox(
-                          width: ScreenUtil.instance.setWidth(160),
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "张数",
-                              style: TextStyle(
-                                  color: Colors.blueGrey, fontSize: 16),
-                            ),
-                          )),
-                      CustomliderWidget(
-                        minValue: 0,
-                        maxValue: 50,
-                        defaultValue: 10,
-                        fixed: 0,
-                        setup: 1.0,
-                        onChange: (double oldValue, double newValue) => {},
-                      )
-                    ],
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                        width: ScreenUtil.instance.setWidth(126),
-                        child: Container(
-                          margin: EdgeInsets.only(left: 10),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "平仓",
-                            style:
-                            TextStyle(color: Colors.blueGrey, fontSize: 16),
-                          ),
-                        )),
-                    Switch(
-                      value: _contractStore.close_enable,
-                      onChanged: (bool value) {
-                        _contractStore.close_enable = value;
-                      },
-                    )
-                  ],
+                  )
+                ],
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                SizedBox(
+                    width: ScreenUtil.instance.setWidth(126),
+                    child: Container(
+                      margin: EdgeInsets.only(left: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "开仓",
+                        style: TextStyle(color: Colors.blueGrey, fontSize: 16),
+                      ),
+                    )),
+                Switch(
+                  value: _contractStore.open_enable,
+                  onChanged: (bool value) {
+                    _contractStore.open_enable = value;
+                  },
                 )
               ],
-            )),
-          )
-        ],
+            ),
+            Container(
+              height: ScreenUtil.instance.setHeight(160),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: ScreenUtil.instance.setWidth(160),
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "实时",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      )),
+                  CustomliderWidget(
+                    minValue: 0,
+                    maxValue: 100,
+                    defaultValue: 10,
+                    setup: 1.0,
+                    fixed: 2,
+                    onChange: (double oldValue, double newValue) => {},
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: ScreenUtil.instance.setHeight(160),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: ScreenUtil.instance.setWidth(160),
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "反弹",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      )),
+                  CustomliderWidget(
+                    minValue: 0,
+                    maxValue: 50,
+                    defaultValue: 10,
+                    setup: 1.0,
+                    fixed: 2,
+                    onChange: (double oldValue, double newValue) => {},
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: ScreenUtil.instance.setHeight(160),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: ScreenUtil.instance.setWidth(160),
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "差价",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      )),
+                  CustomliderWidget(
+                    minValue: 0,
+                    maxValue: 50,
+                    defaultValue: 10,
+                    setup: 1.0,
+                    fixed: 2,
+                    onChange: (double oldValue, double newValue) => {},
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: ScreenUtil.instance.setHeight(160),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: ScreenUtil.instance.setWidth(160),
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "调度",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      )),
+                  CustomliderWidget(
+                    minValue: 0,
+                    maxValue: 120,
+                    defaultValue: 10,
+                    setup: 1.0,
+                    fixed: 0,
+                    onChange: (double oldValue, double newValue) => {},
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: ScreenUtil.instance.setHeight(160),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: ScreenUtil.instance.setWidth(160),
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "超时",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      )),
+                  CustomliderWidget(
+                    minValue: 1,
+                    maxValue: 60,
+                    defaultValue: 10,
+                    setup: 1.0,
+                    fixed: 0,
+                    onChange: (double oldValue, double newValue) => {},
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: ScreenUtil.instance.setHeight(160),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: ScreenUtil.instance.setWidth(160),
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "张数",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      )),
+                  CustomliderWidget(
+                    minValue: 1,
+                    maxValue: 100,
+                    defaultValue: 1,
+                    fixed: 0,
+                    setup: 1.0,
+                    onChange: (double oldValue, double newValue) => {},
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: ScreenUtil.instance.setHeight(100),
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                      width: ScreenUtil.instance.setWidth(160),
+                      child: Container(
+                        margin: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "杠杆",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      )),
+                  Container(
+                      width: ScreenUtil.instance.setWidth(880),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              "1倍",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                            child: Text("5倍"),
+                          ),
+                          Container(
+                            child: Text("10倍"),
+                          ),
+                          Container(
+                            child: Text("20倍"),
+                          )
+                        ],
+                      )),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 20,
+              child: Container(
+                color: Colors.white,
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                SizedBox(
+                    width: ScreenUtil.instance.setWidth(126),
+                    child: Container(
+                      margin: EdgeInsets.only(left: 10),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "平仓",
+                        style: TextStyle(color: Colors.blueGrey, fontSize: 16),
+                      ),
+                    )),
+                Switch(
+                  value: _contractStore.close_enable,
+                  onChanged: (bool value) {
+                    _contractStore.close_enable = value;
+                  },
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

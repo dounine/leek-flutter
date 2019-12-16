@@ -67,7 +67,6 @@ class _ContractPageState extends State<ContractPage> {
     } else if (data["status"] == "fail" && data["msg"] == "token invalid.") {
       Future.delayed(Duration.zero, () {
         Provider.of<UserStore>(context).logout();
-        Navigator.pop(context);
       });
     }
   }

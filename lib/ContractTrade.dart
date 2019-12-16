@@ -26,7 +26,6 @@ class _ContractTradeState extends State<ContractTrade>
   List<String> _socketMsg;
   String navName = "操盘";
 
-//  ContractStore _contractStore;
   AnimationController controller;
   CurvedAnimation curved;
   Map<String, String> _types = {
@@ -82,7 +81,6 @@ class _ContractTradeState extends State<ContractTrade>
   void choose(ContractInfo contractInfo) async {
     ContractStore contractStore = Provider.of<ContractStore>(context);
     await contractStore.choose(contractInfo.symbol);
-//    contractStore.initContract();
     _socketMsg = ["CONTRACT_${contractStore.symbol}_${contractStore.type}"];
     Provider.of<SocketStore>(context)
         .sendMessage({"type": "sub", "channels": _socketMsg});
@@ -236,15 +234,11 @@ class _ContractTradeState extends State<ContractTrade>
                   ),
                 ),
                 SizedBox(
-                  height: ScreenUtil.instance.setHeight(20),
-                ),
-                SizedBox(
-                  height: 10,
+                  height: ScreenUtil.instance.setHeight(40),
                 ),
                 Container(
                   height: 44,
                   decoration: ShapeDecoration(
-//                color: Colors.white,
                     shape: Border(bottom: BorderSide(color: Colors.grey[100])),
                   ),
                   child: Row(
@@ -268,7 +262,10 @@ class _ContractTradeState extends State<ContractTrade>
                     ));
                   }).toList()),
                 ),
-                Expanded(child: pages[navName])
+                Container(
+                  height: ScreenUtil.instance.setHeight(1150),
+                  child: pages[navName],
+                )
               ],
             ),
           ),
