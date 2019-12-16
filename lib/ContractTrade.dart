@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:leek/ContractOpen.dart';
 import 'package:leek/ContractPage.dart';
 import 'package:leek/contract/Contrast.dart';
 import 'package:leek/contract/Entrust.dart';
@@ -23,7 +24,7 @@ class _ContractTradeState extends State<ContractTrade>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Map<String, Widget> pages;
   PageView pageView;
-  List<String> _socketMsg;
+  List<dynamic> _socketMsg;
   String navName = "操盘";
 
   AnimationController controller;
@@ -41,6 +42,10 @@ class _ContractTradeState extends State<ContractTrade>
     controller = new AnimationController(
         duration: const Duration(milliseconds: 500), vsync: this); //动画控制器
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
+    Future.delayed(Duration.zero, () {
+      Provider.of<SocketStore>(context)
+          .addConnectedListener("contract", this.onConnect);
+    });
     controller.forward();
     super.initState();
   }
@@ -81,7 +86,13 @@ class _ContractTradeState extends State<ContractTrade>
   void choose(ContractInfo contractInfo) async {
     ContractStore contractStore = Provider.of<ContractStore>(context);
     await contractStore.choose(contractInfo.symbol);
-    _socketMsg = ["CONTRACT_${contractStore.symbol}_${contractStore.type}"];
+    _socketMsg = [
+      {
+        "type": "contract",
+        "json":
+            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}"}'
+      }
+    ];
     Provider.of<SocketStore>(context)
         .sendMessage({"type": "sub", "channels": _socketMsg});
   }
@@ -99,24 +110,6 @@ class _ContractTradeState extends State<ContractTrade>
     if (!contractInfo.nextWeekOpen) {
       _types.remove("next_week");
     }
-    var appBar = new AppBar(
-      title: Consumer<SocketStore>(
-        builder: (context, socketStore, child) {
-          return socketStore.status == SocketStatus.connected
-              ? Text(
-                  contractInfo.symbol,
-                  style: TextStyle(color: Colors.white),
-                )
-              : const SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(Colors.white)),
-                );
-        },
-      ),
-    );
     ContractStore contractStore = Provider.of<ContractStore>(context);
     SocketStore socketStore = Provider.of<SocketStore>(context);
     if (null == pages) {
@@ -132,9 +125,32 @@ class _ContractTradeState extends State<ContractTrade>
       };
     }
 
+    var hasOpen = contractInfo.opens
+        .where((item) =>
+            item.contractType == contractStore.contractType &&
+            item.direction == contractStore.direction)
+        .isNotEmpty;
+
     return WillPopScope(
         child: new Scaffold(
-          appBar: appBar,
+          appBar: new AppBar(
+            title: Consumer<SocketStore>(
+              builder: (context, socketStore, child) {
+                return socketStore.status == SocketStatus.connected
+                    ? Text(
+                        contractInfo.symbol,
+                        style: TextStyle(color: Colors.white),
+                      )
+                    : const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(Colors.white)),
+                      );
+              },
+            ),
+          ),
           body: Container(
             child: Column(
               children: <Widget>[
@@ -194,7 +210,8 @@ class _ContractTradeState extends State<ContractTrade>
                                           value,
                                           style: TextStyle(
                                               fontSize:
-                                                  contractStore.type == key
+                                                  contractStore.contractType ==
+                                                          key
                                                       ? 18
                                                       : 14,
                                               color: Colors.grey),
@@ -202,9 +219,9 @@ class _ContractTradeState extends State<ContractTrade>
                                         onPressed: () {
                                           socketStore.sendMessage({
                                             "type": "unsub",
-                                            "data": _socketMsg
+                                            "channels": _socketMsg
                                           });
-                                          contractStore.type = key;
+                                          contractStore.contractType = key;
                                           choose(contractInfo);
                                           Vibrate.feedback(FeedbackType.light);
                                           controller.reset();
@@ -220,7 +237,7 @@ class _ContractTradeState extends State<ContractTrade>
                                       child: Icon(
                                         Icons.brightness_1,
                                         size: ScreenUtil.instance.setWidth(24),
-                                        color: contractStore.type == key
+                                        color: contractStore.contractType == key
                                             ? Colors.lightBlueAccent
                                             : Colors.transparent,
                                       ),
@@ -236,36 +253,43 @@ class _ContractTradeState extends State<ContractTrade>
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(40),
                 ),
-                Container(
-                  height: 44,
-                  decoration: ShapeDecoration(
-                    shape: Border(bottom: BorderSide(color: Colors.grey[100])),
-                  ),
-                  child: Row(
-                      children: pages.keys.map((name) {
-                    return Expanded(
-                        child: Container(
-                      height: 44,
-                      child: FlatButton(
-                        textColor:
-                            navName == name ? Colors.black87 : Colors.grey,
-                        onPressed: () {
-                          setState(() {
-                            navName = name;
-                          });
-                          Vibrate.feedback(FeedbackType.light);
-                        },
-                        child: Text(name,
-                            style:
-                                TextStyle(fontSize: navName == name ? 18 : 14)),
-                      ),
-                    ));
-                  }).toList()),
-                ),
-                Container(
-                  height: ScreenUtil.instance.setHeight(1150),
-                  child: pages[navName],
-                )
+                hasOpen
+                    ? Container(
+                        height: 44,
+                        decoration: ShapeDecoration(
+                          shape: Border(
+                              bottom: BorderSide(color: Colors.grey[100])),
+                        ),
+                        child: Row(
+                            children: pages.keys.map((name) {
+                          return Expanded(
+                              child: Container(
+                            height: 44,
+                            child: FlatButton(
+                              textColor: navName == name
+                                  ? Colors.black87
+                                  : Colors.grey,
+                              onPressed: () {
+                                setState(() {
+                                  navName = name;
+                                });
+                                Vibrate.feedback(FeedbackType.light);
+                              },
+                              child: Text(name,
+                                  style: TextStyle(
+                                      fontSize: navName == name ? 18 : 14)),
+                            ),
+                          ));
+                        }).toList()),
+                      )
+                    : Container(),
+                hasOpen
+                    ? Container(
+                        height: ScreenUtil.instance.setHeight(1150),
+                        child: pages[navName],
+                      )
+                    : new ContractOpen(contractStore.symbol,
+                        contractStore.contractType, contractStore.direction)
               ],
             ),
           ),

@@ -52,13 +52,21 @@ class _ContractPageState extends State<ContractPage> {
       List<ContractInfo> tmpList = [];
       List<dynamic> dataList = data["data"];
       dataList.forEach((item) {
+        List<OpenItem> openItems = [];
+        var opens = item["opens"] as List<dynamic>;
+        opens.forEach((j){
+          openItems.add(OpenItem(
+            contractType: j["contractType"],
+            direction: j["direction"]
+          ));
+        });
         tmpList.add(ContractInfo(
             symbol: item["symbol"],
             quarterOpen: item["quarterOpen"],
             thisWeekOpen: item["thisWeekOpen"],
             nextWeekOpen: item["nextWeekOpen"],
             rise: "0.0",
-            opens: item["open"] as List<OpenItem>));
+            opens: openItems));
       });
       setState(() {
         list = tmpList;

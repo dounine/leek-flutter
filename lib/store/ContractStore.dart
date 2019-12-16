@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractStore extends ChangeNotifier {
   String _symbol;
-  String _type;
+  String _contractType;
   String _direction = "buy";
   String _usdt = "";
   String _cny = "";
@@ -62,10 +62,10 @@ class ContractStore extends ChangeNotifier {
     _rise = value;
   }
 
-  String get type => _type;
+  String get contractType => _contractType;
 
-  set type(String value) {
-    _type = value;
+  set contractType(String value) {
+    _contractType = value;
     save();
   }
 
@@ -75,6 +75,7 @@ class ContractStore extends ChangeNotifier {
   }
 
   void onMessage(Map<String, dynamic> data) {
+    print(data);
     if (data["status"] == "ok" &&
         data["type"] == "price" &&
         data["data"] != null) {
@@ -91,7 +92,7 @@ class ContractStore extends ChangeNotifier {
     Map<String, dynamic> data = json.decode(
         sharedPreferences.getString("contract_${symbol.toLowerCase()}") ??
             "{}");
-    data["type"] = _type;
+    data["contractType"] = _contractType;
     data["symbol"] = _symbol;
     data["direction"] = _direction;
     sharedPreferences.setString(
@@ -105,14 +106,14 @@ class ContractStore extends ChangeNotifier {
     Map<String, dynamic> data = json.decode(
         sharedPreferences.getString("contract_${symbol.toLowerCase()}") ??
             "{}");
-    _type = data["type"] ?? "quarter";
+    _contractType = data["contractType"] ?? "quarter";
     _direction = data["direction"] ?? "buy";
     notifyListeners();
   }
 
   void initContract() async {
     Response response = await Config.dio.get(
-        "/contract/scheduling/${_symbol.toLowerCase()}/${_type}/${_direction}");
+        "/contract/scheduling/${_symbol.toLowerCase()}/${_contractType}/${_direction}");
     Map<String, dynamic> result = response.data;
   }
 }
