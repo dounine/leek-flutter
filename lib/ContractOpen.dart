@@ -44,9 +44,6 @@ class _ContractOpenState extends State<ContractOpen>
       Response response = await Config.dio
           .post("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> result = response.data;
-      setState(() {
-        _status = result["status"];
-      });
       if (result["status"] == "fail") {
         Scaffold.of(context).showSnackBar(SnackBar(
             content: Row(
@@ -66,7 +63,12 @@ class _ContractOpenState extends State<ContractOpen>
           ],
         )));
         setState(() {
+          _status = result["status"];
           _agree = "";
+        });
+      } else {
+        setState(() {
+          _status = result["status"];
         });
       }
     } catch (e) {
@@ -87,13 +89,14 @@ class _ContractOpenState extends State<ContractOpen>
       Response response = await Config.dio
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> result = response.data;
-      print(result);
-      setState(() {
-        _status = result["status"];
-      });
       if (result["status"] == "ok" && result["data"] != null) {
         setState(() {
           _agree = "";
+          _status = result["status"];
+        });
+      } else {
+        setState(() {
+          _status = result["status"];
         });
       }
     } catch (e) {
@@ -106,7 +109,9 @@ class _ContractOpenState extends State<ContractOpen>
   @override
   void initState() {
     super.initState();
-    queryStatus();
+    Future.delayed(Duration.zero, () {
+      queryStatus();
+    });
   }
 
   @override
