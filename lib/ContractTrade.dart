@@ -90,7 +90,7 @@ class _ContractTradeState extends State<ContractTrade>
       {
         "type": "contract",
         "json":
-            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}"}'
+            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}"}'
       }
     ];
     Provider.of<SocketStore>(context)
@@ -118,7 +118,7 @@ class _ContractTradeState extends State<ContractTrade>
       contractStore.rise = contractInfo.rise;
       socketStore.addMsgListener("contract", contractStore.onMessage);
       pages = {
-        "操盘": Trades(contractInfo: contractInfo),
+        "操盘": Trades(),
         "委托": Entrust(),
         "持仓": Position(),
         "多空": Contrast()
