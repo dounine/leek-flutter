@@ -11,40 +11,59 @@ class ContractStore extends ChangeNotifier {
   String _symbol;
   String _contractType;
   String _direction = "buy";
+
   String _usdt = "";
   String _cny = "";
   String _rise = "0.0";
   double _open = 0.0;
 
+  String _open_status = "--";
   bool _open_enable = false;
   num _open_rebound_price = 0;
   num _open_plan_price_spread = 0;
   num _open_volume = 1;
-  num _open_scheduling = 3;
-  String _open_status = "--";
+  Map<String, dynamic> _open_schedue = {"length": 3, "unit": "seconds"};
+  Map<String, dynamic> _open_entrust_timeout = {"length": 3, "unit": "seconds"};
+  String _open_lever_rate = "20";
 
-  bool _close_enable = false;
-  bool _close_associated = false;
+  String _close_status = "--";
+  bool _close_bind = false;
   num _close_rebound_price = 0;
   num _close_plan_price_spread = 0;
   num _close_volume = 1;
-  String _close_status = "--";
+  Map<String, dynamic> _close_schedue = {"length": 3, "unit": "seconds"};
+  Map<String, dynamic> _close_entrust_timeout = {
+    "length": 3,
+    "unit": "seconds"
+  };
 
+  String get open_status => _open_status;
+  String get open_lever_rate => _open_lever_rate;
   bool get open_enable => _open_enable;
+  num get open_rebound_price => _open_rebound_price;
+  num get open_plan_price_spread => _open_plan_price_spread;
+  num get open_volume => _open_volume;
+  Map<String, dynamic> get open_schedue => _open_schedue;
+  Map<String, dynamic> get open_entrust_timeout => _open_entrust_timeout;
+
+  String get close_status => _close_status;
+  bool get close_bind => _close_bind;
+  num get close_rebound_price => _close_rebound_price;
+  num get close_plan_price_spread => _close_plan_price_spread;
+  num get close_volume => _close_volume;
+  Map<String, dynamic> get close_schedue => _close_schedue;
+  Map<String, dynamic> get close_entrust_timeout => _close_entrust_timeout;
+
+  String get symbol => _symbol;
+  double get open => _open;
 
   set open_enable(bool value) {
     _open_enable = value;
   }
 
-  bool get close_enable => _close_enable;
-
-  set close_enable(bool value) {
-    _close_enable = value;
+  set close_bind(bool value) {
+    _close_bind = value;
   }
-
-  String get symbol => _symbol;
-
-  double get open => _open;
 
   set open(double value) {
     _open = value;
@@ -75,7 +94,6 @@ class ContractStore extends ChangeNotifier {
   }
 
   void onMessage(Map<String, dynamic> data) {
-    print(data);
     if (data["status"] == "ok" &&
         data["type"] == "price" &&
         data["data"] != null) {
@@ -83,6 +101,26 @@ class ContractStore extends ChangeNotifier {
       _usdt = usdtPrice.toString();
       _cny = (usdtPrice * 7).toStringAsFixed(2);
       _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
+      notifyListeners();
+    } else if (data["status"] == "ok" && data["type"] == "pushInfo") {
+      var d = data["data"];
+
+      _open_enable = d["open_enable"];
+      _open_rebound_price = d["open_rebound_price"];
+      _open_plan_price_spread = d["open_plan_price_spread"];
+      _open_volume = d["open_volume"];
+      _open_schedue = d["open_schedue"];
+      _open_entrust_timeout = d["open_entrust_timeout"];
+      _open_lever_rate = d["open_lever_rate"];
+
+      _open_status = d["open_status"];
+      _close_bind = d["close_bind"];
+      _close_rebound_price = d["close_rebound_price"];
+      _close_plan_price_spread = d["close_plan_price_spread"];
+      _close_volume = d["close_volume"];
+      _close_status = d["close_status"];
+      _close_schedue = d["close_schedue"];
+      _close_entrust_timeout = d["close_entrust_timeout"];
       notifyListeners();
     }
   }

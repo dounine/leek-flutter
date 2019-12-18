@@ -6,9 +6,7 @@ import 'package:leek/store/ContractStore.dart';
 import 'package:provider/provider.dart';
 
 class Trades extends StatefulWidget {
-  final ContractInfo contractInfo;
-
-  Trades({Key key, @required this.contractInfo}) : super(key: key);
+  Trades({Key key}) : super(key: key);
 
   @override
   _TradesState createState() {
@@ -19,7 +17,6 @@ class Trades extends StatefulWidget {
 class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
   ContractInfo contractInfo;
   bool switchValue = true;
-  ContractStore _contractStore;
   AnimationController controller;
   Animation<Color> skeletonColor;
   CurvedAnimation curved;
@@ -27,8 +24,6 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
-    contractInfo = widget.contractInfo;
 
     controller = AnimationController(
         duration: const Duration(seconds: 1), lowerBound: 0.5, vsync: this);
@@ -61,7 +56,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    _contractStore = Provider.of<ContractStore>(context);
+    ContractStore _contractStore = Provider.of<ContractStore>(context);
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     Widget skeleton = FadeTransition(
         opacity: curved,
@@ -317,7 +312,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   CustomliderWidget(
                     minValue: 0,
                     maxValue: 50,
-                    defaultValue: 10,
+                    defaultValue: _contractStore.open_rebound_price,
                     setup: 1.0,
                     fixed: 2,
                     onChange: (double oldValue, double newValue) => {},
@@ -343,7 +338,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   CustomliderWidget(
                     minValue: 0,
                     maxValue: 50,
-                    defaultValue: 10,
+                    defaultValue: _contractStore.open_plan_price_spread,
                     setup: 1.0,
                     fixed: 2,
                     onChange: (double oldValue, double newValue) => {},
@@ -369,7 +364,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   CustomliderWidget(
                     minValue: 0,
                     maxValue: 120,
-                    defaultValue: 10,
+                    defaultValue: _contractStore.open_schedue["length"],
                     setup: 1.0,
                     fixed: 0,
                     onChange: (double oldValue, double newValue) => {},
@@ -395,7 +390,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   CustomliderWidget(
                     minValue: 1,
                     maxValue: 60,
-                    defaultValue: 10,
+                    defaultValue: _contractStore.open_entrust_timeout["length"],
                     setup: 1.0,
                     fixed: 0,
                     onChange: (double oldValue, double newValue) => {},
@@ -421,7 +416,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   CustomliderWidget(
                     minValue: 1,
                     maxValue: 100,
-                    defaultValue: 1,
+                    defaultValue: _contractStore.open_volume,
                     fixed: 0,
                     setup: 1.0,
                     onChange: (double oldValue, double newValue) => {},
@@ -448,23 +443,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       width: ScreenUtil.instance.setWidth(880),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Container(
+                        children: [1, 5, 10, 20].map((i) {
+                          return Container(
                             child: Text(
-                              "1倍",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              "${i}倍",
+                              style: TextStyle(
+                                  fontWeight:
+                                      i.toString() == _contractStore.open_lever_rate
+                                          ? FontWeight.bold
+                                          : FontWeight.normal),
                             ),
-                          ),
-                          Container(
-                            child: Text("5倍"),
-                          ),
-                          Container(
-                            child: Text("10倍"),
-                          ),
-                          Container(
-                            child: Text("20倍"),
-                          )
-                        ],
+                          );
+                        }).toList(),
                       )),
                 ],
               ),
@@ -483,14 +473,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       margin: EdgeInsets.only(left: 10),
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "平仓",
+                        "绑定",
                         style: TextStyle(color: Colors.blueGrey, fontSize: 16),
                       ),
                     )),
                 Switch(
-                  value: _contractStore.close_enable,
+                  value: _contractStore.close_bind,
                   onChanged: (bool value) {
-                    _contractStore.close_enable = value;
+                    _contractStore.close_bind = value;
                   },
                 )
               ],

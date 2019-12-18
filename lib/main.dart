@@ -77,16 +77,16 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            builder: (_) => loginStore,
+            create: (_) => loginStore,
           ),
           ChangeNotifierProvider(
-            builder: (_) => userStore,
+            create: (_) => userStore,
           ),
           ChangeNotifierProvider(
-            builder: (_) => socketStore,
+            create: (_) => socketStore,
           ),
           ChangeNotifierProvider(
-            builder: (_) => contractStore,
+            create: (_) => contractStore,
           )
         ],
         child: MaterialApp(
