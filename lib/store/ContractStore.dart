@@ -68,9 +68,9 @@ class ContractStore extends ChangeNotifier {
     _open_rebound_price = value;
   }
 
-  set open_lever_rate(String value){
+  set open_lever_rate(String value) {
     _open_lever_rate = value;
-     notifyListeners();
+    notifyListeners();
   }
 
   set open_plan_price_spread(num value) {
@@ -154,22 +154,52 @@ class ContractStore extends ChangeNotifier {
     } else if (data["status"] == "ok" && data["type"] == "pushInfo") {
       var d = data["data"];
       _push_info = true;
-      _open_enable = d["open_enable"];
-      _open_rebound_price = d["open_rebound_price"];
-      _open_plan_price_spread = d["open_plan_price_spread"];
-      _open_volume = d["open_volume"];
-      _open_schedue = d["open_schedue"];
-      _open_entrust_timeout = d["open_entrust_timeout"];
-      _open_lever_rate = d["open_lever_rate"];
+      if (d["open_enable"] != null) {
+        _open_enable = d["open_enable"];
+      }
+      if (d["open_rebound_price"] != null) {
+        _open_rebound_price = d["open_rebound_price"];
+      }
+      if (d["open_plan_price_spread"] != null) {
+        _open_plan_price_spread = d["open_plan_price_spread"];
+      }
+      if (d["open_volume"] != null) {
+        _open_volume = d["open_volume"];
+      }
+      if (d["open_schedue"] != null) {
+        _open_schedue = d["open_schedue"];
+      }
+      if (d["open_entrust_timeout"] != null) {
+        _open_entrust_timeout = d["open_entrust_timeout"];
+      }
+      if (d["open_lever_rate"] != null) {
+        _open_lever_rate = d["open_lever_rate"];
+      }
 
-      _open_status = d["open_status"];
-      _close_bind = d["close_bind"];
-      _close_rebound_price = d["close_rebound_price"];
-      _close_plan_price_spread = d["close_plan_price_spread"];
-      _close_volume = d["close_volume"];
-      _close_status = d["close_status"];
-      _close_schedue = d["close_schedue"];
-      _close_entrust_timeout = d["close_entrust_timeout"];
+      if (d["open_status"] != null) {
+        _open_status = d["open_status"];
+      }
+      if (d["close_bind"] != null) {
+        _close_bind = d["close_bind"];
+      }
+      if (d["close_rebound_price"] != null) {
+        _close_rebound_price = d["close_rebound_price"];
+      }
+      if (d["close_plan_price_spread"] != null) {
+        _close_plan_price_spread = d["close_plan_price_spread"];
+      }
+      if (d["close_volume"] != null) {
+        _close_volume = d["close_volume"];
+      }
+      if (d["close_status"] != null) {
+        _close_status = d["close_status"];
+      }
+      if (d["close_schedue"] != null) {
+        _close_schedue = d["close_schedue"];
+      }
+      if (null != d["close_entrust_timeout"]) {
+        _close_entrust_timeout = d["close_entrust_timeout"];
+      }
       notifyListeners();
     }
   }
