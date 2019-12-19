@@ -16,6 +16,7 @@ class ContractStore extends ChangeNotifier {
   String _cny = "";
   String _rise = "0.0";
   double _open = 0.0;
+  bool _push_info = false;
 
   String _open_status = "--";
   bool _open_enable = false;
@@ -37,6 +38,8 @@ class ContractStore extends ChangeNotifier {
     "unit": "seconds"
   };
 
+  bool get push_info => _push_info;
+
   String get open_status => _open_status;
   String get open_lever_rate => _open_lever_rate;
   bool get open_enable => _open_enable;
@@ -57,8 +60,17 @@ class ContractStore extends ChangeNotifier {
   String get symbol => _symbol;
   double get open => _open;
 
+  set push_info(bool value) {
+    _push_info = value;
+  }
+
   set open_rebound_price(num value) {
     _open_rebound_price = value;
+  }
+
+  set open_lever_rate(String value){
+    _open_lever_rate = value;
+     notifyListeners();
   }
 
   set open_plan_price_spread(num value) {
@@ -69,11 +81,11 @@ class ContractStore extends ChangeNotifier {
     _open_schedue = value;
   }
 
-  set open_entrust_timeout(Map<String,dynamic> value){
+  set open_entrust_timeout(Map<String, dynamic> value) {
     _open_entrust_timeout = value;
   }
 
-  set open_volume(num value){
+  set open_volume(num value) {
     _open_volume = value;
   }
 
@@ -83,6 +95,23 @@ class ContractStore extends ChangeNotifier {
 
   set close_bind(bool value) {
     _close_bind = value;
+    notifyListeners();
+  }
+
+  set close_rebound_price(num value) {
+    _close_rebound_price = value;
+  }
+
+  set close_plan_price_spread(num value) {
+    _close_plan_price_spread = value;
+  }
+
+  set close_schedue(Map<String, dynamic> value) {
+    _close_schedue = value;
+  }
+
+  set close_entrust_timeout(Map<String, dynamic> value) {
+    _close_entrust_timeout = value;
   }
 
   set open(double value) {
@@ -123,9 +152,8 @@ class ContractStore extends ChangeNotifier {
       _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
       notifyListeners();
     } else if (data["status"] == "ok" && data["type"] == "pushInfo") {
-      print(data);
       var d = data["data"];
-
+      _push_info = true;
       _open_enable = d["open_enable"];
       _open_rebound_price = d["open_rebound_price"];
       _open_plan_price_spread = d["open_plan_price_spread"];

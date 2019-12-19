@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:leek/Config.dart';
+import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
 import 'package:leek/store/UserStore.dart';
 import 'package:provider/provider.dart';
@@ -54,11 +55,9 @@ class _ContractPageState extends State<ContractPage> {
       dataList.forEach((item) {
         List<OpenItem> openItems = [];
         var opens = item["opens"] as List<dynamic>;
-        opens.forEach((j){
+        opens.forEach((j) {
           openItems.add(OpenItem(
-            contractType: j["contractType"],
-            direction: j["direction"]
-          ));
+              contractType: j["contractType"], direction: j["direction"]));
         });
         tmpList.add(ContractInfo(
             symbol: item["symbol"],
@@ -141,6 +140,7 @@ class _ContractPageState extends State<ContractPage> {
     ContractInfo data = list[index];
     Navigator.pushNamed(context, '/contractTrade', arguments: data)
         .then((result) {
+      Provider.of<ContractStore>(context).push_info = false;
       Provider.of<SocketStore>(context)
           .sendMessage({"type": "unsub", "channels": result});
       Provider.of<SocketStore>(context).delConnectedListener("contract");
