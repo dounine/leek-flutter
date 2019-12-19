@@ -57,6 +57,26 @@ class ContractStore extends ChangeNotifier {
   String get symbol => _symbol;
   double get open => _open;
 
+  set open_rebound_price(num value) {
+    _open_rebound_price = value;
+  }
+
+  set open_plan_price_spread(num value) {
+    _open_plan_price_spread = value;
+  }
+
+  set open_schedue(Map<String, dynamic> value) {
+    _open_schedue = value;
+  }
+
+  set open_entrust_timeout(Map<String,dynamic> value){
+    _open_entrust_timeout = value;
+  }
+
+  set open_volume(num value){
+    _open_volume = value;
+  }
+
   set open_enable(bool value) {
     _open_enable = value;
   }
@@ -103,6 +123,7 @@ class ContractStore extends ChangeNotifier {
       _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
       notifyListeners();
     } else if (data["status"] == "ok" && data["type"] == "pushInfo") {
+      print(data);
       var d = data["data"];
 
       _open_enable = d["open_enable"];

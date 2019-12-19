@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/ContractPage.dart';
 import 'package:leek/components/cslider.dart';
 import 'package:leek/store/ContractStore.dart';
+import 'package:leek/store/SocketStore.dart';
 import 'package:provider/provider.dart';
 
 class Trades extends StatefulWidget {
@@ -57,6 +58,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     ContractStore _contractStore = Provider.of<ContractStore>(context);
+    SocketStore socketStore = Provider.of<SocketStore>(context);
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     Widget skeleton = FadeTransition(
         opacity: curved,
@@ -269,7 +271,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               ],
             ),
             Container(
-              height: ScreenUtil.instance.setHeight(160),
+              height: ScreenUtil.instance.setHeight(200),
               child: Row(
                 children: <Widget>[
                   SizedBox(
@@ -314,8 +316,19 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     maxValue: 50,
                     defaultValue: _contractStore.open_rebound_price,
                     setup: 1.0,
-                    fixed: 2,
-                    onChange: (double oldValue, double newValue) => {},
+                    fixed: 0,
+                    onChange: (num oldValue, num newValue) {
+                      _contractStore.open_rebound_price = newValue;
+                      socketStore.sendMessage({
+                        "type": "contract_update",
+                        "data": {
+                          "symbol": _contractStore.symbol,
+                          "contractType": _contractStore.contractType,
+                          "direction": _contractStore.direction,
+                          "open_rebound_price": newValue.toString()
+                        }
+                      });
+                    },
                   )
                 ],
               ),
@@ -341,7 +354,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     defaultValue: _contractStore.open_plan_price_spread,
                     setup: 1.0,
                     fixed: 2,
-                    onChange: (double oldValue, double newValue) => {},
+                    onChange: (num oldValue, num newValue) {
+                      _contractStore.open_plan_price_spread = newValue;
+                      socketStore.sendMessage({
+                        "type": "contract_update",
+                        "data": {
+                          "symbol": _contractStore.symbol,
+                          "contractType": _contractStore.contractType,
+                          "direction": _contractStore.direction,
+                          "open_plan_price_spread": newValue.toString()
+                        }
+                      });
+                    },
                   )
                 ],
               ),
@@ -367,7 +391,24 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     defaultValue: _contractStore.open_schedue["length"],
                     setup: 1.0,
                     fixed: 0,
-                    onChange: (double oldValue, double newValue) => {},
+                    onChange: (num oldValue, num newValue) {
+                      _contractStore.open_schedue = {
+                        "length": newValue,
+                        "unit": "seconds"
+                      };
+                      socketStore.sendMessage({
+                        "type": "contract_update",
+                        "data": {
+                          "symbol": _contractStore.symbol,
+                          "contractType": _contractStore.contractType,
+                          "direction": _contractStore.direction,
+                          "open_schedue": {
+                            "length": newValue,
+                            "unit": "seconds"
+                          }
+                        }
+                      });
+                    },
                   )
                 ],
               ),
@@ -393,7 +434,24 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     defaultValue: _contractStore.open_entrust_timeout["length"],
                     setup: 1.0,
                     fixed: 0,
-                    onChange: (double oldValue, double newValue) => {},
+                    onChange: (num oldValue, num newValue) {
+                      _contractStore.open_entrust_timeout = {
+                        "length": newValue,
+                        "unit": "seconds"
+                      };
+                      socketStore.sendMessage({
+                        "type": "contract_update",
+                        "data": {
+                          "symbol": _contractStore.symbol,
+                          "contractType": _contractStore.contractType,
+                          "direction": _contractStore.direction,
+                          "open_entrust_timeout": {
+                            "length": newValue,
+                            "unit": "seconds"
+                          }
+                        }
+                      });
+                    },
                   )
                 ],
               ),
@@ -419,7 +477,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     defaultValue: _contractStore.open_volume,
                     fixed: 0,
                     setup: 1.0,
-                    onChange: (double oldValue, double newValue) => {},
+                    onChange: (num oldValue, num newValue) {
+                      _contractStore.open_volume = newValue;
+                      socketStore.sendMessage({
+                        "type": "contract_update",
+                        "data": {
+                          "symbol": _contractStore.symbol,
+                          "contractType": _contractStore.contractType,
+                          "direction": _contractStore.direction,
+                          "open_volume": newValue.toString()
+                        }
+                      });
+                    },
                   )
                 ],
               ),
@@ -448,10 +517,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                             child: Text(
                               "${i}倍",
                               style: TextStyle(
-                                  fontWeight:
-                                      i.toString() == _contractStore.open_lever_rate
-                                          ? FontWeight.bold
-                                          : FontWeight.normal),
+                                  fontWeight: i.toString() ==
+                                          _contractStore.open_lever_rate
+                                      ? FontWeight.bold
+                                      : FontWeight.normal),
                             ),
                           );
                         }).toList(),
