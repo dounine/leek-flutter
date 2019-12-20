@@ -112,10 +112,9 @@ class _ContractTradeState extends State<ContractTrade>
     }
     ContractStore contractStore = Provider.of<ContractStore>(context);
     SocketStore socketStore = Provider.of<SocketStore>(context);
-    if (null == pages) {
+    if (pages == null) {
       choose(contractInfo);
       ContractStore contractStore = Provider.of<ContractStore>(context);
-      contractStore.rise = contractInfo.rise;
       socketStore.addMsgListener("contract", contractStore.onMessage);
       pages = {
         "操盘": Trades(),
@@ -160,20 +159,31 @@ class _ContractTradeState extends State<ContractTrade>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              "￥${contractStore.cny}",
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 1000),
-                              margin: EdgeInsets.only(left: 24),
+                            // Container(
+                            //   margin: EdgeInsets.only(left: 10),
+                            //   child: Text(
+                            //     "\$${contractStore.usdt}",
+                            //     style: TextStyle(
+                            //         color: Colors.black54,
+                            //         fontSize: 22,
+                            //         fontWeight: FontWeight.bold),
+                            //   ),
+                            // ),
+                            Container(
                               child: Text(
-                                contractStore.usdt,
+                                "\$${contractStore.usdt}",
+                                style: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(left: 16),
+                              child: Text(
+                                "￥${contractStore.cny}",
                                 style: TextStyle(fontSize: 16),
                               ),
                             )

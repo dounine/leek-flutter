@@ -149,23 +149,25 @@ class _MyHomePageState extends State<MyHomePage>
     curved = new CurvedAnimation(
         parent: controller,
         curve: const Interval(0.2, 1, curve: Curves.easeInOut));
-    _widgetOptions = {
-      "首页": Container(
-        child: Center(
-          child: Text(
-            "用数据证明给他们看、你是对的。",
-            style: TextStyle(fontSize: 20),
-          ),
-        ),
-      ),
-      "合约": ContractPage(),
-      "钱包": Wallet(),
-      "我": Profile()
-    };
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_widgetOptions == null) {
+      _widgetOptions = {
+        "首页": Container(
+          child: Center(
+            child: Text(
+              "用数据证明给他们看、你是对的。",
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+        "合约": ContractPage(),
+        "钱包": Wallet(),
+        "我": Profile()
+      };
+    }
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Scaffold(
       appBar: _widgetOptions.keys.toList()[_selectedIndex] != "钱包"

@@ -120,7 +120,14 @@ class ContractStore extends ChangeNotifier {
 
   String get direction => _direction;
 
-  String get usdt => _usdt;
+  String get usdt {
+    if (_usdt == "") {
+      return _usdt;
+    } else if (_usdt.split(".")[1].length == 1) {
+      return "${_usdt}0";
+    }
+    return _usdt;
+  }
 
   String get cny => _cny;
 
@@ -149,8 +156,10 @@ class ContractStore extends ChangeNotifier {
       double usdtPrice = double.parse(data["data"].toString());
       _usdt = usdtPrice.toString();
       _cny = (usdtPrice * 7).toStringAsFixed(2);
-      _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
+      // _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
       notifyListeners();
+    } else if (data["status"] == "ok" && data["type"] == "po") {
+      print(data);
     } else if (data["status"] == "ok" && data["type"] == "pushInfo") {
       var d = data["data"];
       _push_info = true;
