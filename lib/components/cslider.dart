@@ -154,8 +154,9 @@ class _CustomliderState extends State<CustomliderWidget>
 
   @override
   void dispose() {
-    controller.dispose();
     super.dispose();
+    controller.stop();
+    controller.dispose();
   }
 
   @override

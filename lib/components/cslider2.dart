@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:leek/Config.dart';
 import 'package:leek/components/cslider.dart';
 import 'package:vibrate/vibrate.dart';
 
@@ -12,15 +15,17 @@ class CustomliderWidget2 extends StatefulWidget {
   final num maxValue;
   final num setup;
   final num fixed;
+  final String eventName;
 
-  const CustomliderWidget2(
+  CustomliderWidget2(
       {Key key,
       @required this.minValue,
       @required this.maxValue,
       @required this.defaultValue,
       @required this.setup,
       @required this.fixed,
-      @required this.onChange})
+      @required this.onChange,
+      this.eventName})
       : super(key: key);
 
   @override
@@ -56,10 +61,10 @@ class _CustomliderState2 extends State<CustomliderWidget2>
   double baseWidth = 0.0;
 
   List<Widget> splits;
+  StreamSubscription subEvent;
 
   @override
   void initState() {
-    super.initState();
     controller = new AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this); //动画控制器
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
@@ -73,7 +78,17 @@ class _CustomliderState2 extends State<CustomliderWidget2>
     //基数、每个值占多少宽度
     baseWidth = width / maxValue;
 
-    left = baseWidth * value + left;
+    left = baseWidth * value;
+    if (widget.eventName != null) {
+      subEvent = Config.eventBus.on<PushEvent>().listen((event) {
+        if (event.name == widget.eventName) {
+          setState(() {
+            value = event.value;
+            left = baseWidth * value;
+          });
+        }
+      });
+    }
 
     //分隔线
     splits = [
@@ -82,6 +97,8 @@ class _CustomliderState2 extends State<CustomliderWidget2>
 //        color: Colors.white,
 //      )
     ];
+
+    super.initState();
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
@@ -126,16 +143,14 @@ class _CustomliderState2 extends State<CustomliderWidget2>
 
   @override
   void dispose() {
+    subEvent?.cancel();
+    controller?.stop();
     controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final textBox = TextSize(
-        pointBorderRadius: pointBorderRadius,
-        value: value + incrmentValue,
-        valueFixed: fixed);
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
@@ -178,7 +193,12 @@ class _CustomliderState2 extends State<CustomliderWidget2>
                   .animate(curved),
               child: ScaleTransition(
                 scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
-                child: textBox,
+                child: value == -1
+                    ? Container()
+                    : TextSize(
+                        pointBorderRadius: pointBorderRadius,
+                        value: value + incrmentValue,
+                        valueFixed: fixed),
               ),
             )),
         Positioned(
@@ -189,26 +209,29 @@ class _CustomliderState2 extends State<CustomliderWidget2>
               onPanUpdate: this._onPanUpdate,
               onPanStart: this._onPanStart,
               onPanEnd: this._onPanEnd,
-              child: FadeTransition(
-                opacity: new Tween(begin: 1.0, end: 0.9).animate(curved),
-                child: ScaleTransition(
-                  scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
-                  child: PhysicalModel(
-                    shape: BoxShape.circle,
-                    elevation: 4.0,
-                    color: Colors.transparent,
-                    shadowColor: Colors.green,
-                    child: Container(
-                      decoration: new BoxDecoration(
-                          border: Border.all(
-                              color: pointBorderColor, width: pointBorderWidth),
-                          color: pointColor,
-                          borderRadius:
-                              BorderRadius.circular(pointBorderRadius)),
+              child: value == -1
+                  ? Container()
+                  : FadeTransition(
+                      opacity: new Tween(begin: 1.0, end: 0.9).animate(curved),
+                      child: ScaleTransition(
+                        scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
+                        child: PhysicalModel(
+                          shape: BoxShape.circle,
+                          elevation: 4.0,
+                          color: Colors.transparent,
+                          shadowColor: Colors.green,
+                          child: Container(
+                            decoration: new BoxDecoration(
+                                border: Border.all(
+                                    color: pointBorderColor,
+                                    width: pointBorderWidth),
+                                color: pointColor,
+                                borderRadius:
+                                    BorderRadius.circular(pointBorderRadius)),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ))
       ],
     );

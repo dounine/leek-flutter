@@ -17,6 +17,15 @@ class ContractStore extends ChangeNotifier {
   String _rise = "0.0";
   double _open = 0.0;
   bool _push_info = false;
+  num _openEntrustValue = -1;
+  num _openEntrustPrice = -1;
+  num _openTradeValue = -1;
+  num _openTradePrice = -1;
+
+  num _closeEntrustValue = -1;
+  num _closeEntrustPrice = -1;
+  num _closeTradeValue = -1;
+  num _closeTradePrice = -1;
 
   String _open_status = "--";
   bool _open_enable = false;
@@ -46,6 +55,14 @@ class ContractStore extends ChangeNotifier {
   num get open_rebound_price => _open_rebound_price;
   num get open_plan_price_spread => _open_plan_price_spread;
   num get open_volume => _open_volume;
+  num get openEntrustValue => _openEntrustValue;
+  num get openEntrustPrice => _openEntrustPrice;
+  num get openTradePrice => _openTradePrice;
+  num get openTradeValue => _openTradeValue;
+  num get closeEntrustValue => _closeEntrustValue;
+  num get closeEntrustPrice => _closeEntrustPrice;
+  num get closeTradePrice => _closeTradePrice;
+  num get closeTradeValue => _closeTradeValue;
   Map<String, dynamic> get open_schedue => _open_schedue;
   Map<String, dynamic> get open_entrust_timeout => _open_entrust_timeout;
 
@@ -157,9 +174,37 @@ class ContractStore extends ChangeNotifier {
       _usdt = usdtPrice.toString();
       _cny = (usdtPrice * 7).toStringAsFixed(2);
       // _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
-      notifyListeners();
     } else if (data["status"] == "ok" && data["type"] == "po") {
-      print(data);
+      var d = data["data"];
+      if (d["offset"] == "open") {
+        if (d["tv"] != null) {
+          _openTradeValue = d["tv"];
+          Config.eventBus
+              .fire(PushEvent("onlineTradePrice", d["tv"]));
+        }
+        if (d["ev"] != null) {
+          _openEntrustValue = d["ev"];
+        }
+        if (d["tp"] != null) {
+          _openTradePrice = d["tp"];
+        }
+        if (d["ep"] != null) {
+          _openEntrustPrice = d["ep"];
+        }
+      } else if (d["offset"] == "close") {
+        if (d["tv"] != null) {
+          _closeTradeValue = d["tv"];
+        }
+        if (d["ev"] != null) {
+          _closeEntrustValue = d["ev"];
+        }
+        if (d["tp"] != null) {
+          _closeTradePrice = d["tp"];
+        }
+        if (d["ep"] != null) {
+          _closeEntrustPrice = d["ep"];
+        }
+      }
     } else if (data["status"] == "ok" && data["type"] == "pushInfo") {
       var d = data["data"];
       _push_info = true;
@@ -209,8 +254,8 @@ class ContractStore extends ChangeNotifier {
       if (null != d["close_entrust_timeout"]) {
         _close_entrust_timeout = d["close_entrust_timeout"];
       }
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   void save() async {
@@ -228,6 +273,7 @@ class ContractStore extends ChangeNotifier {
 
   Future choose(String symbol) async {
     _symbol = symbol;
+    _push_info = false;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     Map<String, dynamic> data = json.decode(
         sharedPreferences.getString("contract_${symbol.toLowerCase()}") ??
