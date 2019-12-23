@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:leek/Config.dart';
 import 'package:vibrate/vibrate.dart';
 
 class CustomliderWidget extends StatefulWidget {
@@ -11,6 +14,7 @@ class CustomliderWidget extends StatefulWidget {
   final num maxValue;
   final num setup;
   final num fixed;
+  final String eventName;
 
   const CustomliderWidget(
       {Key key,
@@ -19,7 +23,9 @@ class CustomliderWidget extends StatefulWidget {
       @required this.defaultValue,
       @required this.setup,
       @required this.fixed,
-      @required this.onChange})
+      @required this.onChange,
+      this.eventName
+      })
       : super(key: key);
 
   @override
@@ -84,10 +90,10 @@ class _CustomliderState extends State<CustomliderWidget>
   double baseWidth = 0.0;
 
   List<Widget> splits;
+  StreamSubscription subEvent;
 
   @override
   void initState() {
-    super.initState();
     controller = new AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this); //动画控制器
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
@@ -101,7 +107,17 @@ class _CustomliderState extends State<CustomliderWidget>
     //基数、每个值占多少宽度
     baseWidth = width / maxValue;
 
-    left = baseWidth * value + left;
+    left = baseWidth * value;
+    if (widget.eventName != null) {
+      subEvent = Config.eventBus.on<PushEvent>().listen((event) {
+        if (event.name == widget.eventName) {
+          setState(() {
+            value = event.value;
+            left = baseWidth * value;
+          });
+        }
+      });
+    }
 
     //分隔线
     splits = [
@@ -110,6 +126,7 @@ class _CustomliderState extends State<CustomliderWidget>
 //        color: Colors.white,
 //      )
     ];
+    super.initState();
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
@@ -154,9 +171,10 @@ class _CustomliderState extends State<CustomliderWidget>
 
   @override
   void dispose() {
-    super.dispose();
+    subEvent?.cancel();
     controller.stop();
     controller.dispose();
+    super.dispose();
   }
 
   @override

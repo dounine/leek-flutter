@@ -152,11 +152,12 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         CustomliderWidget2(
                           minValue: 0,
                           maxValue: 100,
-                          defaultValue: contractStore.openTradeValue,
+                          defaultValue1: contractStore.openTradeValue,
+                          defaultValue2: contractStore.openEntrustValue,
                           setup: 1.0,
                           fixed: 2,
+                          eventName: "online_open_entrust_price,online_open_trade_price",
                           onChange: (double oldValue, double newValue) => {},
-                          eventName: "onlineTradePrice",
                         )
                       ],
                     ),
@@ -182,6 +183,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           defaultValue: contractStore.open_rebound_price,
                           setup: 1.0,
                           fixed: 0,
+                          eventName: "open_rebound_price",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_rebound_price = newValue;
                             socketStore.sendMessage({
@@ -219,6 +221,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           defaultValue: contractStore.open_plan_price_spread,
                           setup: 1.0,
                           fixed: 2,
+                          eventName: "open_plan_price_spread",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_plan_price_spread = newValue;
                             socketStore.sendMessage({
@@ -256,6 +259,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           defaultValue: contractStore.open_schedue["length"],
                           setup: 1.0,
                           fixed: 0,
+                          eventName: "open_schedue",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_schedue = {
                               "length": newValue,
@@ -300,6 +304,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                               contractStore.open_entrust_timeout["length"],
                           setup: 1.0,
                           fixed: 0,
+                          eventName: "open_entrust_timeout",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_entrust_timeout = {
                               "length": newValue,
@@ -343,6 +348,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           defaultValue: contractStore.open_volume,
                           fixed: 0,
                           setup: 1.0,
+                          eventName: "open_volume",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_volume = newValue;
                             socketStore.sendMessage({
@@ -444,7 +450,194 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         },
                       )
                     ],
-                  )
+                  ),
+                  Container(
+                    height: ScreenUtil.instance.setHeight(200),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                            width: ScreenUtil.instance.setWidth(160),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "实时",
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              ),
+                            )),
+                        CustomliderWidget2(
+                          minValue: 0,
+                          maxValue: 100,
+                          defaultValue1: contractStore.closeTradeValue,
+                          defaultValue2: contractStore.closeEntrustValue,
+                          setup: 1.0,
+                          fixed: 2,
+                          eventName: "online_close_entrust_price,online_close_trade_price",
+                          onChange: (double oldValue, double newValue) => {},
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: ScreenUtil.instance.setHeight(160),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                            width: ScreenUtil.instance.setWidth(160),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "反弹",
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              ),
+                            )),
+                        CustomliderWidget(
+                          minValue: 0,
+                          maxValue: 50,
+                          defaultValue: contractStore.close_rebound_price,
+                          setup: 1.0,
+                          fixed: 0,
+                          eventName: "close_rebound_price",
+                          onChange: (num oldValue, num newValue) {
+                            contractStore.close_rebound_price = newValue;
+                            socketStore.sendMessage({
+                              "type": "contract_update",
+                              "data": {
+                                "symbol": contractStore.symbol,
+                                "contractType": contractStore.contractType,
+                                "direction": contractStore.direction,
+                                "close_rebound_price": newValue.toString()
+                              }
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: ScreenUtil.instance.setHeight(160),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                            width: ScreenUtil.instance.setWidth(160),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "差价",
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              ),
+                            )),
+                        CustomliderWidget(
+                          minValue: 0,
+                          maxValue: 50,
+                          defaultValue: contractStore.close_plan_price_spread,
+                          setup: 1.0,
+                          fixed: 2,
+                          eventName: "close_plan_price_spread",
+                          onChange: (num oldValue, num newValue) {
+                            contractStore.close_plan_price_spread = newValue;
+                            socketStore.sendMessage({
+                              "type": "contract_update",
+                              "data": {
+                                "symbol": contractStore.symbol,
+                                "contractType": contractStore.contractType,
+                                "direction": contractStore.direction,
+                                "close_plan_price_spread": newValue.toString()
+                              }
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: ScreenUtil.instance.setHeight(160),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                            width: ScreenUtil.instance.setWidth(160),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "超时",
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              ),
+                            )),
+                        CustomliderWidget(
+                          minValue: 1,
+                          maxValue: 60,
+                          defaultValue:
+                              contractStore.close_entrust_timeout["length"],
+                          setup: 1.0,
+                          fixed: 0,
+                          eventName: "close_entrust_timeout",
+                          onChange: (num oldValue, num newValue) {
+                            contractStore.close_entrust_timeout = {
+                              "length": newValue,
+                              "unit": "seconds"
+                            };
+                            socketStore.sendMessage({
+                              "type": "contract_update",
+                              "data": {
+                                "symbol": contractStore.symbol,
+                                "contractType": contractStore.contractType,
+                                "direction": contractStore.direction,
+                                "close_entrust_timeout": {
+                                  "length": newValue,
+                                  "unit": "seconds"
+                                }
+                              }
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: ScreenUtil.instance.setHeight(160),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                            width: ScreenUtil.instance.setWidth(160),
+                            child: Container(
+                              margin: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "张数",
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              ),
+                            )),
+                        CustomliderWidget(
+                          minValue: 1,
+                          maxValue: 100,
+                          defaultValue: contractStore.close_volume,
+                          fixed: 0,
+                          setup: 1.0,
+                          eventName: "close_volume",
+                          onChange: (num oldValue, num newValue) {
+                            contractStore.close_volume = newValue;
+                            socketStore.sendMessage({
+                              "type": "contract_update",
+                              "data": {
+                                "symbol": contractStore.symbol,
+                                "contractType": contractStore.contractType,
+                                "direction": contractStore.direction,
+                                "close_volume": newValue.toString()
+                              }
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
