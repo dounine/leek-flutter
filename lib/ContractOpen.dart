@@ -90,28 +90,37 @@ class _ContractOpenState extends State<ContractOpen>
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> result = response.data;
       if (result["status"] == "ok" && result["data"] != null) {
-        setState(() {
-          _agree = "";
-          _status = result["status"];
-        });
+        if (mounted) {
+          setState(() {
+            _agree = "";
+            _status = result["status"];
+          });
+        }
       } else {
-        setState(() {
-          _status = result["status"];
-        });
+        if (mounted) {
+          setState(() {
+            _status = result["status"];
+          });
+        }
       }
     } catch (e) {
-      setState(() {
-        _status = "";
-      });
+      if (mounted) {
+        setState(() {
+          _status = "";
+        });
+      }
     }
   }
 
   @override
   void initState() {
+    queryStatus();
     super.initState();
-    Future.delayed(Duration.zero, () {
-      queryStatus();
-    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
