@@ -17,8 +17,17 @@ class User extends StatefulWidget {
 class UserInfo {
   final String phone;
   final String status;
+  final String password;
+  final String createTime;
   final bool isAdmin;
-  UserInfo(this.phone, this.status, this.isAdmin);
+  UserInfo(
+      this.phone, this.status, this.password, this.isAdmin, this.createTime);
+}
+
+class UserOperation {
+  final String title;
+  final UserInfo userInfo;
+  UserOperation(this.title, this.userInfo);
 }
 
 class _UserState extends State<User> {
@@ -40,7 +49,8 @@ class _UserState extends State<User> {
     if (data["status"] == "ok") {
       List<dynamic> ll = data["data"];
       List<UserInfo> list = ll.map((item) {
-        return UserInfo(item["phone"], item["status"], item["admin"]);
+        return UserInfo(item["phone"], item["status"], item["password"],
+            item["admin"], item["createTime"]);
       }).toList();
       setState(() {
         _listInfos = list;
@@ -60,7 +70,12 @@ class _UserState extends State<User> {
         appBar: AppBar(
           title: Text("用户管理"),
           actions: <Widget>[
-            IconButton(icon: Icon(Icons.person_add), onPressed: () {})
+            IconButton(
+                icon: Icon(Icons.person_add),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/user-edit',
+                      arguments: UserOperation('添加', null));
+                })
           ],
         ),
         body: RefreshIndicator(
@@ -70,11 +85,61 @@ class _UserState extends State<User> {
                     child: CircularProgressIndicator(),
                   )
                 : Container(
-                    child: new ListView.builder(
+                    child: new ListView.separated(
                         padding: EdgeInsets.all(5),
                         itemCount: _listInfos.length,
+                        separatorBuilder: (BuildContext context, int index) {
+                          return new Container(
+                              height: 1, color: Colors.grey[300]);
+                        },
                         itemBuilder: (BuildContext context, int index) {
-                          return new Text(_listInfos[index].phone);
+                          UserInfo userInfo = _listInfos[index];
+                          return Container(
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                Container(
+                                    margin: EdgeInsets.all(10),
+                                    height: 50,
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Row(children: <Widget>[
+                                            Text(userInfo.phone,
+                                                style: TextStyle(
+                                                    color: userInfo.status ==
+                                                            "normal"
+                                                        ? Colors.black
+                                                        : Colors.grey,
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            userInfo.isAdmin
+                                                ? Icon(Icons.assignment_ind,
+                                                    color: Colors.redAccent)
+                                                : Container()
+                                          ]),
+                                          Text(userInfo.createTime,
+                                              style:
+                                                  TextStyle(color: Colors.grey))
+                                        ])),
+                                Container(
+                                    child: Row(children: <Widget>[
+                                  IconButton(
+                                      color: Colors.blueGrey,
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                            context, '/user-edit',
+                                            arguments: UserOperation(
+                                                '修改信息', userInfo));
+                                      })
+                                ]))
+                              ]));
                         }))));
   }
 }
