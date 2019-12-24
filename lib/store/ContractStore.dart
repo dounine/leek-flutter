@@ -216,7 +216,7 @@ class ContractStore extends ChangeNotifier {
           _closeEntrustPrice = d["ep"];
         }
       }
-    } else if (data["status"] == "ok" && data["type"] == "pushInfo") {
+    } else if (data["status"] == "ok" && data["type"] == "push_info") {
       var d = data["data"];
       print(d);
       _push_info = true;
