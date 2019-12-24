@@ -16,6 +16,8 @@ import 'package:leek/profile/Profile.dart';
 import 'package:leek/profile/auth/Api.dart';
 import 'package:leek/profile/auth/Auth.dart';
 import 'package:leek/profile/auth/Session.dart';
+import 'package:leek/profile/manager/Manager.dart';
+import 'package:leek/profile/manager/User.dart';
 import 'package:leek/profile/setting/Setting.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/LoginStore.dart';
@@ -105,6 +107,8 @@ class MyApp extends StatelessWidget {
             "/contractTrade": (BuildContext context) => const ContractTrade(),
             "/auth": (BuildContext context) => const Auth(),
             "/session": (BuildContext context) => const Session(),
+            "/manager": (BuildContext context) => const Manager(),
+            "/user": (BuildContext context) => const User(),
             "/api": (BuildContext context) => const Api(),
             "/setting": (BuildContext context) => const Setting(),
           },

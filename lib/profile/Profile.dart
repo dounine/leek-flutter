@@ -48,6 +48,19 @@ class Profile extends StatelessWidget {
           ),
           Container(
             color: Colors.white,
+            child: ListTile(
+                leading: const Icon(Icons.scatter_plot),
+                title: const Text("管理"),
+                onTap: (){
+                  Navigator.pushNamed(context, '/manager');
+                },
+                trailing: Icon(Icons.keyboard_arrow_right)),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            color: Colors.white,
             child: new ListTile(
                 leading: const Icon(Icons.settings),
                 title: const Text("设置"),
