@@ -21,8 +21,6 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   void initState() {
-    super.initState();
-    print("init");
     _loginButtonController = new AnimationController(
         duration: Duration(milliseconds: 2000), vsync: this);
 
@@ -37,10 +35,12 @@ class _LoginPageState extends State<LoginPage>
       end: 34.0,
     ).animate(CurvedAnimation(
         parent: _loginButtonController, curve: new Interval(0.4, 1.0,curve: Curves.easeInOut)));
+    super.initState();
   }
 
   @override
   void dispose() {
+    _loginButtonController.stop();
     _loginButtonController.dispose();
     super.dispose();
   }
