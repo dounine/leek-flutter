@@ -9,6 +9,7 @@ import 'package:leek/contract/Position.dart';
 import 'package:leek/contract/Trades.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
+import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
@@ -28,53 +29,38 @@ class ContractOpen extends StatefulWidget {
 
 class _ContractOpenState extends State<ContractOpen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  String _status = "";
+  String _reqStatus = "";
   String _agree;
-
+  BuildContext _context;
   Dio dio = Config.dio;
 
   void application() async {
     var symbol = widget.symbol;
     var contractType = widget.contractType;
     var direction = widget.direction;
-    setState(() {
-      _status = "request";
-    });
     try {
+      setState(() {
+        _reqStatus = "request";
+      });
       Response response = await Config.dio
           .post("/open/request/info/${symbol}/${contractType}/${direction}");
-      Map<String, dynamic> result = response.data;
-      if (result["status"] == "fail") {
-        Scaffold.of(context).showSnackBar(SnackBar(
-            content: Row(
-          children: <Widget>[
-            Icon(Icons.error_outline),
-            SizedBox(
-              width: 10,
-            ),
-            new Text(""),
-            SizedBox(
-              width: 0,
-            ),
-            new Text(
-              result["msg"],
-              style: TextStyle(color: Colors.red),
-            )
-          ],
-        )));
+      Map<String, dynamic> data = response.data;
+      if (data["status"] == "fail") {
+        ScaffoldUtil.show(_context, data);
         setState(() {
-          _status = result["status"];
+          _reqStatus = data["status"];
           _agree = "";
         });
       } else {
         setState(() {
-          _status = result["status"];
+          _reqStatus = data["status"];
         });
       }
     } catch (e) {
       setState(() {
-        _status = "";
+        _reqStatus = "timeout";
       });
+      ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
 
@@ -82,33 +68,29 @@ class _ContractOpenState extends State<ContractOpen>
     var symbol = widget.symbol;
     var contractType = widget.contractType;
     var direction = widget.direction;
-    setState(() {
-      _status = "request";
-    });
     try {
+      setState(() {
+        _reqStatus = "request";
+      });
       Response response = await Config.dio
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
-      Map<String, dynamic> result = response.data;
-      if (result["status"] == "ok" && result["data"] != null) {
-        if (mounted) {
-          setState(() {
-            _agree = "";
-            _status = result["status"];
-          });
-        }
+      Map<String, dynamic> data = response.data;
+      if (data["status"] == "ok" && data["data"] != null) {
+        setState(() {
+          _agree = "";
+          _reqStatus = data["status"];
+        });
       } else {
-        if (mounted) {
-          setState(() {
-            _status = result["status"];
-          });
-        }
+        setState(() {
+          _reqStatus = data["status"];
+        });
+        ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _status = "";
-        });
-      }
+      setState(() {
+        _reqStatus = "timeout";
+      });
+      ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
 
@@ -126,38 +108,41 @@ class _ContractOpenState extends State<ContractOpen>
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    return Container(
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: ScreenUtil.instance.setHeight(500)),
-          Container(
-            child: Text(
-              "您当前还没有开通这个功能、需要申请",
-              style: TextStyle(fontSize: 16, color: Colors.black54),
+    return new Builder(builder: (context) {
+      _context = context;
+      return Container(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: ScreenUtil.instance.setHeight(500)),
+            Container(
+              child: Text(
+                "您当前还没有开通这个功能、需要申请",
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
             ),
-          ),
-          SizedBox(
-            height: ScreenUtil.instance.setHeight(50),
-          ),
-          SizedBox(
-            width: ScreenUtil.instance.setWidth(800),
-            child: _status == "request"
-                ? CircularProgressIndicator()
-                : RaisedButton(
-                    child: Text(
-                      _agree == null ? "申请开通" : "已申请、等待审核",
-                      style: TextStyle(color: Colors.white),
+            SizedBox(
+              height: ScreenUtil.instance.setHeight(50),
+            ),
+            _reqStatus == "request"
+                ? Center(child: CircularProgressIndicator())
+                : SizedBox(
+                    width: ScreenUtil.instance.setWidth(800),
+                    child: RaisedButton(
+                      child: Text(
+                        _agree == null ? "申请开通" : "已申请、等待审核",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      color: Colors.lightBlue,
+                      onPressed: _agree == null
+                          ? () {
+                              application();
+                            }
+                          : null,
                     ),
-                    color: Colors.lightBlue,
-                    onPressed: _agree == null
-                        ? () {
-                            application();
-                          }
-                        : null,
-                  ),
-          )
-        ],
-      ),
-    );
+                  )
+          ],
+        ),
+      );
+    });
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -65,12 +67,19 @@ class UserStore extends ChangeNotifier {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     _token = sharedPreferences.getString("token") ?? "";
     if (_token != "") {
-      Response response = await Config.dio.get("/user/valid");
-      Map<String, dynamic> result = response.data;
-      if (result["status"] == "ok") {
-        _widget = MyHomePage();
-      } else {
-        _widget = LoginPage();
+      try {
+        Response response = await Config.dio.get("/user/valid");
+        Map<String, dynamic> result = response.data;
+        if (result["status"] == "ok") {
+          _widget = MyHomePage();
+        } else {
+          _widget = LoginPage();
+        }
+      } catch (e) {
+        new Timer(const Duration(seconds: 3), () {
+          print("超时、重新验证");
+          init();
+        });
       }
     } else {
       _widget = LoginPage();

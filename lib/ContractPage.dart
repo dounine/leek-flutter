@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
 import 'package:leek/store/UserStore.dart';
+import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
@@ -45,36 +48,50 @@ class ContractInfo {
 
 class _ContractPageState extends State<ContractPage> {
   List<ContractInfo> list;
+  String _reqStatus = "";
+  BuildContext _context;
 
   Future query() async {
-    Response response = await Config.dio.get("/contract/listOpen");
-    Map<String, dynamic> data = response.data;
-    if (data["status"] == "ok") {
-      List<ContractInfo> tmpList = [];
-      List<dynamic> dataList = data["data"];
-      dataList.forEach((item) {
-        List<OpenItem> openItems = [];
-        var opens = item["opens"] as List<dynamic>;
-        opens.forEach((j) {
-          openItems.add(OpenItem(
-              contractType: j["contractType"], direction: j["direction"]));
-        });
-        tmpList.add(ContractInfo(
-            symbol: item["symbol"],
-            quarterOpen: item["quarterOpen"],
-            thisWeekOpen: item["thisWeekOpen"],
-            nextWeekOpen: item["nextWeekOpen"],
-            rise: "0.0",
-            opens: openItems));
-      });
+    try {
       setState(() {
-        list = tmpList;
+        _reqStatus = "request";
       });
-      Vibrate.feedback(FeedbackType.light);
-    } else if (data["status"] == "fail" && data["msg"] == "token invalid.") {
-      Future.delayed(Duration.zero, () {
-        Provider.of<UserStore>(context).logout();
+      Response response = await Config.dio.get("/contract/listOpen");
+      Map<String, dynamic> data = response.data;
+      if (data["status"] == "ok") {
+        List<ContractInfo> tmpList = [];
+        List<dynamic> dataList = data["data"];
+        dataList.forEach((item) {
+          List<OpenItem> openItems = [];
+          var opens = item["opens"] as List<dynamic>;
+          opens.forEach((j) {
+            openItems.add(OpenItem(
+                contractType: j["contractType"], direction: j["direction"]));
+          });
+          tmpList.add(ContractInfo(
+              symbol: item["symbol"],
+              quarterOpen: item["quarterOpen"],
+              thisWeekOpen: item["thisWeekOpen"],
+              nextWeekOpen: item["nextWeekOpen"],
+              rise: "0.0",
+              opens: openItems));
+        });
+        setState(() {
+          _reqStatus = data["status"];
+          list = tmpList;
+        });
+        Vibrate.feedback(FeedbackType.light);
+      } else {
+        setState(() {
+          _reqStatus = data["status"];
+        });
+        ScaffoldUtil.show(_context, data);
+      }
+    } catch (e) {
+      setState(() {
+        _reqStatus = "timeout";
       });
+      ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
 
@@ -99,10 +116,21 @@ class _ContractPageState extends State<ContractPage> {
     return RefreshIndicator(
         onRefresh: _refresh,
         child: list == null
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : (list != null && list.length == 0)
+            ? (_reqStatus == "timeout"
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                        Text("您的网络不给力、刷新重试"),
+                        IconButton(
+                            icon: Icon(Icons.refresh, color: Colors.blue),
+                            onPressed: () {
+                              query();
+                            })
+                      ])
+                : Center(
+                    child: CircularProgressIndicator(),
+                  ))
+            : (list.length == 0)
                 ? Center(
                     child: Column(
                       children: <Widget>[

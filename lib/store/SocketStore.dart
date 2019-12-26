@@ -16,8 +16,8 @@ class SocketStore extends ChangeNotifier {
 
   IOWebSocketChannel _channel;
   SocketStatus _status = SocketStatus.closed;
-  Map<String,Function> _funs = Map();
-  Map<String,Function> _connectedFuns = Map();
+  Map<String, Function> _funs = Map();
+  Map<String, Function> _connectedFuns = Map();
 
   get status => _status;
 
@@ -34,11 +34,11 @@ class SocketStore extends ChangeNotifier {
     _channel.stream.listen(this.onData, onError: onError, onDone: onDone);
   }
 
-  void addMsgListener(String name,Function fun) {
+  void addMsgListener(String name, Function fun) {
     _funs[name] = fun;
   }
 
-  void addConnectedListener(String name,Function fun) {
+  void addConnectedListener(String name, Function fun) {
     _connectedFuns[name] = fun;
   }
 
@@ -62,24 +62,25 @@ class SocketStore extends ChangeNotifier {
     if (_status != SocketStatus.connected) {
       _status = SocketStatus.connected;
       Vibrate.feedback(FeedbackType.medium);
-      _connectedFuns.forEach((name,fun) {
+      _connectedFuns.forEach((name, fun) {
         fun();
       });
       notifyListeners();
     }
-    _funs.forEach((name,fun) {
+    _funs.forEach((name, fun) {
       fun(jsonDecode(event));
     });
   }
 
   void onError(err) {
-    print(err);
+    print("socket 错误重新连接");
     Vibrate.feedback(FeedbackType.error);
+    onDone();
   }
 
   void onDone() {
     new Timer(const Duration(seconds: 3), () {
-      print("socket 重新连接");
+      print("socket 关闭重新连接");
       Vibrate.feedback(FeedbackType.warning);
       _status = SocketStatus.closed;
       notifyListeners();
