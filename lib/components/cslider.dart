@@ -73,7 +73,7 @@ class _CustomliderState extends State<CustomliderWidget>
   double maxValue = 0.0; //最大值
   double setup = 0.0; //步进值
 
-  double width = 320;
+  double width = 300;
   double height = 15;
   double sliderHeight = 15;
   double left = 0.0;

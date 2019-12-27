@@ -25,7 +25,6 @@ class Profile extends StatelessWidget {
                   Provider.of<UserStore>(context).phone,
                   style: TextStyle(
                       color: Colors.black87,
-                      fontWeight: FontWeight.bold,
                       fontSize: 18),
                 ),
                 trailing: Icon(Icons.keyboard_arrow_right)),

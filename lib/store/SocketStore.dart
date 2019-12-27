@@ -73,9 +73,8 @@ class SocketStore extends ChangeNotifier {
   }
 
   void onError(err) {
-    print("socket 错误重新连接");
+    print("socket 连接错误 ${err}");
     Vibrate.feedback(FeedbackType.error);
-    onDone();
   }
 
   void onDone() {

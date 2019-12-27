@@ -52,7 +52,7 @@ class Manager extends StatelessWidget {
                 child: new ListTile(
                     title: const Text("合约申请管理"),
                     onTap: () {
-                      Navigator.pushNamed(context, "/session");
+                      Navigator.pushNamed(context, "/open-request");
                     },
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),

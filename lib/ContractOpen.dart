@@ -49,11 +49,11 @@ class _ContractOpenState extends State<ContractOpen>
         ScaffoldUtil.show(_context, data);
         setState(() {
           _reqStatus = data["status"];
-          _agree = "";
         });
       } else {
         setState(() {
           _reqStatus = data["status"];
+          _agree = "";
         });
       }
     } catch (e) {
@@ -75,18 +75,26 @@ class _ContractOpenState extends State<ContractOpen>
       Response response = await Config.dio
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> data = response.data;
-      if (data["status"] == "ok" && data["data"] != null) {
+      print(data);
+      if (data["status"] == "ok" && data["data"] == null) {
         setState(() {
-          _agree = "";
+          _agree = null;
+          _reqStatus = data["status"];
+        });
+      } else if (data["status"] == "ok" && data["data"] != null) {
+        setState(() {
+          _agree = data["agree"] ?? "";
           _reqStatus = data["status"];
         });
       } else {
         setState(() {
+          _agree = null;
           _reqStatus = data["status"];
         });
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
+      print(e);
       setState(() {
         _reqStatus = "timeout";
       });

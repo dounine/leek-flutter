@@ -17,6 +17,7 @@ import 'package:leek/profile/auth/Api.dart';
 import 'package:leek/profile/auth/Auth.dart';
 import 'package:leek/profile/auth/Session.dart';
 import 'package:leek/profile/manager/Manager.dart';
+import 'package:leek/profile/manager/OpenRequest.dart';
 import 'package:leek/profile/manager/User.dart';
 import 'package:leek/profile/manager/UserEdit.dart';
 import 'package:leek/profile/setting/Setting.dart';
@@ -111,6 +112,7 @@ class MyApp extends StatelessWidget {
             "/manager": (BuildContext context) => const Manager(),
             "/user": (BuildContext context) => const User(),
             "/user-edit": (BuildContext context) => const UserEdit(),
+            "/open-request": (BuildContext context) => const OpenRequest(),
             "/api": (BuildContext context) => const Api(),
             "/setting": (BuildContext context) => const Setting(),
           },
@@ -164,8 +166,7 @@ class _MyHomePageState extends State<MyHomePage>
         "首页": Container(
           child: Center(
             child: Text(
-              "用数据证明给他们看、你是对的。",
-              style: TextStyle(fontSize: 20),
+              "咱们韭菜的信仰：追涨杀跌",
             ),
           ),
         ),

@@ -261,7 +261,7 @@ class _ContractTradeState extends State<ContractTrade>
                   ),
                 ),
                 SizedBox(
-                  height: ScreenUtil.instance.setHeight(40),
+                  height: 20,
                 ),
                 hasOpen
                     ? Container(
@@ -294,8 +294,7 @@ class _ContractTradeState extends State<ContractTrade>
                       )
                     : Container(),
                 hasOpen
-                    ? Container(
-                        height: ScreenUtil.instance.setHeight(1150),
+                    ? Expanded(
                         child: pages[navName],
                       )
                     : new ContractOpen(contractStore.symbol,

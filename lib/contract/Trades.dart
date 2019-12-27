@@ -64,7 +64,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     return SingleChildScrollView(
       child: !contractStore.push_info
           ? Container(
-              height: 100,
+              margin: EdgeInsets.all(20),
               child: Center(
                 child: CircularProgressIndicator(),
               ),
@@ -73,8 +73,9 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               child: Column(
                 children: <Widget>[
                   Container(
-                    height: ScreenUtil.instance.setHeight(60),
                     padding: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
                       left: 10,
                     ),
                     child: Row(
@@ -109,16 +110,16 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         child: Row(
                           children: <Widget>[
                             SizedBox(
-                                width: ScreenUtil.instance.setWidth(126),
+                                // width: ScreenUtil.instance.setWidth(126),
                                 child: Container(
-                                  margin: EdgeInsets.only(left: 10),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "开仓",
-                                    style: TextStyle(
-                                        color: Colors.blueGrey, fontSize: 16),
-                                  ),
-                                )),
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "开仓",
+                                style: TextStyle(
+                                    color: Colors.blueGrey, fontSize: 16),
+                              ),
+                            )),
                             Switch(
                               value: contractStore.open_enable,
                               onChanged: (bool value) {
@@ -135,20 +136,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ],
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(200),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "实时",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "实时",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget2(
                           minValue: 0,
                           maxValue: 100,
@@ -156,27 +155,26 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           defaultValue2: contractStore.openEntrustValue,
                           setup: 1.0,
                           fixed: 2,
-                          eventName: "online_open_entrust_price,online_open_trade_price",
+                          eventName:
+                              "online_open_entrust_price,online_open_trade_price",
                           onChange: (double oldValue, double newValue) => {},
                         )
                       ],
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "反弹",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "反弹",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 0,
                           maxValue: 50,
@@ -201,20 +199,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "差价",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                         margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "差价",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 0,
                           maxValue: 50,
@@ -239,20 +235,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "调度",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "调度",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 0,
                           maxValue: 120,
@@ -283,20 +277,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "超时",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "超时",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 1,
                           maxValue: 60,
@@ -328,20 +320,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "张数",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "张数",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 1,
                           maxValue: 100,
@@ -366,52 +356,46 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(100),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "杠杆",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
                         Container(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "杠杆",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [1, 5, 10, 20].map((i) {
-                            return Container(
-                              child: FlatButton(
-                                child: Text(
-                                  "${i}倍",
-                                  style: TextStyle(
-                                      color: i.toString() ==
-                                              contractStore.open_lever_rate
-                                          ? Colors.black
-                                          : Colors.grey,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                onPressed: () {
-                                  contractStore.open_lever_rate = i.toString();
-                                  socketStore.sendMessage({
-                                    "type": "contract_update",
-                                    "data": {
-                                      "symbol": contractStore.symbol,
-                                      "contractType":
-                                          contractStore.contractType,
-                                      "direction": contractStore.direction,
-                                      "open_lever_rate": i.toString()
-                                    }
-                                  });
-                                },
+                            return GestureDetector(
+                              child: Text(
+                                "${i}倍",
+                                style: TextStyle(
+                                    color: i.toString() ==
+                                            contractStore.open_lever_rate
+                                        ? Colors.black
+                                        : Colors.grey,
+                                    fontWeight: FontWeight.bold),
                               ),
+                              onTap: () {
+                                contractStore.open_lever_rate = i.toString();
+                                socketStore.sendMessage({
+                                  "type": "contract_update",
+                                  "data": {
+                                    "symbol": contractStore.symbol,
+                                    "contractType": contractStore.contractType,
+                                    "direction": contractStore.direction,
+                                    "open_lever_rate": i.toString()
+                                  }
+                                });
+                              },
                             );
                           }).toList(),
-                        )),
+                        ),
                       ],
                     ),
                   ),
@@ -423,17 +407,15 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   ),
                   Row(
                     children: <Widget>[
-                      SizedBox(
-                          width: ScreenUtil.instance.setWidth(126),
-                          child: Container(
-                            margin: EdgeInsets.only(left: 10),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "绑定",
-                              style: TextStyle(
-                                  color: Colors.blueGrey, fontSize: 16),
-                            ),
-                          )),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "绑定",
+                          style:
+                              TextStyle(color: Colors.blueGrey, fontSize: 16),
+                        ),
+                      ),
                       Switch(
                         value: contractStore.close_bind,
                         onChanged: (bool value) {
@@ -452,20 +434,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ],
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(200),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "实时",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "实时",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget2(
                           minValue: 0,
                           maxValue: 100,
@@ -473,27 +453,26 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           defaultValue2: contractStore.closeEntrustValue,
                           setup: 1.0,
                           fixed: 2,
-                          eventName: "online_close_entrust_price,online_close_trade_price",
+                          eventName:
+                              "online_close_entrust_price,online_close_trade_price",
                           onChange: (double oldValue, double newValue) => {},
                         )
                       ],
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "反弹",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "反弹",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 0,
                           maxValue: 50,
@@ -518,20 +497,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "差价",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "差价",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 0,
                           maxValue: 50,
@@ -556,20 +533,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "超时",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "超时",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 1,
                           maxValue: 60,
@@ -601,20 +576,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    height: ScreenUtil.instance.setHeight(160),
+                    padding: EdgeInsets.only(top: 30, bottom: 30),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                            width: ScreenUtil.instance.setWidth(160),
-                            child: Container(
-                              margin: EdgeInsets.only(left: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "张数",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "张数",
+                            style:
+                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                          ),
+                        ),
                         CustomliderWidget(
                           minValue: 1,
                           maxValue: 100,

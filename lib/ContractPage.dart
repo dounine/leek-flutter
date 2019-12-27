@@ -179,7 +179,6 @@ class _ContractPageState extends State<ContractPage> {
   Widget getRow(int index) {
     ContractInfo data = list[index];
     return Container(
-        height: 60,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _onTap(index),

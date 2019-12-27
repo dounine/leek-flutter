@@ -34,7 +34,8 @@ class _LoginPageState extends State<LoginPage>
       begin: 1.0,
       end: 34.0,
     ).animate(CurvedAnimation(
-        parent: _loginButtonController, curve: new Interval(0.4, 1.0,curve: Curves.easeInOut)));
+        parent: _loginButtonController,
+        curve: new Interval(0.4, 1.0, curve: Curves.easeInOut)));
     super.initState();
   }
 
@@ -94,6 +95,7 @@ class _LoginPageState extends State<LoginPage>
             FocusScope.of(context).requestFocus(FocusNode());
           },
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
                 height: 240,
@@ -137,7 +139,6 @@ class _LoginPageState extends State<LoginPage>
                 height: 30,
               ),
               Container(
-                height: 250,
                 width: 340,
                 decoration: new BoxDecoration(
                   color: Colors.white,
@@ -154,7 +155,6 @@ class _LoginPageState extends State<LoginPage>
                   child: Column(
                     children: <Widget>[
                       Container(
-//                      padding: EdgeInsets.only(left: 10),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -224,14 +224,13 @@ class _LoginPageState extends State<LoginPage>
                         },
                       )),
                       Container(
-                        height: 50,
+                        padding: EdgeInsets.only(top: 20, bottom: 20),
                         alignment: Alignment.center,
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
                             "忘记密码?",
                             style: TextStyle(
-                                fontSize: 14,
                                 color: Colors.blue[300],
                                 fontWeight: FontWeight.bold),
                           ),
@@ -254,7 +253,6 @@ class _LoginPageState extends State<LoginPage>
                         if (buttonSqueezeAnimation.value == 60.0 &&
                             loginStore.status == "") {
                           _loginButtonController.stop();
-                          print("执行login");
                           loginStore.login();
                         }
                         return Container(
@@ -275,8 +273,7 @@ class _LoginPageState extends State<LoginPage>
                             child: buttonSqueezeAnimation.value > 80
                                 ? Text(
                                     "登录",
-                                    style: TextStyle(
-                                        fontSize: 16, letterSpacing: 2.0),
+                                    style: TextStyle(letterSpacing: 2.0),
                                   )
                                 : SizedBox(
                                     width: 24,
@@ -295,7 +292,6 @@ class _LoginPageState extends State<LoginPage>
                             onPressed: loginStore.isValid
                                 ? () {
                                     _loginButtonController.forward();
-//                                login.login();
                                   }
                                 : null,
                           ),
@@ -303,9 +299,9 @@ class _LoginPageState extends State<LoginPage>
                       },
                     ),
                   )),
-              SizedBox(
-                height: 172,
-              ),
+              // SizedBox(
+              //   height: 172,
+              // ),
               Container(
                 alignment: Alignment.bottomCenter,
                 child: Image.asset("images/login-bottom.png"),
