@@ -9,6 +9,7 @@ import 'package:leek/components/cslider.dart';
 import 'package:vibrate/vibrate.dart';
 
 class CustomliderWidget2 extends StatefulWidget {
+  final double width;
   final Function onChange;
   final num defaultValue1;
   final num defaultValue2;
@@ -18,8 +19,9 @@ class CustomliderWidget2 extends StatefulWidget {
   final num fixed;
   final String eventName;
 
-  CustomliderWidget2(
+  const CustomliderWidget2(
       {Key key,
+      @required this.width,
       @required this.minValue,
       @required this.maxValue,
       @required this.defaultValue1,
@@ -34,10 +36,7 @@ class CustomliderWidget2 extends StatefulWidget {
   State<StatefulWidget> createState() => _CustomliderState2();
 }
 
-class _CustomliderState2 extends State<CustomliderWidget2>
-    with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  CurvedAnimation curved;
+class _CustomliderState2 extends State<CustomliderWidget2> {
   bool enableTouch = true; //是否允许触摸
   double value1 = -1; //默认值1
   double value2 = -1; //默认值2
@@ -46,24 +45,24 @@ class _CustomliderState2 extends State<CustomliderWidget2>
   double maxValue = 0.0; //最大值
   double setup = 0.0; //步进值
 
-  double width = 300;
-  double height = 15;
-  double sliderHeight = 15;
+  double width = 0;
+  double height = 50;
+  double sliderHeight = 50;
   double left1 = 0.0;
   double _left1 = 0.0;
   double left2 = 0.0;
   double _left2 = 0.0;
   double initial = 0.0;
 
-  double pointWidth1 = 16;
-  double pointHeight1 = 30;
-  double pointBorderWidth1 = 4;
-  double pointBorderRadius1 = 10;
+  double pointWidth1 = 40;
+  double pointHeight1 = 80;
+  double pointBorderWidth1 = 16;
+  double pointBorderRadius1 = 60;
 
-  double pointWidth2 = 16;
-  double pointHeight2 = 30;
-  double pointBorderWidth2 = 4;
-  double pointBorderRadius2 = 10;
+  double pointWidth2 = 30;
+  double pointHeight2 = 80;
+  double pointBorderWidth2 = 8;
+  double pointBorderRadius2 = 60;
 
   Color pointBorderColor1 = Colors.green;
   Color pointColor1 = Colors.white;
@@ -79,11 +78,9 @@ class _CustomliderState2 extends State<CustomliderWidget2>
 
   @override
   void initState() {
-    controller = new AnimationController(
-        duration: const Duration(milliseconds: 200), vsync: this); //动画控制器
-    curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
 
     fixed = widget.fixed;
+    width = widget.width;
     setup = widget.setup.toDouble();
     minValue = widget.minValue.toDouble();
     maxValue = widget.maxValue.toDouble();
@@ -93,8 +90,12 @@ class _CustomliderState2 extends State<CustomliderWidget2>
     //基数、每个值占多少宽度
     baseWidth = width / maxValue;
 
-    left1 = baseWidth * value1;
-    left2 = baseWidth * value2;
+    if (value1 != -1) {
+      left1 = baseWidth * value1;
+    }
+    if (value2 != -1) {
+      left2 = baseWidth * value2;
+    }
     if (widget.eventName != null) {
       subEvent = Config.eventBus.on<PushEvent>().listen((event) {
         var i = 1;
@@ -102,12 +103,12 @@ class _CustomliderState2 extends State<CustomliderWidget2>
           if (event.name == eventName) {
             if (i == 1) {
               setState(() {
-                value1 = event.value;
+                value1 = event.value as double;
                 left1 = baseWidth * value1;
               });
             } else {
               setState(() {
-                value2 = event.value;
+                value2 = event.value as double;
                 left2 = baseWidth * value2;
               });
             }
@@ -150,7 +151,6 @@ class _CustomliderState2 extends State<CustomliderWidget2>
   void _onPanStart(DragStartDetails details) {
     this.initial = details.globalPosition.dx;
     this._left1 = this.left1;
-    this.controller.forward();
     setState(() {
       pointScale = 1.2;
     });
@@ -159,7 +159,6 @@ class _CustomliderState2 extends State<CustomliderWidget2>
   void _onPanEnd(DragEndDetails details) {
     this.initial = 0.0;
     this._left1 = 0.0;
-    this.controller.reverse();
     double preValue = this.left1 / this.baseWidth / this.setup;
     int latestLeft = preValue.round();
     setState(() {
@@ -171,30 +170,27 @@ class _CustomliderState2 extends State<CustomliderWidget2>
   @override
   void dispose() {
     subEvent?.cancel();
-    controller?.stop();
-    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
-        ScaleTransition(
-            scale: new Tween(begin: 1.0, end: 1.05).animate(curved),
-            child: Container(
-                margin: EdgeInsets.only(top: this.sliderHeight / 2),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Container(
-                      width: this.width,
-                      height: this.sliderHeight,
-                      color: const Color(0xffcfcfc0),
-                    )))),
+        Container(
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    ScreenUtil.instance.setWidth(this.height / 2)),
+                child: Container(
+                  width: this.width,
+                  height: ScreenUtil.instance.setWidth(this.sliderHeight),
+                  color: const Color(0xffcfcfc0),
+                ))),
         Container(
           width: this.width,
-          height: this.height,
+          height: ScreenUtil.instance.setWidth(this.height),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: splits,
@@ -206,100 +202,81 @@ class _CustomliderState2 extends State<CustomliderWidget2>
           onPanEnd: this._onPanEnd,
           child: Container(
             width: this.width,
-            height: this.height,
+            height: ScreenUtil.instance.setWidth(this.height),
             color: Colors.transparent,
           ),
         ),
-        Positioned(
-            left: left1 -
-                pointWidth1 / 2 -
-                value1.toStringAsFixed(fixed).length * 4.5 / 2,
-            top: -(pointHeight1 - height) / 2 - 30,
-            child: SlideTransition(
-              position: new Tween(begin: Offset(0, 0), end: Offset(0, -0.3))
-                  .animate(curved),
-              child: ScaleTransition(
-                scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
-                child: value1 == -1
-                    ? Container()
-                    : TextSize(
-                        pointBorderRadius: pointBorderRadius1,
-                        value: value1,
-                        valueFixed: fixed),
-              ),
-            )),
-        Positioned(
-            left: left2 -
-                pointWidth2 / 2 -
-                value2.toStringAsFixed(fixed).length * 4.5 / 2,
-            top: -(pointHeight2 - height) / 2 - 30,
-            child: SlideTransition(
-              position: new Tween(begin: Offset(0, 0), end: Offset(0, -0.3))
-                  .animate(curved),
-              child: ScaleTransition(
-                scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
-                child: value2 == -1
-                    ? Container()
-                    : TextSize(
-                        pointBorderRadius: pointBorderRadius2,
-                        value: value2,
-                        valueFixed: fixed),
-              ),
-            )),
-        Positioned(
-            height: this.pointHeight1,
-            width: this.pointWidth1,
-            left: left1 - (pointWidth1 / 2),
-            child: GestureDetector(
-              onPanUpdate: this._onPanUpdate,
-              onPanStart: this._onPanStart,
-              onPanEnd: this._onPanEnd,
-              child: value1 == -1
-                  ? Container()
-                  : FadeTransition(
-                      opacity: new Tween(begin: 1.0, end: 0.9).animate(curved),
-                      child: ScaleTransition(
-                        scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
-                        child: PhysicalModel(
-                          shape: BoxShape.circle,
-                          elevation: 4.0,
-                          color: Colors.transparent,
-                          shadowColor: Colors.green,
-                          child: Container(
-                            decoration: new BoxDecoration(
-                                border: Border.all(
-                                    color: pointBorderColor1,
-                                    width: pointBorderWidth1),
-                                color: pointColor1,
-                                borderRadius:
-                                    BorderRadius.circular(pointBorderRadius1)),
-                          ),
-                        ),
-                      ),
-                    ),
-            )),
-        Positioned(
-          height: this.pointHeight2,
-          width: this.pointWidth2,
-          left: left2 - (pointWidth2 / 2),
-          child: value2 == -1
-              ? Container()
-              : FadeTransition(
-                  opacity: new Tween(begin: 1.0, end: 0.9).animate(curved),
-                  child: ScaleTransition(
-                    scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
-                    child: Container(
-                      decoration: new BoxDecoration(
-                          border: Border.all(
-                              color: pointBorderColor2,
-                              width: pointBorderWidth2),
-                          color: pointColor2,
-                          borderRadius:
-                              BorderRadius.circular(pointBorderRadius2)),
-                    ),
+        value1 != -1
+            ? Positioned(
+                left: left1 -
+                    ScreenUtil.instance.setWidth(pointWidth1) / 2 -
+                    value1.toStringAsFixed(fixed).length *
+                        ScreenUtil.instance.setWidth(20) /
+                        2,
+                top: ScreenUtil.instance
+                    .setWidth(-(pointHeight1 - height) / 2 - pointHeight1),
+                child: TextSize(
+                    pointBorderRadius: pointBorderRadius1,
+                    value: value1,
+                    valueFixed: fixed),
+              )
+            : Container(),
+        value2 != -1
+            ? Positioned(
+                left: left2 -
+                    ScreenUtil.instance.setWidth(pointWidth2) / 2 -
+                    value2.toStringAsFixed(fixed).length *
+                        ScreenUtil.instance.setWidth(20) /
+                        2,
+                top: ScreenUtil.instance
+                    .setWidth(-(pointHeight2 - height) / 2 - pointHeight2),
+                child: TextSize(
+                    pointBorderRadius: pointBorderRadius2,
+                    value: value2,
+                    valueFixed: fixed),
+              )
+            : Container(),
+        value1 != -1
+            ? Positioned(
+                height: ScreenUtil.instance.setWidth(this.pointHeight1),
+                width: ScreenUtil.instance.setWidth(this.pointWidth1),
+                left: left1 - (ScreenUtil.instance.setWidth(pointWidth1) / 2),
+                top: ScreenUtil.instance.setWidth(-(pointHeight1 - height) / 2),
+                child: GestureDetector(
+                  onPanUpdate: this._onPanUpdate,
+                  onPanStart: this._onPanStart,
+                  onPanEnd: this._onPanEnd,
+                  child: Container(
+                    decoration: new BoxDecoration(
+                        border: Border.all(
+                            color: pointBorderColor1,
+                            width: ScreenUtil.instance
+                                .setWidth(pointBorderWidth1)),
+                        color: pointColor1,
+                        borderRadius: BorderRadius.circular(
+                            ScreenUtil.instance.setWidth(pointBorderRadius1))),
                   ),
                 ),
-        )
+              )
+            : Container(),
+        value2 != -1
+            ? Positioned(
+                height: ScreenUtil.instance.setWidth(this.pointHeight2),
+                width: ScreenUtil.instance.setWidth(this.pointWidth2),
+                left: left2 - (ScreenUtil.instance.setWidth(pointWidth2) / 2),
+                top: ScreenUtil.instance.setWidth(-(pointHeight2 - height) / 2),
+                child: Container(
+                  decoration: new BoxDecoration(
+                      border: Border.all(
+                          color: pointBorderColor2,
+                          width:
+                              ScreenUtil.instance.setWidth(pointBorderWidth2)),
+                      color: pointColor2,
+                      borderRadius: BorderRadius.circular(
+                          ScreenUtil.instance.setWidth(pointBorderRadius2))),
+                ),
+              )
+            : Container()
       ],
     );
   }

@@ -17,6 +17,7 @@ import 'package:leek/profile/auth/Api.dart';
 import 'package:leek/profile/auth/Auth.dart';
 import 'package:leek/profile/auth/Session.dart';
 import 'package:leek/profile/manager/Manager.dart';
+import 'package:leek/profile/manager/OpenManager.dart';
 import 'package:leek/profile/manager/OpenRequest.dart';
 import 'package:leek/profile/manager/User.dart';
 import 'package:leek/profile/manager/UserEdit.dart';
@@ -113,6 +114,7 @@ class MyApp extends StatelessWidget {
             "/user": (BuildContext context) => const User(),
             "/user-edit": (BuildContext context) => const UserEdit(),
             "/open-request": (BuildContext context) => const OpenRequest(),
+            "/open-manager": (BuildContext context) => const OpenManager(),
             "/api": (BuildContext context) => const Api(),
             "/setting": (BuildContext context) => const Setting(),
           },

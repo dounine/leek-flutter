@@ -34,9 +34,9 @@ class Manager extends StatelessWidget {
               Container(
                 color: Colors.white,
                 child: new ListTile(
-                    title: const Text("合约开通管理"),
+                    title: const Text("用户合约管理"),
                     onTap: () {
-                      Navigator.pushNamed(context, "/session");
+                      Navigator.pushNamed(context, "/open-manager");
                     },
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),

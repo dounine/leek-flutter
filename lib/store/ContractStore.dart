@@ -158,7 +158,7 @@ class ContractStore extends ChangeNotifier {
     _rise = value;
   }
 
-  String get contractType => _contractType;
+  String get contractType => _contractType ?? "quarter";
 
   set contractType(String value) {
     _contractType = value;

@@ -101,15 +101,15 @@ class _ContractTradeState extends State<ContractTrade>
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     final ContractInfo contractInfo = ModalRoute.of(context).settings.arguments;
-    if (!contractInfo.quarterOpen) {
-      _types.remove("quarter");
-    }
-    if (!contractInfo.thisWeekOpen) {
-      _types.remove("this_week");
-    }
-    if (!contractInfo.nextWeekOpen) {
-      _types.remove("next_week");
-    }
+    // if (!contractInfo.quarterOpen) {
+    //   _types.remove("quarter");
+    // }
+    // if (!contractInfo.thisWeekOpen) {
+    //   _types.remove("this_week");
+    // }
+    // if (!contractInfo.nextWeekOpen) {
+    //   _types.remove("next_week");
+    // }
     ContractStore contractStore = Provider.of<ContractStore>(context);
     SocketStore socketStore = Provider.of<SocketStore>(context);
     if (pages == null) {
@@ -140,9 +140,9 @@ class _ContractTradeState extends State<ContractTrade>
                         contractInfo.symbol,
                         style: TextStyle(color: Colors.white),
                       )
-                    : const SizedBox(
-                        height: 24,
-                        width: 24,
+                    : SizedBox(
+                        height: ScreenUtil.instance.setWidth(50),
+                        width: ScreenUtil.instance.setWidth(50),
                         child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation(Colors.white)),
@@ -158,43 +158,43 @@ class _ContractTradeState extends State<ContractTrade>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Column(
-                          // crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            // Container(
-                            //   margin: EdgeInsets.only(left: 10),
-                            //   child: Text(
-                            //     "\$${contractStore.usdt}",
-                            //     style: TextStyle(
-                            //         color: Colors.black54,
-                            //         fontSize: 22,
-                            //         fontWeight: FontWeight.bold),
-                            //   ),
-                            // ),
-                            Container(
-                              child: Text(
-                                "\$${contractStore.usdt}",
-                                style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(20)),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                width: ScreenUtil.instance.setWidth(200),
+                                child: Text(
+                                  contractStore.cny == ""
+                                      ? "--"
+                                      : contractStore.cny,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                ),
                               ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(left: 16),
-                              child: Text(
-                                "￥${contractStore.cny}",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            )
-                          ],
+                              Container(
+                                width: ScreenUtil.instance.setWidth(200),
+                                child: Text(
+                                  contractStore.usdt == ""
+                                      ? "--"
+                                      : contractStore.usdt,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                         Text(
                           "${contractStore.rise} %",
                           style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
                         )
                       ],
                     )),
@@ -212,21 +212,25 @@ class _ContractTradeState extends State<ContractTrade>
                               Container(
                                   child: Stack(
                                 children: <Widget>[
-                                  SizedBox(
-                                    width: ScreenUtil.instance.setWidth(200),
-                                    height: ScreenUtil.instance.setWidth(80),
-                                    child: FlatButton(
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: ScreenUtil.instance.setWidth(20)),
+                                    child: Container(
+                                      width: ScreenUtil.instance.setWidth(140),
+                                      margin: EdgeInsets.all(
+                                          ScreenUtil.instance.setWidth(10)),
+                                      child: GestureDetector(
                                         child: Text(
                                           value,
                                           style: TextStyle(
-                                              fontSize:
+                                              fontWeight: FontWeight.w500,
+                                              color:
                                                   contractStore.contractType ==
                                                           key
-                                                      ? 18
-                                                      : 14,
-                                              color: Colors.grey),
+                                                      ? Colors.black
+                                                      : Colors.grey),
                                         ),
-                                        onPressed: () {
+                                        onTap: () {
                                           socketStore.sendMessage({
                                             "type": "unsub",
                                             "channels": _socketMsg
@@ -236,7 +240,9 @@ class _ContractTradeState extends State<ContractTrade>
                                           Vibrate.feedback(FeedbackType.light);
                                           controller.reset();
                                           controller.forward();
-                                        }),
+                                        },
+                                      ),
+                                    ),
                                   ),
                                   Positioned(
                                     right: ScreenUtil.instance.setWidth(22),
@@ -261,7 +267,7 @@ class _ContractTradeState extends State<ContractTrade>
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: ScreenUtil.instance.setHeight(40),
                 ),
                 hasOpen
                     ? Container(
@@ -286,8 +292,8 @@ class _ContractTradeState extends State<ContractTrade>
                                 Vibrate.feedback(FeedbackType.light);
                               },
                               child: Text(name,
-                                  style: TextStyle(
-                                      fontSize: navName == name ? 18 : 14)),
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w500)),
                             ),
                           ));
                         }).toList()),

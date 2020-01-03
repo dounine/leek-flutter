@@ -41,7 +41,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     controller?.stop();
-    controller.dispose();
+    controller?.dispose();
     super.dispose();
   }
 
@@ -106,31 +106,28 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Container(
-                        child: Row(
-                          children: <Widget>[
-                            SizedBox(
-                                // width: ScreenUtil.instance.setWidth(126),
-                                child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 10),
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "开仓",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 16),
-                              ),
-                            )),
-                            Switch(
-                              value: contractStore.open_enable,
-                              onChanged: (bool value) {
-                                contractStore.open_enable = value;
-                              },
-                            )
-                          ],
-                        ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(
+                                left: ScreenUtil.instance.setWidth(30),
+                                right: ScreenUtil.instance.setWidth(30)),
+                            child: Text(
+                              "开仓",
+                              style: TextStyle(color: Colors.blueGrey),
+                            ),
+                          ),
+                          Switch(
+                            value: contractStore.open_enable,
+                            onChanged: (bool value) {
+                              contractStore.open_enable = value;
+                            },
+                          )
+                        ],
                       ),
                       Container(
-                        padding: EdgeInsets.only(right: 40),
+                        padding: EdgeInsets.only(
+                            right: ScreenUtil.instance.setWidth(60)),
                         child: Text(contractStore.open_status),
                       )
                     ],
@@ -140,42 +137,57 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "实时",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
-                        CustomliderWidget2(
-                          minValue: 0,
-                          maxValue: 100,
-                          defaultValue1: contractStore.openTradeValue,
-                          defaultValue2: contractStore.openEntrustValue,
-                          setup: 1.0,
-                          fixed: 2,
-                          eventName:
-                              "online_open_entrust_price,online_open_trade_price",
-                          onChange: (double oldValue, double newValue) => {},
-                        )
+                        contractStore.openTradeValue == -1
+                            ? Container(
+                                width: ScreenUtil.instance.setWidth(860),
+                                child: Center(
+                                  child: SizedBox(
+                                    height: ScreenUtil.instance.setWidth(60),
+                                    width: ScreenUtil.instance.setWidth(60),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              )
+                            : CustomliderWidget2(
+                                width: ScreenUtil.instance.setWidth(860),
+                                minValue: 0,
+                                maxValue: 100,
+                                defaultValue1: contractStore.openEntrustValue,
+                                defaultValue2: contractStore.openTradeValue,
+                                setup: 1.0,
+                                fixed: 2,
+                                eventName:
+                                    "online_open_entrust_price,online_open_trade_price",
+                                onChange: (double oldValue, double newValue) =>
+                                    {},
+                              )
                       ],
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(80)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "反弹",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 0,
                           maxValue: 50,
                           defaultValue: contractStore.open_rebound_price,
@@ -199,19 +211,21 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                         margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "差价",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 0,
                           maxValue: 50,
                           defaultValue: contractStore.open_plan_price_spread,
@@ -235,19 +249,21 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "调度",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 0,
                           maxValue: 120,
                           defaultValue: contractStore.open_schedue["length"],
@@ -277,19 +293,21 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "超时",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 1,
                           maxValue: 60,
                           defaultValue:
@@ -320,19 +338,21 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "张数",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 1,
                           maxValue: 100,
                           defaultValue: contractStore.open_volume,
@@ -356,45 +376,51 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.only(
+                        top: ScreenUtil.instance.setHeight(30),
+                        bottom: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "杠杆",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [1, 5, 10, 20].map((i) {
-                            return GestureDetector(
-                              child: Text(
-                                "${i}倍",
-                                style: TextStyle(
-                                    color: i.toString() ==
-                                            contractStore.open_lever_rate
-                                        ? Colors.black
-                                        : Colors.grey,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              onTap: () {
-                                contractStore.open_lever_rate = i.toString();
-                                socketStore.sendMessage({
-                                  "type": "contract_update",
-                                  "data": {
-                                    "symbol": contractStore.symbol,
-                                    "contractType": contractStore.contractType,
-                                    "direction": contractStore.direction,
-                                    "open_lever_rate": i.toString()
-                                  }
-                                });
-                              },
-                            );
-                          }).toList(),
+                        Container(
+                          width: ScreenUtil.instance.setWidth(860),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [1, 5, 10, 20].map((i) {
+                              return GestureDetector(
+                                child: Text(
+                                  "${i}倍",
+                                  style: TextStyle(
+                                      color: i.toString() ==
+                                              contractStore.open_lever_rate
+                                          ? Colors.black
+                                          : Colors.grey,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onTap: () {
+                                  contractStore.open_lever_rate = i.toString();
+                                  socketStore.sendMessage({
+                                    "type": "contract_update",
+                                    "data": {
+                                      "symbol": contractStore.symbol,
+                                      "contractType":
+                                          contractStore.contractType,
+                                      "direction": contractStore.direction,
+                                      "open_lever_rate": i.toString()
+                                    }
+                                  });
+                                },
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ],
                     ),
@@ -406,74 +432,100 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "绑定",
-                          style:
-                              TextStyle(color: Colors.blueGrey, fontSize: 16),
-                        ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(
+                                left: ScreenUtil.instance.setWidth(30),
+                                right: ScreenUtil.instance.setWidth(30)),
+                            child: Text(
+                              "绑定",
+                              style: TextStyle(color: Colors.blueGrey),
+                            ),
+                          ),
+                          Switch(
+                            value: contractStore.close_bind,
+                            onChanged: (bool value) {
+                              contractStore.close_bind = value;
+                              socketStore.sendMessage({
+                                "type": "contract_update",
+                                "data": {
+                                  "symbol": contractStore.symbol,
+                                  "contractType": contractStore.contractType,
+                                  "direction": contractStore.direction,
+                                  "close_bind": value
+                                }
+                              });
+                            },
+                          )
+                        ],
                       ),
-                      Switch(
-                        value: contractStore.close_bind,
-                        onChanged: (bool value) {
-                          contractStore.close_bind = value;
-                          socketStore.sendMessage({
-                            "type": "contract_update",
-                            "data": {
-                              "symbol": contractStore.symbol,
-                              "contractType": contractStore.contractType,
-                              "direction": contractStore.direction,
-                              "close_bind": value
-                            }
-                          });
-                        },
+                      Container(
+                        padding: EdgeInsets.only(
+                            right: ScreenUtil.instance.setWidth(60)),
+                        child: Text(contractStore.close_status),
                       )
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "实时",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
-                        CustomliderWidget2(
-                          minValue: 0,
-                          maxValue: 100,
-                          defaultValue1: contractStore.closeTradeValue,
-                          defaultValue2: contractStore.closeEntrustValue,
-                          setup: 1.0,
-                          fixed: 2,
-                          eventName:
-                              "online_close_entrust_price,online_close_trade_price",
-                          onChange: (double oldValue, double newValue) => {},
-                        )
+                        contractStore.closeTradeValue == -1
+                            ? Container(
+                                width: ScreenUtil.instance.setWidth(860),
+                                child: Center(
+                                  child: SizedBox(
+                                    height: ScreenUtil.instance.setWidth(60),
+                                    width: ScreenUtil.instance.setWidth(60),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              )
+                            : CustomliderWidget2(
+                                width: ScreenUtil.instance.setWidth(860),
+                                minValue: 0,
+                                maxValue: 100,
+                                defaultValue1: contractStore.closeEntrustValue,
+                                defaultValue2: contractStore.closeTradeValue,
+                                setup: 1.0,
+                                fixed: 2,
+                                eventName:
+                                    "online_close_entrust_price,online_close_trade_price",
+                                onChange: (double oldValue, double newValue) =>
+                                    {},
+                              )
                       ],
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "反弹",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 0,
                           maxValue: 50,
                           defaultValue: contractStore.close_rebound_price,
@@ -497,19 +549,21 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "差价",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 0,
                           maxValue: 50,
                           defaultValue: contractStore.close_plan_price_spread,
@@ -533,19 +587,21 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "超时",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 1,
                           maxValue: 60,
                           defaultValue:
@@ -576,19 +632,21 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
+                    padding: EdgeInsets.symmetric(
+                        vertical: ScreenUtil.instance.setHeight(60)),
                     child: Row(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.only(
+                              left: ScreenUtil.instance.setWidth(30),
+                              right: ScreenUtil.instance.setWidth(50)),
                           child: Text(
                             "张数",
-                            style:
-                                TextStyle(color: Colors.blueGrey, fontSize: 16),
+                            style: TextStyle(color: Colors.blueGrey),
                           ),
                         ),
                         CustomliderWidget(
+                          width: ScreenUtil.instance.setWidth(860),
                           minValue: 1,
                           maxValue: 100,
                           defaultValue: contractStore.close_volume,

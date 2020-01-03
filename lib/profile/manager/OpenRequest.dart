@@ -73,6 +73,7 @@ class _OpenRequestState extends State<OpenRequest> {
           _listInfos = list;
         });
       } else {
+        print(data);
         setState(() {
           _reqStatus = data["status"];
         });
@@ -110,6 +111,7 @@ class _OpenRequestState extends State<OpenRequest> {
           _listInfos = list;
         });
       } else {
+        print(data);
         setState(() {
           _reqStatus = data["status"];
         });
@@ -205,15 +207,9 @@ class _OpenRequestState extends State<OpenRequest> {
                                               children: <Widget>[
                                                 Row(children: <Widget>[
                                                   Text(info.phone,
-                                                      style: TextStyle(
-                                                          color:
-                                                              info.agree == null
-                                                                  ? Colors.black
-                                                                  : Colors.grey,
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
+                                                      style: TextStyle(fontSize: 18,)),
                                                 ]),
+                                                SizedBox(height: 6,),
                                                 Text(info.createTime,
                                                     style: TextStyle(
                                                         color: Colors.grey))
@@ -248,8 +244,8 @@ class _OpenRequestState extends State<OpenRequest> {
                                           ? Container(
                                               margin: EdgeInsets.all(10),
                                               child: (info.agree
-                                                  ? Icon(Icons.check)
-                                                  : Icon(Icons.close)))
+                                                  ? Icon(Icons.check,color: Colors.grey,)
+                                                  : Icon(Icons.close,color: Colors.grey)))
                                           : Container(
                                               child: Row(children: <Widget>[
                                               IconButton(

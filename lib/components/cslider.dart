@@ -8,6 +8,7 @@ import 'package:leek/Config.dart';
 import 'package:vibrate/vibrate.dart';
 
 class CustomliderWidget extends StatefulWidget {
+  final double width;
   final Function onChange;
   final num defaultValue;
   final num minValue;
@@ -15,17 +16,19 @@ class CustomliderWidget extends StatefulWidget {
   final num setup;
   final num fixed;
   final String eventName;
+  final bool animation;
 
   const CustomliderWidget(
       {Key key,
+      @required this.width,
       @required this.minValue,
       @required this.maxValue,
       @required this.defaultValue,
       @required this.setup,
       @required this.fixed,
       @required this.onChange,
-      this.eventName
-      })
+      this.eventName,
+      this.animation})
       : super(key: key);
 
   @override
@@ -48,14 +51,18 @@ class TextSize extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Container(
       decoration: new BoxDecoration(
           color: Colors.grey,
-          borderRadius: BorderRadius.circular(pointBorderRadius)),
-      padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
+          borderRadius: BorderRadius.circular(
+              ScreenUtil.instance.setWidth(pointBorderRadius))),
+      padding: EdgeInsets.symmetric(
+          vertical: ScreenUtil.instance.setWidth(10),
+          horizontal: ScreenUtil.instance.setWidth(20)),
       child: Text(
         (value).toStringAsFixed(valueFixed),
-        style: TextStyle(fontSize: 16, color: Colors.white),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
@@ -65,6 +72,7 @@ class _CustomliderState extends State<CustomliderWidget>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   CurvedAnimation curved;
+  bool animation = false;
   bool enableTouch = true; //是否允许触摸
   double value = 0.0; //默认值
   double incrmentValue = 0.0;
@@ -73,17 +81,17 @@ class _CustomliderState extends State<CustomliderWidget>
   double maxValue = 0.0; //最大值
   double setup = 0.0; //步进值
 
-  double width = 300;
-  double height = 15;
-  double sliderHeight = 15;
+  double width = 0;
+  double height = 50;
+  double sliderHeight = 50;
   double left = 0.0;
   double _left = 0.0;
   double initial = 0.0;
 
-  double pointWidth = 30;
-  double pointHeight = 30;
-  double pointBorderWidth = 6;
-  double pointBorderRadius = 30;
+  double pointWidth = 80;
+  double pointHeight = 80;
+  double pointBorderWidth = 16;
+  double pointBorderRadius = 60;
   Color pointBorderColor = Colors.green;
   Color pointColor = Colors.white;
   double pointScale = 1.0;
@@ -99,6 +107,8 @@ class _CustomliderState extends State<CustomliderWidget>
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
 
     fixed = widget.fixed;
+    width = widget.width;
+    animation = widget.animation;
     setup = widget.setup.toDouble();
     minValue = widget.minValue.toDouble();
     maxValue = widget.maxValue.toDouble();
@@ -112,7 +122,7 @@ class _CustomliderState extends State<CustomliderWidget>
       subEvent = Config.eventBus.on<PushEvent>().listen((event) {
         if (event.name == widget.eventName) {
           setState(() {
-            value = event.value;
+            value = event.value as double;
             left = baseWidth * value;
           });
         }
@@ -129,11 +139,22 @@ class _CustomliderState extends State<CustomliderWidget>
     super.initState();
   }
 
+  void _onPanStart(DragStartDetails details) {
+    this.initial = details.globalPosition.dx;
+    this._left = this.left;
+    if (animation) {
+      this.controller.forward();
+    }
+    setState(() {
+      pointScale = 1.2;
+    });
+  }
+
   void _onPanUpdate(DragUpdateDetails details) {
     double moveWidth = details.globalPosition.dx + this.initial;
     if (moveWidth != 0) {
       double nextLeft = _left + details.globalPosition.dx - this.initial;
-      double boundaryLeft = nextLeft < minValue * baseWidth
+      double boundaryLeft = nextLeft < (minValue * baseWidth)
           ? minValue * baseWidth
           : (nextLeft > width ? width : nextLeft);
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
@@ -148,19 +169,12 @@ class _CustomliderState extends State<CustomliderWidget>
     }
   }
 
-  void _onPanStart(DragStartDetails details) {
-    this.initial = details.globalPosition.dx;
-    this._left = this.left;
-    this.controller.forward();
-    setState(() {
-      pointScale = 1.2;
-    });
-  }
-
   void _onPanEnd(DragEndDetails details) {
     this.initial = 0.0;
     this._left = 0.0;
-    this.controller.reverse();
+    if (animation) {
+      this.controller.reverse();
+    }
     double preValue = this.left / this.baseWidth / this.setup;
     int latestLeft = preValue.round();
     setState(() {
@@ -172,34 +186,31 @@ class _CustomliderState extends State<CustomliderWidget>
   @override
   void dispose() {
     subEvent?.cancel();
-    controller.stop();
-    controller.dispose();
+    controller?.stop();
+    controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final textBox = TextSize(
-        pointBorderRadius: pointBorderRadius,
-        value: value + incrmentValue,
-        valueFixed: fixed);
+    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Stack(
       overflow: Overflow.visible,
       children: <Widget>[
         ScaleTransition(
             scale: new Tween(begin: 1.0, end: 1.05).animate(curved),
             child: Container(
-                margin: EdgeInsets.only(top: this.sliderHeight / 2),
                 child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
+                    borderRadius: BorderRadius.circular(
+                        ScreenUtil.instance.setWidth(this.height / 2)),
                     child: Container(
                       width: this.width,
-                      height: this.sliderHeight,
+                      height: ScreenUtil.instance.setWidth(this.sliderHeight),
                       color: const Color(0xffcfcfc0),
                     )))),
         Container(
           width: this.width,
-          height: this.height,
+          height: ScreenUtil.instance.setWidth(this.height),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: splits,
@@ -211,27 +222,33 @@ class _CustomliderState extends State<CustomliderWidget>
           onPanEnd: this._onPanEnd,
           child: Container(
             width: this.width,
-            height: this.height,
+            height: ScreenUtil.instance.setWidth(this.height),
             color: Colors.transparent,
           ),
         ),
         Positioned(
             left: left -
-                pointWidth / 2 -
+                ScreenUtil.instance.setWidth(pointWidth) / 2 -
                 (value + incrmentValue).toStringAsFixed(fixed).length * 4.5 / 2,
-            top: -(pointHeight - height) / 2 - 30,
+            top: ScreenUtil.instance
+                .setWidth(-(pointHeight - height) / 2 - pointHeight),
             child: SlideTransition(
               position: new Tween(begin: Offset(0, 0), end: Offset(0, -0.3))
                   .animate(curved),
               child: ScaleTransition(
                 scale: new Tween(begin: 1.0, end: 1.2).animate(curved),
-                child: textBox,
+                child: TextSize(
+                    pointBorderRadius:
+                        ScreenUtil.instance.setWidth(pointBorderRadius),
+                    value: value + incrmentValue,
+                    valueFixed: fixed),
               ),
             )),
         Positioned(
-            height: this.pointHeight,
-            width: this.pointWidth,
-            left: left - (pointWidth / 2),
+            height: ScreenUtil.instance.setWidth(this.pointHeight),
+            width: ScreenUtil.instance.setWidth(this.pointWidth),
+            left: left - (ScreenUtil.instance.setWidth(pointWidth) / 2),
+            top: ScreenUtil.instance.setWidth(-(pointHeight - height) / 2),
             child: GestureDetector(
               onPanUpdate: this._onPanUpdate,
               onPanStart: this._onPanStart,
@@ -248,10 +265,12 @@ class _CustomliderState extends State<CustomliderWidget>
                     child: Container(
                       decoration: new BoxDecoration(
                           border: Border.all(
-                              color: pointBorderColor, width: pointBorderWidth),
+                              color: pointBorderColor,
+                              width: ScreenUtil.instance
+                                  .setWidth(pointBorderWidth)),
                           color: pointColor,
-                          borderRadius:
-                              BorderRadius.circular(pointBorderRadius)),
+                          borderRadius: BorderRadius.circular(
+                              ScreenUtil.instance.setWidth(pointBorderRadius))),
                     ),
                   ),
                 ),
