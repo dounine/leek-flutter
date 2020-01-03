@@ -164,7 +164,7 @@ class _ContractTradeState extends State<ContractTrade>
                           child: Column(
                             children: <Widget>[
                               Container(
-                                width: ScreenUtil.instance.setWidth(200),
+                                width: ScreenUtil.instance.setWidth(300),
                                 child: Text(
                                   contractStore.cny == ""
                                       ? "--"
@@ -175,7 +175,7 @@ class _ContractTradeState extends State<ContractTrade>
                                 ),
                               ),
                               Container(
-                                width: ScreenUtil.instance.setWidth(200),
+                                width: ScreenUtil.instance.setWidth(300),
                                 child: Text(
                                   contractStore.usdt == ""
                                       ? "--"
