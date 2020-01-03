@@ -140,7 +140,7 @@ class _OpenManagerState extends State<OpenManager> {
                         )
                       : Container(
                           child: new ListView.separated(
-                              padding: EdgeInsets.all(5),
+                              padding: EdgeInsets.all(ScreenUtil.instance.setWidth(10)),
                               itemCount: _listInfos.length,
                               separatorBuilder:
                                   (BuildContext context, int index) {
@@ -156,16 +156,16 @@ class _OpenManagerState extends State<OpenManager> {
                                     .toSet()
                                     .toList();
                                 return Container(
-                                    margin: EdgeInsets.all(10),
+                                    margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
                                     child: Column(children: <Widget>[
                                       Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(info.phone,
                                             style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                             )),
                                       ),
-                                      SizedBox(height: 6),
+                                      SizedBox(height: ScreenUtil.instance.setWidth(18)),
                                       Row(
                                         children: names.length == 0
                                             ? [

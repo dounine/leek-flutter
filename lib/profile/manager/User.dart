@@ -142,7 +142,8 @@ class _UserState extends State<User> {
                         )
                       : Container(
                           child: new ListView.separated(
-                              padding: EdgeInsets.all(5),
+                              padding: EdgeInsets.all(
+                                  ScreenUtil.instance.setWidth(10)),
                               itemCount: _listInfos.length,
                               separatorBuilder:
                                   (BuildContext context, int index) {
@@ -157,8 +158,8 @@ class _UserState extends State<User> {
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                       Container(
-                                          margin: EdgeInsets.all(10),
-                                          height: 50,
+                                          margin: EdgeInsets.all(
+                                              ScreenUtil.instance.setWidth(20)),
                                           child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -169,11 +170,10 @@ class _UserState extends State<User> {
                                                 Row(children: <Widget>[
                                                   Text(info.phone,
                                                       style: TextStyle(
-                                                          color:
-                                                              info.status ==
-                                                                      "normal"
-                                                                  ? Colors.black
-                                                                  : Colors.grey,
+                                                          color: info.status ==
+                                                                  "normal"
+                                                              ? Colors.black
+                                                              : Colors.grey,
                                                           fontSize: 16)),
                                                   info.isAdmin
                                                       ? Icon(
@@ -182,6 +182,10 @@ class _UserState extends State<User> {
                                                               Colors.redAccent)
                                                       : Container()
                                                 ]),
+                                                SizedBox(
+                                                  height: ScreenUtil.instance
+                                                      .setHeight(18),
+                                                ),
                                                 Text(info.createTime,
                                                     style: TextStyle(
                                                         color: Colors.grey))
