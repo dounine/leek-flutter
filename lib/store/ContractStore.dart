@@ -304,6 +304,8 @@ class ContractStore extends ChangeNotifier {
   }
 
   Future choose(String symbol) async {
+    _cny = "";
+    _usdt = "";
     _symbol = symbol;
     _push_info = false;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

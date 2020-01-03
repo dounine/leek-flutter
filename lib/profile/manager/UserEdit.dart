@@ -29,9 +29,9 @@ class _UserEditState extends State<UserEdit> {
     Future.delayed(Duration.zero, () {
       UserOperation userOperation = ModalRoute.of(context).settings.arguments;
       setState(() {
-        _status = userOperation.userInfo.status;
-        _phone = userOperation.userInfo.phone;
-        _password = userOperation.userInfo.password;
+        _status = userOperation.info.status;
+        _phone = userOperation.info.phone;
+        _password = userOperation.info.password;
       });
     });
     super.initState();
@@ -132,9 +132,9 @@ class _UserEditState extends State<UserEdit> {
                 _phone,
                 _status,
                 _password,
-                userOperation.userInfo.isAdmin,
-                userOperation.userInfo.createTime,
-                userOperation.userInfo.add));
+                userOperation.info.isAdmin,
+                userOperation.info.createTime,
+                userOperation.info.add));
         return false;
       },
       child: new Scaffold(
@@ -145,7 +145,7 @@ class _UserEditState extends State<UserEdit> {
                   icon: Icon(Icons.save),
                   onPressed: _phone.length == 11 && _password.length >= 6
                       ? () {
-                          if (userOperation.userInfo.add) {
+                          if (userOperation.info.add) {
                             add();
                           } else {
                             edit();
@@ -164,7 +164,7 @@ class _UserEditState extends State<UserEdit> {
                     Expanded(
                         child: TextField(
                             keyboardType: TextInputType.phone,
-                            readOnly: !userOperation.userInfo.add,
+                            readOnly: !userOperation.info.add,
                             onChanged: (value) {
                               setState(() {
                                 _phone = value;
@@ -221,7 +221,7 @@ class _UserEditState extends State<UserEdit> {
                   SizedBox(
                     height: 20,
                   ),
-                  userOperation.userInfo.add
+                  userOperation.info.add
                       ? (_reqStatus == "request"
                           ? CircularProgressIndicator()
                           : Container())

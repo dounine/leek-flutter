@@ -103,12 +103,12 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
           if (event.name == eventName) {
             if (i == 1) {
               setState(() {
-                value1 = event.value as double;
+                value1 = event.value * 1.0;
                 left1 = baseWidth * value1;
               });
             } else {
               setState(() {
-                value2 = event.value as double;
+                value2 = event.value * 1.0;
                 left2 = baseWidth * value2;
               });
             }

@@ -57,6 +57,7 @@ class _ContractOpenState extends State<ContractOpen>
         });
       }
     } catch (e) {
+      print(e);
       setState(() {
         _reqStatus = "timeout";
       });
@@ -75,20 +76,20 @@ class _ContractOpenState extends State<ContractOpen>
       Response response = await Config.dio
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> data = response.data;
-      print(data);
+
       if (data["status"] == "ok" && data["data"] == null) {
         setState(() {
-          _agree = null;
+          _agree = "";
           _reqStatus = data["status"];
         });
       } else if (data["status"] == "ok" && data["data"] != null) {
         setState(() {
-          _agree = data["agree"] ?? "";
+          _agree = (data["data"]["agree"] ?? "").toString();
           _reqStatus = data["status"];
         });
       } else {
         setState(() {
-          _agree = null;
+          _agree = "";
           _reqStatus = data["status"];
         });
         ScaffoldUtil.show(_context, data);
@@ -137,11 +138,15 @@ class _ContractOpenState extends State<ContractOpen>
                     width: ScreenUtil.instance.setWidth(800),
                     child: RaisedButton(
                       child: Text(
-                        _agree == null ? "申请开通" : "已申请、等待审核",
+                        _agree == null
+                            ? "申请开通"
+                            : (_agree == ""
+                                ? "已申请、请等待审核"
+                                : (_agree == "false" ? "已拒绝、重新申请" : "已通过")),
                         style: TextStyle(color: Colors.white),
                       ),
                       color: Colors.lightBlue,
-                      onPressed: _agree == null
+                      onPressed: (_agree == null || _agree == "false")
                           ? () {
                               application();
                             }

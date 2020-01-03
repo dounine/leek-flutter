@@ -34,7 +34,23 @@ class Manager extends StatelessWidget {
               Container(
                 color: Colors.white,
                 child: new ListTile(
-                    title: const Text("用户合约管理"),
+                    title: const Text("合约管理"),
+                    onTap: () {
+                      Navigator.pushNamed(context, "/contract-manager");
+                    },
+                    trailing: Icon(Icons.keyboard_arrow_right)),
+              ),
+              SizedBox(
+                height: 1,
+                child: Container(
+                  margin: EdgeInsets.only(left: 16),
+                  color: Colors.grey[200],
+                ),
+              ),
+              Container(
+                color: Colors.white,
+                child: new ListTile(
+                    title: const Text("用户合约"),
                     onTap: () {
                       Navigator.pushNamed(context, "/open-manager");
                     },
@@ -50,7 +66,7 @@ class Manager extends StatelessWidget {
               Container(
                 color: Colors.white,
                 child: new ListTile(
-                    title: const Text("合约申请管理"),
+                    title: const Text("合约申请"),
                     onTap: () {
                       Navigator.pushNamed(context, "/open-request");
                     },

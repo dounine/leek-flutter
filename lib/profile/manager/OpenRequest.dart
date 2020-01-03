@@ -182,102 +182,119 @@ class _OpenRequestState extends State<OpenRequest> {
                         )
                       : Container(
                           child: new ListView.separated(
-                              padding: EdgeInsets.all(5),
                               itemCount: _listInfos.length,
                               separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return new Container(
-                                    height: 1, color: Colors.grey[300]);
-                              },
+                                  (BuildContext context, int index) =>
+                                      new Divider(
+                                        height: 1,
+                                      ),
                               itemBuilder: (BuildContext context, int index) {
                                 OpenRequestInfo info = _listInfos[index];
                                 return Container(
+                                    margin: EdgeInsets.all(
+                                        ScreenUtil.instance.setWidth(30)),
                                     child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                      Container(
-                                          margin: EdgeInsets.all(10),
-                                          child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
+                                          Container(
+                                              child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
                                                 Row(children: <Widget>[
                                                   Text(info.phone,
-                                                      style: TextStyle(fontSize: 18,)),
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                      )),
                                                 ]),
-                                                SizedBox(height: 6,),
+                                                SizedBox(
+                                                  height: 6,
+                                                ),
                                                 Text(info.createTime,
                                                     style: TextStyle(
                                                         color: Colors.grey))
                                               ])),
-                                      Row(children: <Widget>[
-                                        Text(info.symbol),
-                                        Text("/",
-                                            style:
-                                                TextStyle(color: Colors.grey)),
-                                        Text(
-                                            info.contractType == "quarter"
-                                                ? "季度"
-                                                : (info.contractType ==
-                                                        "this_week"
-                                                    ? "本周"
-                                                    : "下周"),
-                                            style:
-                                                TextStyle(color: Colors.grey)),
-                                        Text("/",
-                                            style:
-                                                TextStyle(color: Colors.grey)),
-                                        Text(
-                                            info.direction == "buy"
-                                                ? "追涨"
-                                                : "杀跌",
-                                            style: TextStyle(
-                                                color: info.direction == "buy"
-                                                    ? Colors.green
-                                                    : Colors.red))
-                                      ]),
-                                      info.agree != null
-                                          ? Container(
-                                              margin: EdgeInsets.all(10),
-                                              child: (info.agree
-                                                  ? Icon(Icons.check,color: Colors.grey,)
-                                                  : Icon(Icons.close,color: Colors.grey)))
-                                          : Container(
-                                              child: Row(children: <Widget>[
-                                              IconButton(
-                                                  color: Colors.blue,
-                                                  icon: Icon(Icons
-                                                      .check_circle_outline),
-                                                  onPressed: info.agree == null
-                                                      ? () {
-                                                          agree(
-                                                              info.phone,
-                                                              info.symbol,
-                                                              info.contractType,
-                                                              info.direction,
-                                                              true);
-                                                        }
-                                                      : null),
-                                              IconButton(
-                                                  color: Colors.blue,
-                                                  icon: Icon(
-                                                      Icons.do_not_disturb_alt),
-                                                  onPressed: info.agree == null
-                                                      ? () {
-                                                          agree(
-                                                              info.phone,
-                                                              info.symbol,
-                                                              info.contractType,
-                                                              info.direction,
-                                                              false);
-                                                        }
-                                                      : null)
-                                            ]))
-                                    ]));
+                                          Row(children: <Widget>[
+                                            Text(info.symbol),
+                                            Padding(
+                                              padding: const EdgeInsets.all(2),
+                                              child: Text("/",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
+                                            ),
+                                            Text(
+                                                info.contractType == "quarter"
+                                                    ? "季度"
+                                                    : (info.contractType ==
+                                                            "this_week"
+                                                        ? "本周"
+                                                        : "下周"),
+                                                style: TextStyle(
+                                                    color: Colors.grey)),
+                                            Padding(
+                                              padding: const EdgeInsets.all(2.0),
+                                              child: Text("/",
+                                                  style: TextStyle(
+                                                      color: Colors.grey)),
+                                            ),
+                                            Text(
+                                                info.direction == "buy"
+                                                    ? "追涨"
+                                                    : "杀跌",
+                                                style: TextStyle(
+                                                    color: Colors.grey))
+                                          ]),
+                                          info.agree != null
+                                              ? Container(
+                                                  child: (info.agree
+                                                      ? Text(
+                                                          "同意",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.green),
+                                                        )
+                                                      : Text("拒绝",
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .grey))))
+                                              : Container(
+                                                  child: Row(children: <Widget>[
+                                                  IconButton(
+                                                      color: Colors.blue,
+                                                      icon: Icon(Icons
+                                                          .check_circle_outline),
+                                                      onPressed:
+                                                          info.agree == null
+                                                              ? () {
+                                                                  agree(
+                                                                      info.phone,
+                                                                      info.symbol,
+                                                                      info.contractType,
+                                                                      info.direction,
+                                                                      true);
+                                                                }
+                                                              : null),
+                                                  IconButton(
+                                                      color: Colors.blue,
+                                                      icon: Icon(Icons
+                                                          .do_not_disturb_alt),
+                                                      onPressed:
+                                                          info.agree == null
+                                                              ? () {
+                                                                  agree(
+                                                                      info.phone,
+                                                                      info.symbol,
+                                                                      info.contractType,
+                                                                      info.direction,
+                                                                      false);
+                                                                }
+                                                              : null)
+                                                ]))
+                                        ]));
                               }))));
         }));
   }

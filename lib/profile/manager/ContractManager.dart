@@ -6,34 +6,33 @@ import 'package:leek/store/UserStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
 
-class User extends StatefulWidget {
-  const User({Key key}) : super(key: key);
+class ContractManager extends StatefulWidget {
+  const ContractManager({Key key}) : super(key: key);
 
   @override
-  _UserState createState() {
-    return _UserState();
+  _ContractManagerState createState() {
+    return _ContractManagerState();
   }
 }
 
-class UserInfo {
-  final String phone;
-  final String status;
-  final String password;
-  final String createTime;
-  final bool isAdmin;
+class ContractManagerInfo {
+  final String symbol;
+  final bool quarter;
+  final bool thisWeek;
+  final bool nextWeek;
   final bool add;
-  UserInfo(this.phone, this.status, this.password, this.isAdmin,
-      this.createTime, this.add);
+  ContractManagerInfo(
+      this.symbol, this.quarter, this.thisWeek, this.nextWeek, this.add);
 }
 
-class UserOperation {
+class ContractManagerOperation {
   final String title;
-  final UserInfo info;
-  UserOperation(this.title, this.info);
+  final ContractManagerInfo info;
+  ContractManagerOperation(this.title, this.info);
 }
 
-class _UserState extends State<User> {
-  List<UserInfo> _listInfos;
+class _ContractManagerState extends State<ContractManager> {
+  List<ContractManagerInfo> _listInfos;
   String _reqStatus = "";
   @override
   void initState() {
@@ -51,13 +50,13 @@ class _UserState extends State<User> {
       setState(() {
         _reqStatus = "request";
       });
-      Response response = await Config.dio.get("/user/admin/list");
+      Response response = await Config.dio.get("/contract/admin/list");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         List<dynamic> ll = data["data"];
-        List<UserInfo> list = ll.map((item) {
-          return UserInfo(item["phone"], item["status"], item["password"],
-              item["admin"], item["createTime"], false);
+        List<ContractManagerInfo> list = ll.map((item) {
+          return ContractManagerInfo(item["symbol"], item["quarterOpen"],
+              item["thisWeekOpen"], item["nextWeekOpen"], false);
         }).toList();
         setState(() {
           _reqStatus = data["status"];
@@ -70,6 +69,7 @@ class _UserState extends State<User> {
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
+      print(e);
       setState(() {
         _reqStatus = "timeout";
       });
@@ -89,14 +89,14 @@ class _UserState extends State<User> {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return new Scaffold(
         appBar: AppBar(
-          title: Text("用户管理"),
+          title: Text("合约管理"),
           actions: <Widget>[
             IconButton(
-                icon: Icon(Icons.person_add),
+                icon: Icon(Icons.add),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/user-edit',
-                      arguments: UserOperation(
-                          '添加', UserInfo("", "normal", "", false, "", true)));
+                  Navigator.pushNamed(context, '/contract-edit',
+                      arguments: ContractManagerOperation('添加',
+                          ContractManagerInfo("", false, false, false, true)));
                 })
           ],
         ),
@@ -150,7 +150,7 @@ class _UserState extends State<User> {
                                     height: 1, color: Colors.grey[300]);
                               },
                               itemBuilder: (BuildContext context, int index) {
-                                UserInfo info = _listInfos[index];
+                                ContractManagerInfo info = _listInfos[index];
                                 return Container(
                                     child: Row(
                                         mainAxisAlignment:
@@ -167,24 +167,48 @@ class _UserState extends State<User> {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Row(children: <Widget>[
-                                                  Text(info.phone,
+                                                  Text(info.symbol,
                                                       style: TextStyle(
-                                                          color:
-                                                              info.status ==
-                                                                      "normal"
-                                                                  ? Colors.black
-                                                                  : Colors.grey,
                                                           fontSize: 16)),
-                                                  info.isAdmin
-                                                      ? Icon(
-                                                          Icons.assignment_ind,
-                                                          color:
-                                                              Colors.redAccent)
-                                                      : Container()
                                                 ]),
-                                                Text(info.createTime,
-                                                    style: TextStyle(
-                                                        color: Colors.grey))
+                                                Row(
+                                                  children: <Widget>[
+                                                    Text("季度",
+                                                        style: TextStyle(
+                                                            color: info.quarter
+                                                                ? Colors.black
+                                                                : Colors.grey)),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              2.0),
+                                                      child: Text("/",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.grey)),
+                                                    ),
+                                                    Text("本周",
+                                                        style: TextStyle(
+                                                            color: info.thisWeek
+                                                                ? Colors.black
+                                                                : Colors.grey)),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              2.0),
+                                                      child: Text(
+                                                        "/",
+                                                        style: TextStyle(
+                                                            color: Colors.grey),
+                                                      ),
+                                                    ),
+                                                    Text("下周",
+                                                        style: TextStyle(
+                                                            color: info.nextWeek
+                                                                ? Colors.black
+                                                                : Colors.grey)),
+                                                  ],
+                                                )
                                               ])),
                                       Container(
                                           child: Row(children: <Widget>[
@@ -193,22 +217,22 @@ class _UserState extends State<User> {
                                             icon: Icon(Icons.edit),
                                             onPressed: () {
                                               Navigator.pushNamed(
-                                                      context, '/user-edit',
-                                                      arguments: UserOperation(
-                                                          '修改信息', info))
+                                                      context, '/contract-edit',
+                                                      arguments:
+                                                          ContractManagerOperation(
+                                                              '修改信息', info))
                                                   .then((result) {
-                                                UserInfo ui = result;
+                                                ContractManagerInfo ui = result;
                                                 setState(() {
                                                   _listInfos =
                                                       _listInfos.map((item) {
-                                                    if (item.phone ==
-                                                        ui.phone) {
-                                                      return UserInfo(
-                                                          ui.phone,
-                                                          ui.status,
-                                                          ui.password,
-                                                          ui.isAdmin,
-                                                          item.createTime,
+                                                    if (item.symbol ==
+                                                        ui.symbol) {
+                                                      return ContractManagerInfo(
+                                                          ui.symbol,
+                                                          ui.quarter,
+                                                          ui.thisWeek,
+                                                          ui.nextWeek,
                                                           ui.add);
                                                     } else {
                                                       return item;

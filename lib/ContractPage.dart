@@ -88,6 +88,7 @@ class _ContractPageState extends State<ContractPage> {
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
+      print(e);
       setState(() {
         _reqStatus = "timeout";
       });
@@ -113,55 +114,58 @@ class _ContractPageState extends State<ContractPage> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-        onRefresh: _refresh,
-        child: list == null
-            ? (_reqStatus == "timeout"
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                        Text("您的网络不给力、刷新重试"),
-                        IconButton(
-                            icon: Icon(Icons.refresh, color: Colors.blue),
-                            onPressed: () {
-                              query();
-                            })
-                      ])
-                : Center(
-                    child: CircularProgressIndicator(),
-                  ))
-            : (list.length == 0)
-                ? Center(
-                    child: Column(
+    return new Builder(builder: (c) {
+      _context = c;
+      return RefreshIndicator(
+          onRefresh: _refresh,
+          child: list == null
+              ? (_reqStatus == "timeout"
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        SizedBox(
-                          height: 40,
-                        ),
-                        Icon(
-                          Icons.inbox,
-                          size: 36,
-                          color: Colors.black12,
-                        ),
-                        Text(
-                          "没有数据显示",
-                          style: TextStyle(
-                            color: Colors.black54,
+                          Text("您的网络不给力、刷新重试"),
+                          IconButton(
+                              icon: Icon(Icons.refresh, color: Colors.blue),
+                              onPressed: () {
+                                query();
+                              })
+                        ])
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    ))
+              : (list.length == 0)
+                  ? Center(
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 40,
                           ),
-                        )
-                      ],
-                    ),
-                  )
-                : Container(
-                    child: ListView.separated(
-                        itemCount: list.length,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            new Divider(
-                              height: 1,
+                          Icon(
+                            Icons.inbox,
+                            size: 36,
+                            color: Colors.black12,
+                          ),
+                          Text(
+                            "没有数据显示",
+                            style: TextStyle(
+                              color: Colors.black54,
                             ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return getRow(index);
-                        }),
-                  ));
+                          )
+                        ],
+                      ),
+                    )
+                  : Container(
+                      child: new ListView.separated(
+                          itemCount: list.length,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              new Divider(
+                                height: 1,
+                              ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return getRow(index);
+                          }),
+                    ));
+    });
   }
 
   _onTap(int index) {
@@ -179,6 +183,7 @@ class _ContractPageState extends State<ContractPage> {
   Widget getRow(int index) {
     ContractInfo data = list[index];
     return Container(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _onTap(index),
@@ -186,79 +191,70 @@ class _ContractPageState extends State<ContractPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
-                child: Container(
-                  padding: EdgeInsets.only(left: 20.0, top: 5.0),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        padding: EdgeInsets.only(top: 5.0),
-                        child: Text(data.symbol,
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      Container(
-                          alignment: Alignment.centerLeft,
-                          child: RichText(
-                              text: TextSpan(children: [
-                            TextSpan(
-                                text: "24h ",
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
-                            TextSpan(
-                                text: "",
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.black54))
-                          ])))
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.only(top: 5.0),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(top: 5.0),
-                        child: Text("",
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold)),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(top: 3.0),
-                        child: Text("",
-                            style:
-                                TextStyle(fontSize: 12, color: Colors.black54)),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  height: 30,
-                  margin: EdgeInsets.only(left: 24, right: 24.0),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      color:
-                          data.rise.startsWith("-") ? Colors.red : Colors.green,
-                      borderRadius: BorderRadius.circular(2.0)),
-                  child: Container(
-                    child: Text(
-                      "${data.rise}%",
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(data.symbol,
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500)),
                     ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    Container(
+                        alignment: Alignment.centerLeft,
+                        child: RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                              text: "24h ",
+                              style: TextStyle(color: Colors.grey)),
+                          TextSpan(
+                              text: "", style: TextStyle(color: Colors.black54))
+                        ])))
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 5.0),
+                      child: Text("",
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 3.0),
+                      child: Text("",
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.black54)),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                padding:
+                    EdgeInsets.only(top: 8, bottom: 8, left: 14, right: 14),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color:
+                        data.rise.startsWith("-") ? Colors.red : Colors.green,
+                    borderRadius: BorderRadius.circular(2.0)),
+                child: Container(
+                  child: Text(
+                    "${data.rise}%",
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ));

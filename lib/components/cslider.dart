@@ -122,7 +122,7 @@ class _CustomliderState extends State<CustomliderWidget>
       subEvent = Config.eventBus.on<PushEvent>().listen((event) {
         if (event.name == widget.eventName) {
           setState(() {
-            value = event.value as double;
+            value = event.value * 1.0;
             left = baseWidth * value;
           });
         }

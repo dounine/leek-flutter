@@ -149,6 +149,12 @@ class _OpenManagerState extends State<OpenManager> {
                               },
                               itemBuilder: (BuildContext context, int index) {
                                 OpenManagerInfo info = _listInfos[index];
+                                List<String> names = info.list
+                                    .map((item) {
+                                      return item.symbol;
+                                    })
+                                    .toSet()
+                                    .toList();
                                 return Container(
                                     margin: EdgeInsets.all(10),
                                     child: Column(children: <Widget>[
@@ -161,40 +167,57 @@ class _OpenManagerState extends State<OpenManager> {
                                       ),
                                       SizedBox(height: 6),
                                       Row(
-                                        children: info.list
-                                            .asMap()
-                                            .map((index, i) {
-                                              return MapEntry(
-                                                  index,
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Container(
-                                                          margin:
-                                                              EdgeInsets.only(
-                                                                  left: 4),
-                                                          child: Text(
-                                                            i.symbol,
-                                                          )),
-                                                      index ==
-                                                              info.list.length -
-                                                                  1
-                                                          ? Container()
-                                                          : Container(
+                                        children: names.length == 0
+                                            ? [
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        left: 4),
+                                                    child: Text(
+                                                      "--",
+                                                      style: TextStyle(
+                                                          color: Colors.grey),
+                                                    ))
+                                              ]
+                                            : names
+                                                .asMap()
+                                                .map((index, symbol) {
+                                                  return MapEntry(
+                                                      index,
+                                                      Row(
+                                                        children: <Widget>[
+                                                          Container(
                                                               margin: EdgeInsets
                                                                   .only(
-                                                                      left: 2,
-                                                                      right: 2),
+                                                                      left: 4),
                                                               child: Text(
-                                                                "/",
+                                                                symbol,
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .grey),
-                                                              ))
-                                                    ],
-                                                  ));
-                                            })
-                                            .values
-                                            .toList(),
+                                                              )),
+                                                          (names.length != 1 &&
+                                                                  index !=
+                                                                      names.length -
+                                                                          1)
+                                                              ? Container(
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              2,
+                                                                          right:
+                                                                              2),
+                                                                  child: Text(
+                                                                    "/",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .grey),
+                                                                  ))
+                                                              : Container()
+                                                        ],
+                                                      ));
+                                                })
+                                                .values
+                                                .toList(),
                                       )
                                     ]));
                               }))));

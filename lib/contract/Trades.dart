@@ -425,49 +425,51 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                    child: Container(
-                      color: Colors.white,
-                    ),
+                  new Divider(
+                    height: 1,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.only(
-                                left: ScreenUtil.instance.setWidth(30),
-                                right: ScreenUtil.instance.setWidth(30)),
-                            child: Text(
-                              "绑定",
-                              style: TextStyle(color: Colors.blueGrey),
+                  Container(
+                    padding: EdgeInsets.only(
+                        top: ScreenUtil.instance.setHeight(30),
+                        bottom: ScreenUtil.instance.setHeight(30)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.only(
+                                  left: ScreenUtil.instance.setWidth(30),
+                                  right: ScreenUtil.instance.setWidth(30)),
+                              child: Text(
+                                "绑定",
+                                style: TextStyle(color: Colors.blueGrey),
+                              ),
                             ),
-                          ),
-                          Switch(
-                            value: contractStore.close_bind,
-                            onChanged: (bool value) {
-                              contractStore.close_bind = value;
-                              socketStore.sendMessage({
-                                "type": "contract_update",
-                                "data": {
-                                  "symbol": contractStore.symbol,
-                                  "contractType": contractStore.contractType,
-                                  "direction": contractStore.direction,
-                                  "close_bind": value
-                                }
-                              });
-                            },
-                          )
-                        ],
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(
-                            right: ScreenUtil.instance.setWidth(60)),
-                        child: Text(contractStore.close_status),
-                      )
-                    ],
+                            Switch(
+                              value: contractStore.close_bind,
+                              onChanged: (bool value) {
+                                contractStore.close_bind = value;
+                                socketStore.sendMessage({
+                                  "type": "contract_update",
+                                  "data": {
+                                    "symbol": contractStore.symbol,
+                                    "contractType": contractStore.contractType,
+                                    "direction": contractStore.direction,
+                                    "close_bind": value
+                                  }
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(
+                              right: ScreenUtil.instance.setWidth(60)),
+                          child: Text(contractStore.close_status),
+                        )
+                      ],
+                    ),
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
