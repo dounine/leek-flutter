@@ -128,13 +128,8 @@ class _UserEditState extends State<UserEdit> {
       onWillPop: () async {
         Navigator.pop(
             context,
-            UserInfo(
-                _phone,
-                _status,
-                _password,
-                userOperation.info.isAdmin,
-                userOperation.info.createTime,
-                userOperation.info.add));
+            UserInfo(_phone, _status, _password, userOperation.info.isAdmin,
+                userOperation.info.createTime, userOperation.info.add));
         return false;
       },
       child: new Scaffold(
@@ -157,7 +152,7 @@ class _UserEditState extends State<UserEdit> {
           body: new Builder(builder: (context) {
             _context = context;
             return Container(
-                margin: EdgeInsets.all(10),
+                margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
                 child: Column(children: <Widget>[
                   Container(
                       child: Row(children: <Widget>[
@@ -185,7 +180,7 @@ class _UserEditState extends State<UserEdit> {
                                 ))))
                   ])),
                   SizedBox(
-                    height: 10,
+                    height: ScreenUtil.instance.setHeight(20),
                   ),
                   Container(
                       child: Row(children: <Widget>[
@@ -219,7 +214,7 @@ class _UserEditState extends State<UserEdit> {
                                     )))))
                   ])),
                   SizedBox(
-                    height: 20,
+                    height: ScreenUtil.instance.setHeight(40),
                   ),
                   userOperation.info.add
                       ? (_reqStatus == "request"

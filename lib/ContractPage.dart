@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
@@ -114,6 +115,7 @@ class _ContractPageState extends State<ContractPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return new Builder(builder: (c) {
       _context = c;
       return RefreshIndicator(
@@ -225,7 +227,7 @@ class _ContractPageState extends State<ContractPage> {
                       child: Text("",
                           style: TextStyle(
                               color: Colors.black87,
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold)),
                     ),
                     Container(
@@ -238,8 +240,9 @@ class _ContractPageState extends State<ContractPage> {
                 ),
               ),
               Container(
-                padding:
-                    EdgeInsets.only(top: 8, bottom: 8, left: 14, right: 14),
+                padding: EdgeInsets.symmetric(
+                    vertical: ScreenUtil.instance.setHeight(10),
+                    horizontal: ScreenUtil.instance.setWidth(30)),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                     color:
@@ -249,7 +252,6 @@ class _ContractPageState extends State<ContractPage> {
                   child: Text(
                     "${data.rise}%",
                     style: TextStyle(
-                        fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),

@@ -59,7 +59,7 @@ class TextSize extends StatelessWidget {
               ScreenUtil.instance.setWidth(pointBorderRadius))),
       padding: EdgeInsets.symmetric(
           vertical: ScreenUtil.instance.setWidth(10),
-          horizontal: ScreenUtil.instance.setWidth(20)),
+          horizontal: ScreenUtil.instance.setWidth(16)),
       child: Text(
         (value).toStringAsFixed(valueFixed),
         style: TextStyle(color: Colors.white),
@@ -229,7 +229,7 @@ class _CustomliderState extends State<CustomliderWidget>
         Positioned(
             left: left -
                 ScreenUtil.instance.setWidth(pointWidth) / 2 -
-                (value + incrmentValue).toStringAsFixed(fixed).length * 4.5 / 2,
+                (value + incrmentValue).toStringAsFixed(fixed).length * 4.5 / 2 + 5,
             top: ScreenUtil.instance
                 .setWidth(-(pointHeight - height) / 2 - pointHeight),
             child: SlideTransition(

@@ -17,7 +17,7 @@ class Manager extends StatelessWidget {
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: 10,
+                height: ScreenUtil.instance.setHeight(20),
               ),
               Container(
                 color: Colors.white,
@@ -29,7 +29,7 @@ class Manager extends StatelessWidget {
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
               SizedBox(
-                height: 20,
+                height: ScreenUtil.instance.setHeight(40),
               ),
               Container(
                 color: Colors.white,
@@ -40,13 +40,7 @@ class Manager extends StatelessWidget {
                     },
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
-              SizedBox(
-                height: 1,
-                child: Container(
-                  margin: EdgeInsets.only(left: 16),
-                  color: Colors.grey[200],
-                ),
-              ),
+              new Divider(height: 1, indent: 10),
               Container(
                 color: Colors.white,
                 child: new ListTile(
@@ -56,13 +50,7 @@ class Manager extends StatelessWidget {
                     },
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
-              SizedBox(
-                height: 1,
-                child: Container(
-                  margin: EdgeInsets.only(left: 16),
-                  color: Colors.grey[200],
-                ),
-              ),
+              new Divider(height: 1, indent: 10),
               Container(
                 color: Colors.white,
                 child: new ListTile(
@@ -73,7 +61,7 @@ class Manager extends StatelessWidget {
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
               SizedBox(
-                height: 20,
+                height: ScreenUtil.instance.setHeight(40),
               ),
               Container(
                 color: Colors.white,

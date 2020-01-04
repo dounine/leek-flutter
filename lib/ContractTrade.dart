@@ -154,7 +154,7 @@ class _ContractTradeState extends State<ContractTrade>
             child: Column(
               children: <Widget>[
                 Container(
-                    padding: EdgeInsets.all(10.0),
+                    padding: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -216,7 +216,7 @@ class _ContractTradeState extends State<ContractTrade>
                                     padding: EdgeInsets.only(
                                         left: ScreenUtil.instance.setWidth(20)),
                                     child: Container(
-                                      width: ScreenUtil.instance.setWidth(140),
+                                      width: ScreenUtil.instance.setWidth(150),
                                       margin: EdgeInsets.all(
                                           ScreenUtil.instance.setWidth(10)),
                                       child: GestureDetector(
@@ -271,7 +271,7 @@ class _ContractTradeState extends State<ContractTrade>
                 ),
                 hasOpen
                     ? Container(
-                        height: 44,
+                        height: ScreenUtil.instance.setHeight(80),
                         decoration: ShapeDecoration(
                           shape: Border(
                               bottom: BorderSide(color: Colors.grey[100])),
@@ -279,8 +279,6 @@ class _ContractTradeState extends State<ContractTrade>
                         child: Row(
                             children: pages.keys.map((name) {
                           return Expanded(
-                              child: Container(
-                            height: 44,
                             child: FlatButton(
                               textColor: navName == name
                                   ? Colors.black87
@@ -295,7 +293,7 @@ class _ContractTradeState extends State<ContractTrade>
                                   style:
                                       TextStyle(fontWeight: FontWeight.w500)),
                             ),
-                          ));
+                          );
                         }).toList()),
                       )
                     : Container(),

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/store/UserStore.dart';
@@ -19,7 +17,7 @@ class Setting extends StatelessWidget {
           child: Column(
             children: <Widget>[
               SizedBox(
-                height: 10,
+                height: ScreenUtil.instance.setHeight(20),
               ),
               Container(
                 color: Colors.white,
@@ -31,7 +29,7 @@ class Setting extends StatelessWidget {
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
               SizedBox(
-                height: 20,
+                height: ScreenUtil.instance.setHeight(40),
               ),
               Container(
                 color: Colors.white,
@@ -42,13 +40,7 @@ class Setting extends StatelessWidget {
                     },
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
-              SizedBox(
-                height: 1,
-                child: Container(
-                  margin: EdgeInsets.only(left: 16),
-                  color: Colors.grey[200],
-                ),
-              ),
+              new Divider(height: 1, indent: ScreenUtil.instance.setWidth(20)),
               Container(
                 color: Colors.white,
                 child: new ListTile(
@@ -59,7 +51,7 @@ class Setting extends StatelessWidget {
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
               SizedBox(
-                height: 20,
+                height: ScreenUtil.instance.setHeight(40),
               ),
               Container(
                 color: Colors.white,
@@ -70,13 +62,7 @@ class Setting extends StatelessWidget {
                     },
                     trailing: Icon(Icons.keyboard_arrow_right)),
               ),
-              SizedBox(
-                height: 1,
-                child: Container(
-                  margin: EdgeInsets.only(left: 16),
-                  color: Colors.grey[200],
-                ),
-              ),
+              new Divider(height: 1, indent: ScreenUtil.instance.setWidth(20)),
               Container(
                 color: Colors.white,
                 child: new ListTile(
@@ -85,7 +71,7 @@ class Setting extends StatelessWidget {
                       Navigator.pushNamed(context, "/api");
                     },
                     trailing: Container(
-                        width: 100,
+                        width: ScreenUtil.instance.setWidth(400),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -98,23 +84,21 @@ class Setting extends StatelessWidget {
                         ))),
               ),
               SizedBox(
-                height: 20,
+                height: ScreenUtil.instance.setHeight(40),
               ),
-              FractionallySizedBox(
-                widthFactor: 0.96,
-                child: Container(
-                    color: Colors.white,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: ScreenUtil.instance.setHeight(90),
-                      child: RaisedButton(
-                          child: Text("退出登录"),
-                          onPressed: () {
-                            Provider.of<UserStore>(context).logout();
-                            Navigator.pop(context);
-                          }),
-                    )),
-              ),
+              Container(
+                  color: Colors.white,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: ScreenUtil.instance.setHeight(120),
+                    child: RaisedButton(
+                        color: Colors.white,
+                        child: Text("退出登录"),
+                        onPressed: () {
+                          Provider.of<UserStore>(context).logout();
+                          Navigator.pop(context);
+                        }),
+                  )),
             ],
           ),
         ));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/store/LoginStore.dart';
 import 'package:leek/store/UserStore.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +49,7 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     final LoginStore loginStore = Provider.of<LoginStore>(context);
     final UserStore userStore = Provider.of<UserStore>(context);
     loginStore.nextAnimation((String status, String msg) {
@@ -98,7 +100,7 @@ class _LoginPageState extends State<LoginPage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Container(
-                height: 240,
+                height: ScreenUtil.instance.setHeight(540),
                 child: Stack(
                   alignment: Alignment.topRight,
                   children: <Widget>[
@@ -107,39 +109,40 @@ class _LoginPageState extends State<LoginPage>
                       child: Image.asset("images/login-top.png"),
                     ),
                     Positioned(
-                        bottom: 10,
-                        left: 20,
+                        bottom: ScreenUtil.instance.setHeight(20),
+                        left: ScreenUtil.instance.setWidth(40),
                         child: Image.asset(
                           "images/leek.png",
-                          width: 60,
+                          width: ScreenUtil.instance.setWidth(120),
                         )),
                     Positioned(
-                      left: 90,
-                      bottom: 16,
+                      left: ScreenUtil.instance.setWidth(180),
+                      bottom: ScreenUtil.instance.setHeight(32),
                       child: Text(
                         "Leek",
                         style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                             color: Colors.black54),
                       ),
                     ),
                     Positioned(
-                      top: 80,
-                      right: 40,
+                      top: ScreenUtil.instance.setHeight(160),
+                      right: ScreenUtil.instance.setWidth(80),
                       child: Image.asset(
                         "images/leek-white.png",
-                        width: 60,
+                        width: ScreenUtil.instance.setWidth(120),
                       ),
                     )
                   ],
                 ),
               ),
               SizedBox(
-                height: 30,
+                height: ScreenUtil.instance.setHeight(60),
               ),
               Container(
-                width: 340,
+                margin: EdgeInsets.symmetric(
+                    horizontal: ScreenUtil.instance.setWidth(50)),
                 decoration: new BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(4.0),
@@ -147,11 +150,11 @@ class _LoginPageState extends State<LoginPage>
                     BoxShadow(
                         color: Colors.greenAccent[100],
                         offset: Offset(10.0, 10.0),
-                        blurRadius: 40.0)
+                        blurRadius: ScreenUtil.instance.setWidth(80))
                   ],
                 ),
                 child: Container(
-                  padding: EdgeInsets.only(left: 20.0, top: 20.0, right: 20.0),
+                  padding: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -160,11 +163,15 @@ class _LoginPageState extends State<LoginPage>
                           child: Text(
                             "Login",
                             style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        height: ScreenUtil.instance.setHeight(20),
                       ),
                       Container(
                         child: Consumer<LoginStore>(
@@ -192,7 +199,7 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: ScreenUtil.instance.setHeight(20),
                       ),
                       Container(child: Consumer<LoginStore>(
                         builder: (_, login, child) {
@@ -223,16 +230,19 @@ class _LoginPageState extends State<LoginPage>
                           );
                         },
                       )),
+                      SizedBox(
+                        height: ScreenUtil.instance.setHeight(20),
+                      ),
                       Container(
-                        padding: EdgeInsets.only(top: 20, bottom: 20),
+                        padding:
+                            EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
                         alignment: Alignment.center,
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
                             "忘记密码?",
                             style: TextStyle(
-                                color: Colors.blue[300],
-                                fontWeight: FontWeight.bold),
+                                color: Colors.blue[300]),
                           ),
                         ),
                       ),
@@ -241,12 +251,12 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
               SizedBox(
-                height: 24,
+                height: ScreenUtil.instance.setHeight(50),
               ),
               ScaleTransition(
                   scale: _scaleCurved,
                   child: Container(
-                    height: 46,
+                    height: ScreenUtil.instance.setHeight(100),
                     child: AnimatedBuilder(
                       animation: buttonSqueezeAnimation,
                       builder: (context, _) {
@@ -257,9 +267,10 @@ class _LoginPageState extends State<LoginPage>
                         }
                         return Container(
                           width: buttonSqueezeAnimation.value,
-                          height: 46,
+                          height: ScreenUtil.instance.setHeight(100),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
+                            borderRadius: BorderRadius.circular(
+                                ScreenUtil.instance.setWidth(60)),
                             gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -273,11 +284,11 @@ class _LoginPageState extends State<LoginPage>
                             child: buttonSqueezeAnimation.value > 80
                                 ? Text(
                                     "登录",
-                                    style: TextStyle(letterSpacing: 2.0),
+                                    style: TextStyle(letterSpacing: 2.0,color: Colors.white),
                                   )
                                 : SizedBox(
-                                    width: 24,
-                                    height: 24,
+                                    width: ScreenUtil.instance.setWidth(50),
+                                    height: ScreenUtil.instance.setWidth(50),
                                     child: _scaleCurved.value < 2
                                         ? new CircularProgressIndicator(
                                             strokeWidth: 2,
@@ -288,7 +299,8 @@ class _LoginPageState extends State<LoginPage>
                                   ),
                             textColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0)),
+                                borderRadius: BorderRadius.circular(
+                                    ScreenUtil.instance.setWidth(60))),
                             onPressed: loginStore.isValid
                                 ? () {
                                     _loginButtonController.forward();
@@ -299,13 +311,14 @@ class _LoginPageState extends State<LoginPage>
                       },
                     ),
                   )),
-              // SizedBox(
-              //   height: 172,
-              // ),
-              Container(
-                alignment: Alignment.bottomCenter,
-                child: Image.asset("images/login-bottom.png"),
-              )
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                    minHeight: ScreenUtil.instance.setHeight(540)),
+                child: Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Image.asset("images/login-bottom.png"),
+                ),
+              ),
             ],
           ),
         ),

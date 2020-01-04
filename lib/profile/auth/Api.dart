@@ -31,6 +31,7 @@ class _ApiState extends State<Api> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     if (userStore == null) {
       userStore = Provider.of<UserStore>(context);
       userStore.initApi((status, msg) {
@@ -71,11 +72,14 @@ class _ApiState extends State<Api> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: 10,
+                    height: ScreenUtil.instance.setHeight(20),
                   ),
                   Container(
                     color: Colors.white,
-                    padding: EdgeInsets.only(left: 14, right: 14, bottom: 6),
+                    padding: EdgeInsets.only(
+                        left: ScreenUtil.instance.setWidth(40),
+                        right: ScreenUtil.instance.setWidth(40),
+                        bottom: ScreenUtil.instance.setHeight(20)),
                     child: Consumer<UserStore>(
                       builder: (_, store, child) {
                         return TextField(
@@ -96,11 +100,14 @@ class _ApiState extends State<Api> {
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: ScreenUtil.instance.setHeight(40),
                   ),
                   Container(
                     color: Colors.white,
-                    padding: EdgeInsets.only(left: 14, right: 14, bottom: 6),
+                    padding: EdgeInsets.only(
+                        left: ScreenUtil.instance.setWidth(40),
+                        right: ScreenUtil.instance.setWidth(40),
+                        bottom: ScreenUtil.instance.setHeight(20)),
                     child: Consumer<UserStore>(
                       builder: (_, store, child) {
                         return TextField(
@@ -131,10 +138,11 @@ class _ApiState extends State<Api> {
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: ScreenUtil.instance.setHeight(40),
                   ),
                   Container(
-                      margin: EdgeInsets.only(left: 10, right: 10),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: ScreenUtil.instance.setWidth(20)),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -151,49 +159,49 @@ class _ApiState extends State<Api> {
                           ? Center(
                               child: CircularProgressIndicator(),
                             )
-                          : FractionallySizedBox(
-                              widthFactor: 0.96,
-                              child: MaterialButton(
-                                color: Colors.blue,
-                                textColor: Colors.white,
-                                height: ScreenUtil.instance.setHeight(90),
-                                child: new Text("保存"),
-                                onPressed: (store.apiKey == "" ||
-                                        store.apiSecret == "")
-                                    ? null
-                                    : () {
-                                        userStore.saveApi((status, msg) {
-                                          if (status != "success") {
-                                            preApiKey = userStore.apiKey;
-                                            preApiSecret = userStore.apiSecret;
-                                          }
-                                          Scaffold.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Row(
-                                            children: <Widget>[
-                                              Icon(status == "success"
-                                                  ? Icons.check_circle_outline
-                                                  : Icons.error_outline),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              new Text(
-                                                status == "success" ? "保存成功" : "",
-                                              ),
-                                              SizedBox(
-                                                width: status == "success" ? 10 : 0,
-                                              ),
-                                              new Text(
-                                                msg,
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              )
-                                            ],
-                                          )));
-                                        });
-                                      },
-                              ),
-                            );
+                          : ((store.apiKey == "" || store.apiSecret == "")
+                              ? Container()
+                              : FractionallySizedBox(
+                                  widthFactor: 0.96,
+                                  child: MaterialButton(
+                                    color: Colors.blue,
+                                    textColor: Colors.white,
+                                    height: ScreenUtil.instance.setHeight(90),
+                                    child: new Text("保存"),
+                                    onPressed: () {
+                                      userStore.saveApi((status, msg) {
+                                        if (status != "success") {
+                                          preApiKey = userStore.apiKey;
+                                          preApiSecret = userStore.apiSecret;
+                                        }
+                                        Scaffold.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Row(
+                                          children: <Widget>[
+                                            Icon(status == "success"
+                                                ? Icons.check_circle_outline
+                                                : Icons.error_outline),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            new Text(
+                                              status == "success" ? "保存成功" : "",
+                                            ),
+                                            SizedBox(
+                                              width:
+                                                  status == "success" ? 10 : 0,
+                                            ),
+                                            new Text(
+                                              msg,
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            )
+                                          ],
+                                        )));
+                                      });
+                                    },
+                                  ),
+                                ));
                     },
                   ),
                 ],

@@ -22,7 +22,6 @@ class _WalletState extends State<Wallet> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Text("wallet");
+    return Center(child: Text("你的钱包空空如也"));
   }
 }

@@ -64,7 +64,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     return SingleChildScrollView(
       child: !contractStore.push_info
           ? Container(
-              margin: EdgeInsets.all(20),
+              margin: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
               child: Center(
                 child: CircularProgressIndicator(),
               ),
@@ -81,24 +81,22 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              child: Icon(Icons.fullscreen,
+                        Container(
+                          width: ScreenUtil.instance.setWidth(260),
+                          margin: EdgeInsets.only(
+                            right: ScreenUtil.instance.setWidth(40),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Icon(Icons.fullscreen,
                                   color: Colors.grey, size: 22),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(right: 10),
-                              child: Icon(Icons.settings,
+                              Icon(Icons.settings,
                                   color: Colors.grey, size: 18),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(right: 10),
-                              child: Icon(Icons.lock_outline,
+                              Icon(Icons.lock_outline,
                                   color: Colors.grey, size: 19),
-                            )
-                          ],
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -147,13 +145,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         contractStore.openTradeValue == -1
                             ? Container(
-                                width: ScreenUtil.instance.setWidth(860),
-                                child: Center(
-                                  child: SizedBox(
-                                    height: ScreenUtil.instance.setWidth(60),
-                                    width: ScreenUtil.instance.setWidth(60),
-                                    child: CircularProgressIndicator(),
-                                  ),
+                                child: SizedBox(
+                                  height: ScreenUtil.instance.setWidth(50),
+                                  width: ScreenUtil.instance.setWidth(50),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 ),
                               )
                             : CustomliderWidget2(
@@ -487,13 +483,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         contractStore.closeTradeValue == -1
                             ? Container(
-                                width: ScreenUtil.instance.setWidth(860),
-                                child: Center(
-                                  child: SizedBox(
-                                    height: ScreenUtil.instance.setWidth(60),
-                                    width: ScreenUtil.instance.setWidth(60),
-                                    child: CircularProgressIndicator(),
-                                  ),
+                                child: SizedBox(
+                                  height: ScreenUtil.instance.setWidth(50),
+                                  width: ScreenUtil.instance.setWidth(50),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 ),
                               )
                             : CustomliderWidget2(
