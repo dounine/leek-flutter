@@ -46,7 +46,7 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
     if (add) {
       try {
         setState(() {
-          _reqStatus = "request";
+          _reqStatus = "${symbol}_${contractType}_${direction}_request";
         });
         Map<String, String> formData = {
           "phone": _phone,
@@ -80,7 +80,8 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
             }
           });
           setState(() {
-            _reqStatus = data["status"];
+            _reqStatus =
+                "${symbol}_${contractType}_${direction}_" + data["status"];
             _list = copyList;
           });
         } else {
@@ -88,14 +89,15 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
         }
       } catch (e) {
         setState(() {
-          _reqStatus = "timeout";
+          _reqStatus = "${symbol}_${contractType}_${direction}_timeout";
         });
-        ScaffoldUtil.show(_context, {"status": "timeout"});
+        ScaffoldUtil.show(_context,
+            {"status": "${symbol}_${contractType}_${direction}_timeout"});
       }
     } else {
       try {
         setState(() {
-          _reqStatus = "request";
+          _reqStatus = "${symbol}_${contractType}_${direction}_request";
         });
         Response response = await Config.dio.delete(
             "/open/info/admin/${_phone}/${symbol}/${contractType}/${direction}");
@@ -123,7 +125,8 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
             }
           });
           setState(() {
-            _reqStatus = data["status"];
+            _reqStatus =
+                "${symbol}_${contractType}_${direction}_" + data["status"];
             _list = copyList;
           });
         } else {
@@ -131,9 +134,10 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
         }
       } catch (e) {
         setState(() {
-          _reqStatus = "timeout";
+          _reqStatus = "${symbol}_${contractType}_${direction}_timeout";
         });
-        ScaffoldUtil.show(_context, {"status": "timeout"});
+        ScaffoldUtil.show(_context,
+            {"status": "${symbol}_${contractType}_${direction}_timeout"});
       }
     }
   }
@@ -253,6 +257,8 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                           children: <Widget>[
                                             Text("季度"),
                                             Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
                                               children: <Widget>[
                                                 Row(
                                                   children: <Widget>[
@@ -260,23 +266,47 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                                       Icons.trending_up,
                                                       color: Colors.green,
                                                     ),
-                                                    IconButton(
-                                                        icon: Icon(
-                                                          quarterBuy
-                                                              ? Icons.check_box
-                                                              : Icons
-                                                                  .check_box_outline_blank,
-                                                          color: quarterBuy
-                                                              ? Colors.blue
-                                                              : Colors.grey,
-                                                        ),
-                                                        onPressed: () {
-                                                          update(
-                                                              symbol,
-                                                              "quarter",
-                                                              "buy",
-                                                              !quarterBuy);
-                                                        })
+                                                    _reqStatus ==
+                                                            "${symbol}_quarter_buy_request"
+                                                        ? Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                              ScreenUtil
+                                                                  .instance
+                                                                  .setWidth(38),
+                                                            ),
+                                                            child: SizedBox(
+                                                                width: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                height: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      2,
+                                                                )))
+                                                        : IconButton(
+                                                            icon: Icon(
+                                                              quarterBuy
+                                                                  ? Icons
+                                                                      .check_box
+                                                                  : Icons
+                                                                      .check_box_outline_blank,
+                                                              color: quarterBuy
+                                                                  ? Colors.blue
+                                                                  : Colors.grey,
+                                                            ),
+                                                            onPressed: () {
+                                                              update(
+                                                                  symbol,
+                                                                  "quarter",
+                                                                  "buy",
+                                                                  !quarterBuy);
+                                                            })
                                                   ],
                                                 ),
                                                 Row(
@@ -285,23 +315,47 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                                       Icons.trending_down,
                                                       color: Colors.red,
                                                     ),
-                                                    IconButton(
-                                                        icon: Icon(
-                                                          quarterSell
-                                                              ? Icons.check_box
-                                                              : Icons
-                                                                  .check_box_outline_blank,
-                                                          color: quarterSell
-                                                              ? Colors.blue
-                                                              : Colors.grey,
-                                                        ),
-                                                        onPressed: () {
-                                                          update(
-                                                              symbol,
-                                                              "quarter",
-                                                              "sell",
-                                                              !quarterSell);
-                                                        })
+                                                    _reqStatus ==
+                                                            "${symbol}_quarter_sell_request"
+                                                        ? Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                              ScreenUtil
+                                                                  .instance
+                                                                  .setWidth(38),
+                                                            ),
+                                                            child: SizedBox(
+                                                                width: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                height: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      2,
+                                                                )))
+                                                        : IconButton(
+                                                            icon: Icon(
+                                                              quarterSell
+                                                                  ? Icons
+                                                                      .check_box
+                                                                  : Icons
+                                                                      .check_box_outline_blank,
+                                                              color: quarterSell
+                                                                  ? Colors.blue
+                                                                  : Colors.grey,
+                                                            ),
+                                                            onPressed: () {
+                                                              update(
+                                                                  symbol,
+                                                                  "quarter",
+                                                                  "sell",
+                                                                  !quarterSell);
+                                                            })
                                                   ],
                                                 )
                                               ],
@@ -319,23 +373,47 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                                       Icons.trending_up,
                                                       color: Colors.green,
                                                     ),
-                                                    IconButton(
-                                                        icon: Icon(
-                                                          thisWeekBuy
-                                                              ? Icons.check_box
-                                                              : Icons
-                                                                  .check_box_outline_blank,
-                                                          color: thisWeekBuy
-                                                              ? Colors.blue
-                                                              : Colors.grey,
-                                                        ),
-                                                        onPressed: () {
-                                                          update(
-                                                              symbol,
-                                                              "this_week",
-                                                              "buy",
-                                                              !thisWeekBuy);
-                                                        })
+                                                    _reqStatus ==
+                                                            "${symbol}_this_week_buy_request"
+                                                        ? Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                              ScreenUtil
+                                                                  .instance
+                                                                  .setWidth(38),
+                                                            ),
+                                                            child: SizedBox(
+                                                                width: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                height: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      2,
+                                                                )))
+                                                        : IconButton(
+                                                            icon: Icon(
+                                                              thisWeekBuy
+                                                                  ? Icons
+                                                                      .check_box
+                                                                  : Icons
+                                                                      .check_box_outline_blank,
+                                                              color: thisWeekBuy
+                                                                  ? Colors.blue
+                                                                  : Colors.grey,
+                                                            ),
+                                                            onPressed: () {
+                                                              update(
+                                                                  symbol,
+                                                                  "this_week",
+                                                                  "buy",
+                                                                  !thisWeekBuy);
+                                                            })
                                                   ],
                                                 ),
                                                 Row(
@@ -344,23 +422,50 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                                       Icons.trending_down,
                                                       color: Colors.red,
                                                     ),
-                                                    IconButton(
-                                                        icon: Icon(
-                                                          thisWeekSell
-                                                              ? Icons.check_box
-                                                              : Icons
-                                                                  .check_box_outline_blank,
-                                                          color: thisWeekSell
-                                                              ? Colors.blue
-                                                              : Colors.grey,
-                                                        ),
-                                                        onPressed: () {
-                                                          update(
-                                                              symbol,
-                                                              "this_week",
-                                                              "sell",
-                                                              !thisWeekSell);
-                                                        })
+                                                    _reqStatus ==
+                                                            "${symbol}_this_week_sell_request"
+                                                        ? Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                              ScreenUtil
+                                                                  .instance
+                                                                  .setWidth(38),
+                                                            ),
+                                                            child: SizedBox(
+                                                                width: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                height: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      2,
+                                                                )))
+                                                        : IconButton(
+                                                            icon: Icon(
+                                                              thisWeekSell
+                                                                  ? Icons
+                                                                      .check_box
+                                                                  : Icons
+                                                                      .check_box_outline_blank,
+                                                              color:
+                                                                  thisWeekSell
+                                                                      ? Colors
+                                                                          .blue
+                                                                      : Colors
+                                                                          .grey,
+                                                            ),
+                                                            onPressed: () {
+                                                              update(
+                                                                  symbol,
+                                                                  "this_week",
+                                                                  "sell",
+                                                                  !thisWeekSell);
+                                                            })
                                                   ],
                                                 )
                                               ],
@@ -378,23 +483,47 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                                       Icons.trending_up,
                                                       color: Colors.green,
                                                     ),
-                                                    IconButton(
-                                                        icon: Icon(
-                                                          nextWeekBuy
-                                                              ? Icons.check_box
-                                                              : Icons
-                                                                  .check_box_outline_blank,
-                                                          color: nextWeekBuy
-                                                              ? Colors.blue
-                                                              : Colors.grey,
-                                                        ),
-                                                        onPressed: () {
-                                                          update(
-                                                              symbol,
-                                                              "next_week",
-                                                              "buy",
-                                                              !nextWeekBuy);
-                                                        })
+                                                    _reqStatus ==
+                                                            "${symbol}_next_week_buy_request"
+                                                        ? Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                              ScreenUtil
+                                                                  .instance
+                                                                  .setWidth(38),
+                                                            ),
+                                                            child: SizedBox(
+                                                                width: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                height: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      2,
+                                                                )))
+                                                        : IconButton(
+                                                            icon: Icon(
+                                                              nextWeekBuy
+                                                                  ? Icons
+                                                                      .check_box
+                                                                  : Icons
+                                                                      .check_box_outline_blank,
+                                                              color: nextWeekBuy
+                                                                  ? Colors.blue
+                                                                  : Colors.grey,
+                                                            ),
+                                                            onPressed: () {
+                                                              update(
+                                                                  symbol,
+                                                                  "next_week",
+                                                                  "buy",
+                                                                  !nextWeekBuy);
+                                                            })
                                                   ],
                                                 ),
                                                 Row(
@@ -403,23 +532,50 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                                       Icons.trending_down,
                                                       color: Colors.red,
                                                     ),
-                                                    IconButton(
-                                                        icon: Icon(
-                                                          nextWeekSell
-                                                              ? Icons.check_box
-                                                              : Icons
-                                                                  .check_box_outline_blank,
-                                                          color: nextWeekSell
-                                                              ? Colors.blue
-                                                              : Colors.grey,
-                                                        ),
-                                                        onPressed: () {
-                                                          update(
-                                                              symbol,
-                                                              "next_week",
-                                                              "sell",
-                                                              !nextWeekSell);
-                                                        })
+                                                    _reqStatus ==
+                                                            "${symbol}_next_week_sell_request"
+                                                        ? Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                              ScreenUtil
+                                                                  .instance
+                                                                  .setWidth(38),
+                                                            ),
+                                                            child: SizedBox(
+                                                                width: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                height: ScreenUtil
+                                                                    .instance
+                                                                    .setWidth(
+                                                                        50),
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  strokeWidth:
+                                                                      2,
+                                                                )))
+                                                        : IconButton(
+                                                            icon: Icon(
+                                                              nextWeekSell
+                                                                  ? Icons
+                                                                      .check_box
+                                                                  : Icons
+                                                                      .check_box_outline_blank,
+                                                              color:
+                                                                  nextWeekSell
+                                                                      ? Colors
+                                                                          .blue
+                                                                      : Colors
+                                                                          .grey,
+                                                            ),
+                                                            onPressed: () {
+                                                              update(
+                                                                  symbol,
+                                                                  "next_week",
+                                                                  "sell",
+                                                                  !nextWeekSell);
+                                                            })
                                                   ],
                                                 )
                                               ],
