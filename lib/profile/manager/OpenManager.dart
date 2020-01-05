@@ -161,7 +161,13 @@ class _OpenManagerState extends State<OpenManager> {
                                 OpenManagerInfo info = _listInfos[index];
                                 List<String> names = [];
                                 info.list.forEach((item, i) {
-                                  names.add(item);
+                                  if (info.list[item]
+                                          .where((citem) =>
+                                              citem.buy || citem.sell)
+                                          .length >
+                                      0) {
+                                    names.add(item);
+                                  }
                                 });
                                 return Row(
                                   mainAxisAlignment:
@@ -202,7 +208,7 @@ class _OpenManagerState extends State<OpenManager> {
                                                                   margin: EdgeInsets
                                                                       .only(
                                                                           left:
-                                                                              4),
+                                                                              1),
                                                                   child: Text(
                                                                     symbol,
                                                                     style: TextStyle(
@@ -217,9 +223,9 @@ class _OpenManagerState extends State<OpenManager> {
                                                                   ? Container(
                                                                       margin: EdgeInsets.only(
                                                                           left:
-                                                                              2,
+                                                                              1,
                                                                           right:
-                                                                              2),
+                                                                              1),
                                                                       child:
                                                                           Text(
                                                                         "/",
@@ -240,12 +246,12 @@ class _OpenManagerState extends State<OpenManager> {
                                       icon: Icon(Icons.edit),
                                       onPressed: () {
                                         Navigator.pushNamed(
-                                                    context, '/open-manager-edit',
-                                                    arguments: OpenManagerOperation(
-                                                        '修改信息', info))
-                                                .then((result) {
-                                              OpenManagerInfo backInfo = result;
-                                            });
+                                                context, '/open-manager-edit',
+                                                arguments: OpenManagerOperation(
+                                                    '修改信息', info))
+                                            .then((result) {
+                                          OpenManagerInfo backInfo = result;
+                                        });
                                       },
                                     )
                                   ],
