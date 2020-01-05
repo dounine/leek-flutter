@@ -161,9 +161,6 @@ class _UserState extends State<User> {
                                           margin: EdgeInsets.all(
                                               ScreenUtil.instance.setWidth(20)),
                                           child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[

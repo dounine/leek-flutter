@@ -176,71 +176,75 @@ class _OpenManagerState extends State<OpenManager> {
                                     Container(
                                         margin: EdgeInsets.all(
                                             ScreenUtil.instance.setWidth(20)),
-                                        child: Column(children: <Widget>[
-                                          Text(info.phone,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              )),
-                                          SizedBox(
-                                              height: ScreenUtil.instance
-                                                  .setWidth(18)),
-                                          Row(
-                                            children: names.length == 0
-                                                ? [
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 4),
-                                                        child: Text(
-                                                          "--",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.grey),
-                                                        ))
-                                                  ]
-                                                : names
-                                                    .asMap()
-                                                    .map((index, symbol) {
-                                                      return MapEntry(
-                                                          index,
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Container(
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              1),
-                                                                  child: Text(
-                                                                    symbol,
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .grey),
-                                                                  )),
-                                                              (names.length !=
-                                                                          1 &&
-                                                                      index !=
-                                                                          names.length -
-                                                                              1)
-                                                                  ? Container(
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(info.phone,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                  )),
+                                              SizedBox(
+                                                  height: ScreenUtil.instance
+                                                      .setWidth(18)),
+                                              Row(
+                                                children: names.length == 0
+                                                    ? [
+                                                        Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 4),
+                                                            child: Text(
+                                                              "--",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ))
+                                                      ]
+                                                    : names
+                                                        .asMap()
+                                                        .map((index, symbol) {
+                                                          return MapEntry(
+                                                              index,
+                                                              Row(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Container(
                                                                       margin: EdgeInsets.only(
                                                                           left:
-                                                                              1,
-                                                                          right:
                                                                               1),
                                                                       child:
                                                                           Text(
-                                                                        "/",
+                                                                        symbol,
                                                                         style: TextStyle(
                                                                             color:
                                                                                 Colors.grey),
-                                                                      ))
-                                                                  : Container()
-                                                            ],
-                                                          ));
-                                                    })
-                                                    .values
-                                                    .toList(),
-                                          )
-                                        ])),
+                                                                      )),
+                                                                  (names.length !=
+                                                                              1 &&
+                                                                          index !=
+                                                                              names.length -
+                                                                                  1)
+                                                                      ? Container(
+                                                                          margin: EdgeInsets.only(
+                                                                              left:
+                                                                                  1,
+                                                                              right:
+                                                                                  1),
+                                                                          child:
+                                                                              Text(
+                                                                            "/",
+                                                                            style:
+                                                                                TextStyle(color: Colors.grey),
+                                                                          ))
+                                                                      : Container()
+                                                                ],
+                                                              ));
+                                                        })
+                                                        .values
+                                                        .toList(),
+                                              )
+                                            ])),
                                     IconButton(
                                       color: Colors.blueGrey,
                                       icon: Icon(Icons.edit),
