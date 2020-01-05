@@ -215,38 +215,13 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                               0;
                           return Column(
                             children: <Widget>[
-                              Container(
-                                height: ScreenUtil.instance.setHeight(100),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.all(
-                                          ScreenUtil.instance.setWidth(20)),
-                                      child: Text("币种"),
-                                    ),
-                                    Container(
-                                        margin: EdgeInsets.only(
-                                            left: ScreenUtil.instance
-                                                .setWidth(40)),
-                                        child: Text(
-                                          symbol,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500),
-                                        )),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: ScreenUtil.instance.setHeight(10),
-                              ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Container(
-                                    margin: EdgeInsets.all(
-                                        ScreenUtil.instance.setWidth(20)),
-                                    child: Text("类型"),
+                                    padding: EdgeInsets.only(left: 2, right: 2),
+                                    child: Text(symbol),
                                   ),
                                   Expanded(
                                     child: Row(
