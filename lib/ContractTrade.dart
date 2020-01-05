@@ -26,6 +26,7 @@ class _ContractTradeState extends State<ContractTrade>
   PageView pageView;
   List<dynamic> _socketMsg;
   String navName = "操盘";
+  ContractInfo contractInfo;
 
   AnimationController controller;
   CurvedAnimation curved;
@@ -93,23 +94,21 @@ class _ContractTradeState extends State<ContractTrade>
             '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}"}'
       }
     ];
-    Provider.of<SocketStore>(context)
-        .sendMessage({"type": "sub", "channels": _socketMsg});
+    var hasOpen = contractInfo.opens
+        .where((item) =>
+            item.contractType == contractStore.contractType &&
+            item.direction == contractStore.direction)
+        .isNotEmpty;
+    if (hasOpen) {
+      Provider.of<SocketStore>(context)
+          .sendMessage({"type": "sub", "channels": _socketMsg});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    final ContractInfo contractInfo = ModalRoute.of(context).settings.arguments;
-    // if (!contractInfo.quarterOpen) {
-    //   _types.remove("quarter");
-    // }
-    // if (!contractInfo.thisWeekOpen) {
-    //   _types.remove("this_week");
-    // }
-    // if (!contractInfo.nextWeekOpen) {
-    //   _types.remove("next_week");
-    // }
+    contractInfo = ModalRoute.of(context).settings.arguments;
     ContractStore contractStore = Provider.of<ContractStore>(context);
     SocketStore socketStore = Provider.of<SocketStore>(context);
     if (pages == null) {

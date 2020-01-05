@@ -6,6 +6,7 @@ import 'package:leek/components/cslider2.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
 import 'package:provider/provider.dart';
+import 'package:vibrate/vibrate.dart';
 
 class Trades extends StatefulWidget {
   Trades({Key key}) : super(key: key);
@@ -144,12 +145,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         contractStore.openTradeValue == -1
-                            ? Container(
-                                child: SizedBox(
-                                  height: ScreenUtil.instance.setWidth(50),
-                                  width: ScreenUtil.instance.setWidth(50),
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
+                            ? Expanded(
+                                child: Center(
+                                  child: SizedBox(
+                                    height: ScreenUtil.instance.setWidth(50),
+                                    width: ScreenUtil.instance.setWidth(50),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  ),
                                 ),
                               )
                             : CustomliderWidget2(
@@ -402,6 +405,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 onTap: () {
+                                  Vibrate.feedback(FeedbackType.selection);
                                   contractStore.open_lever_rate = i.toString();
                                   socketStore.sendMessage({
                                     "type": "contract_update",
@@ -482,12 +486,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         contractStore.closeTradeValue == -1
-                            ? Container(
-                                child: SizedBox(
-                                  height: ScreenUtil.instance.setWidth(50),
-                                  width: ScreenUtil.instance.setWidth(50),
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
+                            ? Expanded(
+                                child: Center(
+                                  child: SizedBox(
+                                    height: ScreenUtil.instance.setWidth(50),
+                                    width: ScreenUtil.instance.setWidth(50),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  ),
                                 ),
                               )
                             : CustomliderWidget2(

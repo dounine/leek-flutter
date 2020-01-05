@@ -157,7 +157,8 @@ class _ContractManagerState extends State<ContractManager> {
                                             MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
                                       Container(
-                                          margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
+                                          margin: EdgeInsets.all(
+                                              ScreenUtil.instance.setWidth(20)),
                                           child: Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -170,7 +171,10 @@ class _ContractManagerState extends State<ContractManager> {
                                                       style: TextStyle(
                                                           fontSize: 16)),
                                                 ]),
-                                                SizedBox(height: ScreenUtil.instance.setHeight(18),),
+                                                SizedBox(
+                                                  height: ScreenUtil.instance
+                                                      .setHeight(18),
+                                                ),
                                                 Row(
                                                   children: <Widget>[
                                                     Text("季度",

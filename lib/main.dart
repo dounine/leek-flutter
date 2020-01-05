@@ -223,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage>
           BottomNavigationBarItem(
               icon: _selectedIndex == 1
                   ? ScaleTransition(
-                      scale: new Tween(begin: 1.0, end: 1.1).animate(curved),
+                      scale: new Tween(begin: 1.0, end: 1.0).animate(curved),
                       child: Icon(Icons.content_paste),
                     )
                   : Icon(Icons.content_paste),
