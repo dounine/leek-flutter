@@ -251,6 +251,17 @@ class _OpenManagerState extends State<OpenManager> {
                                                     '修改信息', info))
                                             .then((result) {
                                           OpenManagerInfo backInfo = result;
+                                          List<OpenManagerInfo> lis = [];
+                                          _listInfos.forEach((item) {
+                                            if (item.phone == backInfo.phone) {
+                                              lis.add(backInfo);
+                                            } else {
+                                              lis.add(item);
+                                            }
+                                          });
+                                          setState(() {
+                                            _listInfos = lis;
+                                          });
                                         });
                                       },
                                     )

@@ -19,7 +19,6 @@ class OpenManagerEdit extends StatefulWidget {
 
 class _OpenManagerEditState extends State<OpenManagerEdit> {
   bool passwordHidden = true;
-  String _status = "normal";
   String _phone = "";
   Map<String, List<OpenManagerItem>> _list;
   String _reqStatus = "";
@@ -42,37 +41,100 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
     super.dispose();
   }
 
-  void update(String contractType, bool value) async {
-    try {
-      setState(() {
-        _reqStatus = "request";
-      });
-      Response response =
-          await Config.dio.patch("/contract/admin/info/auto/${_phone}");
-      Map<String, dynamic> data = response.data;
-      ScaffoldUtil.show(_context, data,
-          msg: "${value ? '开通' : '关闭'}" +
-              (data["status"] == "ok" ? "成功" : "失败"));
-      if (data["status"] == "ok") {
-        if (_status == "normal") {
+  void update(
+      String symbol, String contractType, String direction, bool add) async {
+    if (add) {
+      try {
+        setState(() {
+          _reqStatus = "request";
+        });
+        Map<String, String> formData = {
+          "phone": _phone,
+          "symbol": symbol,
+          "contractType": contractType,
+          "direction": direction
+        };
+        Response response =
+            await Config.dio.post("/open/info/admin", data: formData);
+        Map<String, dynamic> data = response.data;
+        ScaffoldUtil.show(_context, data,
+            msg: "开通" + (data["status"] == "ok" ? "成功" : "失败"));
+        if (data["status"] == "ok") {
+          Map<String, List<OpenManagerItem>> copyList = new Map();
+          _list.keys.forEach((symbolName) {
+            if (symbolName == symbol) {
+              List<OpenManagerItem> convertList = [];
+              _list[symbolName].forEach((citem) {
+                if (citem.contractType == contractType) {
+                  convertList.add(OpenManagerItem(
+                      contractType,
+                      direction == "buy" ? true : citem.buy,
+                      direction == "sell" ? true : citem.sell));
+                } else {
+                  convertList.add(citem);
+                }
+              });
+              copyList[symbolName] = convertList;
+            } else {
+              copyList[symbolName] = _list[symbolName];
+            }
+          });
           setState(() {
             _reqStatus = data["status"];
-            _status = 'locked';
+            _list = copyList;
           });
         } else {
+          ScaffoldUtil.show(_context, data);
+        }
+      } catch (e) {
+        setState(() {
+          _reqStatus = "timeout";
+        });
+        ScaffoldUtil.show(_context, {"status": "timeout"});
+      }
+    } else {
+      try {
+        setState(() {
+          _reqStatus = "request";
+        });
+        Response response = await Config.dio.delete(
+            "/open/info/admin/${_phone}/${symbol}/${contractType}/${direction}");
+        Map<String, dynamic> data = response.data;
+        ScaffoldUtil.show(_context, data,
+            msg: "关闭" + (data["status"] == "ok" ? "成功" : "失败"));
+        if (data["status"] == "ok") {
+          Map<String, List<OpenManagerItem>> copyList = new Map();
+          _list.keys.forEach((symbolName) {
+            if (symbolName == symbol) {
+              List<OpenManagerItem> convertList = [];
+              _list[symbolName].forEach((citem) {
+                if (citem.contractType == contractType) {
+                  convertList.add(OpenManagerItem(
+                      contractType,
+                      direction == "buy" ? false : citem.buy,
+                      direction == "sell" ? false : citem.sell));
+                } else {
+                  convertList.add(citem);
+                }
+              });
+              copyList[symbolName] = convertList;
+            } else {
+              copyList[symbolName] = _list[symbolName];
+            }
+          });
           setState(() {
             _reqStatus = data["status"];
-            _status = 'normal';
+            _list = copyList;
           });
+        } else {
+          ScaffoldUtil.show(_context, data);
         }
-      } else {
-        ScaffoldUtil.show(_context, data);
+      } catch (e) {
+        setState(() {
+          _reqStatus = "timeout";
+        });
+        ScaffoldUtil.show(_context, {"status": "timeout"});
       }
-    } catch (e) {
-      setState(() {
-        _reqStatus = "timeout";
-      });
-      ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
 
@@ -111,19 +173,40 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                         itemBuilder: (BuildContext context, int index) {
                           String symbol = _list.keys.toList()[index];
                           List<OpenManagerItem> listInfo = _list[symbol];
-                          bool quarter = listInfo
-                                  .where(
-                                      (item) => item.contractType == "quarter")
+                          bool quarterBuy = listInfo
+                                  .where((item) =>
+                                      item.contractType == "quarter" &&
+                                      item.buy)
                                   .length !=
                               0;
-                          bool thisWeek = listInfo
+                          bool quarterSell = listInfo
                                   .where((item) =>
-                                      item.contractType == "this_week")
+                                      item.contractType == "quarter" &&
+                                      item.sell)
                                   .length !=
                               0;
-                          bool nextWeek = listInfo
+                          bool thisWeekBuy = listInfo
                                   .where((item) =>
-                                      item.contractType == "next_week")
+                                      item.contractType == "this_week" &&
+                                      item.buy)
+                                  .length !=
+                              0;
+                          bool thisWeekSell = listInfo
+                                  .where((item) =>
+                                      item.contractType == "this_week" &&
+                                      item.sell)
+                                  .length !=
+                              0;
+                          bool nextWeekBuy = listInfo
+                                  .where((item) =>
+                                      item.contractType == "next_week" &&
+                                      item.buy)
+                                  .length !=
+                              0;
+                          bool nextWeekSell = listInfo
+                                  .where((item) =>
+                                      item.contractType == "next_week" &&
+                                      item.sell)
                                   .length !=
                               0;
                           return Column(
@@ -150,7 +233,7 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                 ),
                               ),
                               SizedBox(
-                                height: ScreenUtil.instance.setHeight(20),
+                                height: ScreenUtil.instance.setHeight(10),
                               ),
                               Row(
                                 mainAxisAlignment:
@@ -169,57 +252,178 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                                         Row(
                                           children: <Widget>[
                                             Text("季度"),
-                                            IconButton(
-                                                icon: Icon(
-                                                  quarter
-                                                      ? Icons.check_box
-                                                      : Icons
-                                                          .check_box_outline_blank,
-                                                  color: quarter
-                                                      ? Colors.blue
-                                                      : Colors.grey,
+                                            Column(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.trending_up,
+                                                      color: Colors.green,
+                                                    ),
+                                                    IconButton(
+                                                        icon: Icon(
+                                                          quarterBuy
+                                                              ? Icons.check_box
+                                                              : Icons
+                                                                  .check_box_outline_blank,
+                                                          color: quarterBuy
+                                                              ? Colors.blue
+                                                              : Colors.grey,
+                                                        ),
+                                                        onPressed: () {
+                                                          update(
+                                                              symbol,
+                                                              "quarter",
+                                                              "buy",
+                                                              !quarterBuy);
+                                                        })
+                                                  ],
                                                 ),
-                                                onPressed: () {
-                                                  update("quarter", !quarter);
-                                                })
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.trending_down,
+                                                      color: Colors.red,
+                                                    ),
+                                                    IconButton(
+                                                        icon: Icon(
+                                                          quarterSell
+                                                              ? Icons.check_box
+                                                              : Icons
+                                                                  .check_box_outline_blank,
+                                                          color: quarterSell
+                                                              ? Colors.blue
+                                                              : Colors.grey,
+                                                        ),
+                                                        onPressed: () {
+                                                          update(
+                                                              symbol,
+                                                              "quarter",
+                                                              "sell",
+                                                              !quarterSell);
+                                                        })
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ],
                                         ),
                                         Row(
                                           children: <Widget>[
                                             Text("本周"),
-                                            IconButton(
-                                                icon: Icon(
-                                                  thisWeek
-                                                      ? Icons.check_box
-                                                      : Icons
-                                                          .check_box_outline_blank,
-                                                  color: thisWeek
-                                                      ? Colors.blue
-                                                      : Colors.grey,
+                                            Column(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.trending_up,
+                                                      color: Colors.green,
+                                                    ),
+                                                    IconButton(
+                                                        icon: Icon(
+                                                          thisWeekBuy
+                                                              ? Icons.check_box
+                                                              : Icons
+                                                                  .check_box_outline_blank,
+                                                          color: thisWeekBuy
+                                                              ? Colors.blue
+                                                              : Colors.grey,
+                                                        ),
+                                                        onPressed: () {
+                                                          update(
+                                                              symbol,
+                                                              "this_week",
+                                                              "buy",
+                                                              !thisWeekBuy);
+                                                        })
+                                                  ],
                                                 ),
-                                                onPressed: () {
-                                                  update(
-                                                      "this_week", !thisWeek);
-                                                })
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.trending_down,
+                                                      color: Colors.red,
+                                                    ),
+                                                    IconButton(
+                                                        icon: Icon(
+                                                          thisWeekSell
+                                                              ? Icons.check_box
+                                                              : Icons
+                                                                  .check_box_outline_blank,
+                                                          color: thisWeekSell
+                                                              ? Colors.blue
+                                                              : Colors.grey,
+                                                        ),
+                                                        onPressed: () {
+                                                          update(
+                                                              symbol,
+                                                              "this_week",
+                                                              "sell",
+                                                              !thisWeekSell);
+                                                        })
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ],
                                         ),
                                         Row(
                                           children: <Widget>[
                                             Text("下周"),
-                                            IconButton(
-                                                icon: Icon(
-                                                  nextWeek
-                                                      ? Icons.check_box
-                                                      : Icons
-                                                          .check_box_outline_blank,
-                                                  color: nextWeek
-                                                      ? Colors.blue
-                                                      : Colors.grey,
+                                            Column(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.trending_up,
+                                                      color: Colors.green,
+                                                    ),
+                                                    IconButton(
+                                                        icon: Icon(
+                                                          nextWeekBuy
+                                                              ? Icons.check_box
+                                                              : Icons
+                                                                  .check_box_outline_blank,
+                                                          color: nextWeekBuy
+                                                              ? Colors.blue
+                                                              : Colors.grey,
+                                                        ),
+                                                        onPressed: () {
+                                                          update(
+                                                              symbol,
+                                                              "next_week",
+                                                              "buy",
+                                                              !nextWeekBuy);
+                                                        })
+                                                  ],
                                                 ),
-                                                onPressed: () {
-                                                  update(
-                                                      "next_week", !nextWeek);
-                                                })
+                                                Row(
+                                                  children: <Widget>[
+                                                    Icon(
+                                                      Icons.trending_down,
+                                                      color: Colors.red,
+                                                    ),
+                                                    IconButton(
+                                                        icon: Icon(
+                                                          nextWeekSell
+                                                              ? Icons.check_box
+                                                              : Icons
+                                                                  .check_box_outline_blank,
+                                                          color: nextWeekSell
+                                                              ? Colors.blue
+                                                              : Colors.grey,
+                                                        ),
+                                                        onPressed: () {
+                                                          update(
+                                                              symbol,
+                                                              "next_week",
+                                                              "sell",
+                                                              !nextWeekSell);
+                                                        })
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ],
                                         )
                                       ],
@@ -229,163 +433,7 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                               ),
                             ],
                           );
-                        })
-                    // Column(children: <Widget>[
-                    // Container(
-                    //   height: ScreenUtil.instance.setHeight(100),
-                    //   child: Row(
-                    //     children: <Widget>[
-                    //       Container(
-                    //         margin: EdgeInsets.all(10),
-                    //         child: Text("币种"),
-                    //       ),
-                    //       Container(
-                    //           margin: EdgeInsets.only(left: 20),
-                    //           child: operation.info.add
-                    //               ? (_periods == null
-                    //                   ? SizedBox(
-                    //                       width: ScreenUtil.instance
-                    //                           .setWidth(50),
-                    //                       height: ScreenUtil.instance
-                    //                           .setWidth(50),
-                    //                       child: CircularProgressIndicator(
-                    //                         strokeWidth: 2,
-                    //                       ),
-                    //                     )
-                    //                   : Row(children: <Widget>[
-                    //                       DropdownButtonHideUnderline(
-                    //                         child: DropdownButton(
-                    //                           items:
-                    //                               _periods.keys.map((name) {
-                    //                             return new DropdownMenuItem(
-                    //                               child: Row(
-                    //                                 children: <Widget>[
-                    //                                   new Text(
-                    //                                       _periods[name]),
-                    //                                   _period == name
-                    //                                       ? Icon(
-                    //                                           Icons
-                    //                                               .arrow_left,
-                    //                                           color:
-                    //                                               Colors.blue,
-                    //                                         )
-                    //                                       : Container()
-                    //                                 ],
-                    //                               ),
-                    //                               value: name,
-                    //                             );
-                    //                           }).toList(),
-                    //                           iconSize: 18,
-                    //                           hint: Text(
-                    //                             _periods[_period],
-                    //                           ),
-                    //                           onChanged: (value) {
-                    //                             setState(() {
-                    //                               _period = value;
-                    //                             });
-                    //                             // _choose(_symbol, _type);
-                    //                             Vibrate.feedback(
-                    //                                 FeedbackType.light);
-                    //                           },
-                    //                         ),
-                    //                       )
-                    //                     ]))
-                    //               : Text(
-                    //                   operation.info.symbol,
-                    //                   style: TextStyle(
-                    //                       fontWeight: FontWeight.w500),
-                    //                 )),
-                    //     ],
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: <Widget>[
-                    //     Container(
-                    //       margin: EdgeInsets.all(10),
-                    //       child: Text("类型"),
-                    //     ),
-                    //     Expanded(
-                    //       child: Row(
-                    //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //         children: <Widget>[
-                    //           Row(
-                    //             children: <Widget>[
-                    //               Text("季度"),
-                    //               IconButton(
-                    //                   icon: Icon(
-                    //                     _quarter
-                    //                         ? Icons.check_box
-                    //                         : Icons.check_box_outline_blank,
-                    //                     color: _quarter
-                    //                         ? Colors.blue
-                    //                         : Colors.grey,
-                    //                   ),
-                    //                   onPressed: () {
-                    //                     if (!operation.info.add) {
-                    //                       update("quarter", !_quarter);
-                    //                     }
-                    //                     setState(() {
-                    //                       _quarter = !_quarter;
-                    //                     });
-                    //                   })
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             children: <Widget>[
-                    //               Text("本周"),
-                    //               IconButton(
-                    //                   icon: Icon(
-                    //                     _thisWeek
-                    //                         ? Icons.check_box
-                    //                         : Icons.check_box_outline_blank,
-                    //                     color: _thisWeek
-                    //                         ? Colors.blue
-                    //                         : Colors.grey,
-                    //                   ),
-                    //                   onPressed: () {
-                    //                     if (!operation.info.add) {
-                    //                       update("this_week", !_thisWeek);
-                    //                     }
-                    //                     setState(() {
-                    //                       _thisWeek = !_thisWeek;
-                    //                     });
-                    //                   })
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             children: <Widget>[
-                    //               Text("下周"),
-                    //               IconButton(
-                    //                   icon: Icon(
-                    //                     _nextWeek
-                    //                         ? Icons.check_box
-                    //                         : Icons.check_box_outline_blank,
-                    //                     color: _nextWeek
-                    //                         ? Colors.blue
-                    //                         : Colors.grey,
-                    //                   ),
-                    //                   onPressed: () {
-                    //                     if (!operation.info.add) {
-                    //                       update("next_week", !_nextWeek);
-                    //                     }
-                    //                     setState(() {
-                    //                       _nextWeek = !_nextWeek;
-                    //                     });
-                    //                   })
-                    //             ],
-                    //           )
-                    //         ],
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
-                    // ]
-                    // )
-                    );
+                        }));
           })),
     );
   }
