@@ -15,35 +15,38 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-  AnimationController _loginButtonController;
+  AnimationController _controller;
   Animation<double> _scaleCurved;
   Animation<double> buttonSqueezeAnimation;
-  Animation<double> buttonZoomout;
 
   @override
   void initState() {
-    _loginButtonController = new AnimationController(
-        duration: Duration(milliseconds: 2000), vsync: this);
+    _controller = new AnimationController(
+        duration: Duration(milliseconds: 1000), vsync: this);
 
     buttonSqueezeAnimation = Tween(
       begin: 340.0,
       end: 60.0,
-    ).animate(CurvedAnimation(
-        parent: _loginButtonController, curve: new Interval(0.0, 0.25)));
+    ).animate(
+        CurvedAnimation(parent: _controller, curve: new Interval(0.0, 0.25)));
 
     _scaleCurved = Tween(
       begin: 1.0,
       end: 34.0,
     ).animate(CurvedAnimation(
-        parent: _loginButtonController,
-        curve: new Interval(0.4, 1.0, curve: Curves.easeInOut)));
+        parent: _controller,
+        curve: new Interval(0.5, 0.9, curve: Curves.easeInOut)));
     super.initState();
   }
 
   @override
   void dispose() {
-    _loginButtonController.stop();
-    _loginButtonController.dispose();
+    try {
+      _controller?.stop();
+    } catch (e) {}
+    try {
+      _controller?.dispose();
+    } catch (e) {}
     super.dispose();
   }
 
@@ -55,19 +58,19 @@ class _LoginPageState extends State<LoginPage>
     loginStore.nextAnimation((String status, String msg) {
       if (status == "ok") {
         loginStore.status = "ok";
-        _loginButtonController.addStatusListener((status) {
+        _controller.addStatusListener((status) {
           if (status == AnimationStatus.completed) {
-            print("已经完成");
             userStore.phone = loginStore.phone;
             userStore.init();
-            _loginButtonController.reset();
             loginStore.status = "";
           }
         });
-        _loginButtonController.forward();
+        _controller.forward();
         FocusScope.of(context).requestFocus(FocusNode());
       } else {
-        _loginButtonController.reset();
+        try {
+          _controller?.reset();
+        } catch (e) {}
         loginStore.status = "";
         showDialog<void>(
           context: context,
@@ -79,7 +82,7 @@ class _LoginPageState extends State<LoginPage>
                 FlatButton(
                   child: Text('确认'),
                   onPressed: () {
-                    Navigator.of(dialogContext).pop(); // Dismiss alert dialog
+                    Navigator.of(dialogContext).pop();
                   },
                 ),
               ],
@@ -241,8 +244,7 @@ class _LoginPageState extends State<LoginPage>
                           alignment: Alignment.centerRight,
                           child: Text(
                             "忘记密码?",
-                            style: TextStyle(
-                                color: Colors.blue[300]),
+                            style: TextStyle(color: Colors.blue[300]),
                           ),
                         ),
                       ),
@@ -262,7 +264,7 @@ class _LoginPageState extends State<LoginPage>
                       builder: (context, _) {
                         if (buttonSqueezeAnimation.value == 60.0 &&
                             loginStore.status == "") {
-                          _loginButtonController.stop();
+                          _controller.stop();
                           loginStore.login();
                         }
                         return Container(
@@ -284,7 +286,9 @@ class _LoginPageState extends State<LoginPage>
                             child: buttonSqueezeAnimation.value > 80
                                 ? Text(
                                     "登录",
-                                    style: TextStyle(letterSpacing: 2.0,color: Colors.white),
+                                    style: TextStyle(
+                                        letterSpacing: 2.0,
+                                        color: Colors.white),
                                   )
                                 : SizedBox(
                                     width: ScreenUtil.instance.setWidth(50),
@@ -303,7 +307,8 @@ class _LoginPageState extends State<LoginPage>
                                     ScreenUtil.instance.setWidth(60))),
                             onPressed: loginStore.isValid
                                 ? () {
-                                    _loginButtonController.forward();
+                                    _controller.reset();
+                                    _controller.forward();
                                   }
                                 : null,
                           ),
