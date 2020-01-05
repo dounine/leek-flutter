@@ -20,6 +20,7 @@ import 'package:leek/profile/manager/ContractManager.dart';
 import 'package:leek/profile/manager/ContractManagerEdit.dart';
 import 'package:leek/profile/manager/Manager.dart';
 import 'package:leek/profile/manager/OpenManager.dart';
+import 'package:leek/profile/manager/OpenManagerEdit.dart';
 import 'package:leek/profile/manager/OpenRequest.dart';
 import 'package:leek/profile/manager/User.dart';
 import 'package:leek/profile/manager/UserEdit.dart';
@@ -117,6 +118,7 @@ class MyApp extends StatelessWidget {
             "/user-edit": (BuildContext context) => const UserEdit(),
             "/open-request": (BuildContext context) => const OpenRequest(),
             "/open-manager": (BuildContext context) => const OpenManager(),
+            "/open-manager-edit": (BuildContext context) => const OpenManagerEdit(),
             "/contract-manager": (BuildContext context) =>
                 const ContractManager(),
             "/contract-edit": (BuildContext context) =>
