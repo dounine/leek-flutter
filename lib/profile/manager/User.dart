@@ -190,38 +190,34 @@ class _UserState extends State<User> {
                                                     style: TextStyle(
                                                         color: Colors.grey))
                                               ])),
-                                      Container(
-                                          child: Row(children: <Widget>[
-                                        IconButton(
-                                            color: Colors.blueGrey,
-                                            icon: Icon(Icons.edit),
-                                            onPressed: () {
-                                              Navigator.pushNamed(
-                                                      context, '/user-edit',
-                                                      arguments: UserOperation(
-                                                          '修改信息', info))
-                                                  .then((result) {
-                                                UserInfo ui = result;
-                                                setState(() {
-                                                  _listInfos =
-                                                      _listInfos.map((item) {
-                                                    if (item.phone ==
-                                                        ui.phone) {
-                                                      return UserInfo(
-                                                          ui.phone,
-                                                          ui.status,
-                                                          ui.password,
-                                                          ui.isAdmin,
-                                                          item.createTime,
-                                                          ui.add);
-                                                    } else {
-                                                      return item;
-                                                    }
-                                                  }).toList();
-                                                });
+                                      IconButton(
+                                          color: Colors.blueGrey,
+                                          icon: Icon(Icons.edit),
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                    context, '/user-edit',
+                                                    arguments: UserOperation(
+                                                        '修改信息', info))
+                                                .then((result) {
+                                              UserInfo backInfo = result;
+                                              setState(() {
+                                                _listInfos =
+                                                    _listInfos.map((item) {
+                                                  if (item.phone == backInfo.phone) {
+                                                    return UserInfo(
+                                                        backInfo.phone,
+                                                        backInfo.status,
+                                                        backInfo.password,
+                                                        backInfo.isAdmin,
+                                                        item.createTime,
+                                                        backInfo.add);
+                                                  } else {
+                                                    return item;
+                                                  }
+                                                }).toList();
                                               });
-                                            })
-                                      ]))
+                                            });
+                                          })
                                     ]));
                               }))));
         }));

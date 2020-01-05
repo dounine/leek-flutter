@@ -226,18 +226,18 @@ class _ContractManagerState extends State<ContractManager> {
                                                           ContractManagerOperation(
                                                               '修改信息', info))
                                                   .then((result) {
-                                                ContractManagerInfo ui = result;
+                                                ContractManagerInfo backInfo = result;
                                                 setState(() {
                                                   _listInfos =
                                                       _listInfos.map((item) {
                                                     if (item.symbol ==
-                                                        ui.symbol) {
+                                                        backInfo.symbol) {
                                                       return ContractManagerInfo(
-                                                          ui.symbol,
-                                                          ui.quarter,
-                                                          ui.thisWeek,
-                                                          ui.nextWeek,
-                                                          ui.add);
+                                                          backInfo.symbol,
+                                                          backInfo.quarter,
+                                                          backInfo.thisWeek,
+                                                          backInfo.nextWeek,
+                                                          backInfo.add);
                                                     } else {
                                                       return item;
                                                     }

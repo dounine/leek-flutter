@@ -17,21 +17,21 @@ class OpenManager extends StatefulWidget {
 
 class OpenManagerItem {
   final String contractType;
-  final String direction;
-  final String symbol;
-  OpenManagerItem(this.symbol, this.contractType, this.direction);
+  final bool buy;
+  final bool sell;
+  OpenManagerItem(this.contractType, this.buy, this.sell);
 }
 
 class OpenManagerInfo {
   final String phone;
-  final List<OpenManagerItem> list;
+  final Map<String, List<OpenManagerItem>> list;
   OpenManagerInfo(this.phone, this.list);
 }
 
 class OpenManagerOperation {
   final String title;
-  final OpenManagerInfo openManagerInfo;
-  OpenManagerOperation(this.title, this.openManagerInfo);
+  final OpenManagerInfo info;
+  OpenManagerOperation(this.title, this.info);
 }
 
 class _OpenManagerState extends State<OpenManager> {
@@ -57,17 +57,26 @@ class _OpenManagerState extends State<OpenManager> {
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         List<dynamic> ll = data["data"];
-        List<OpenManagerInfo> list = ll.map((item) {
-          List<OpenManagerItem> items = [];
-          item["list"].forEach((j) {
-            items.add(OpenManagerItem(
-                j["symbol"], j["contractType"], j["direction"]));
+        List<OpenManagerInfo> infos = [];
+        ll.forEach((item) {
+          Map<String, List<OpenManagerItem>> l = new Map();
+          Map<String, dynamic> maps = item["list"];
+          maps.forEach((j, i) {
+            (i as List<dynamic>).forEach((ci) {
+              OpenManagerItem _item =
+                  OpenManagerItem(ci["contractType"], ci["buy"], ci["sell"]);
+              if (l[j] == null) {
+                l[j] = [_item];
+              } else {
+                l[j].add(_item);
+              }
+            });
           });
-          return OpenManagerInfo(item["phone"], items);
-        }).toList();
+          infos.add(OpenManagerInfo(item["phone"], l));
+        });
         setState(() {
           _reqStatus = data["status"];
-          _listInfos = list;
+          _listInfos = infos;
         });
       } else {
         setState(() {
@@ -140,7 +149,8 @@ class _OpenManagerState extends State<OpenManager> {
                         )
                       : Container(
                           child: new ListView.separated(
-                              padding: EdgeInsets.all(ScreenUtil.instance.setWidth(10)),
+                              padding: EdgeInsets.all(
+                                  ScreenUtil.instance.setWidth(10)),
                               itemCount: _listInfos.length,
                               separatorBuilder:
                                   (BuildContext context, int index) {
@@ -149,77 +159,97 @@ class _OpenManagerState extends State<OpenManager> {
                               },
                               itemBuilder: (BuildContext context, int index) {
                                 OpenManagerInfo info = _listInfos[index];
-                                List<String> names = info.list
-                                    .map((item) {
-                                      return item.symbol;
-                                    })
-                                    .toSet()
-                                    .toList();
-                                return Container(
-                                    margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
-                                    child: Column(children: <Widget>[
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(info.phone,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                            )),
-                                      ),
-                                      SizedBox(height: ScreenUtil.instance.setWidth(18)),
-                                      Row(
-                                        children: names.length == 0
-                                            ? [
-                                                Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 4),
-                                                    child: Text(
-                                                      "--",
-                                                      style: TextStyle(
-                                                          color: Colors.grey),
-                                                    ))
-                                              ]
-                                            : names
-                                                .asMap()
-                                                .map((index, symbol) {
-                                                  return MapEntry(
-                                                      index,
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Container(
-                                                              margin: EdgeInsets
-                                                                  .only(
-                                                                      left: 4),
-                                                              child: Text(
-                                                                symbol,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey),
-                                                              )),
-                                                          (names.length != 1 &&
-                                                                  index !=
-                                                                      names.length -
-                                                                          1)
-                                                              ? Container(
+                                List<String> names = [];
+                                info.list.forEach((item, i) {
+                                  names.add(item);
+                                });
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                        margin: EdgeInsets.all(
+                                            ScreenUtil.instance.setWidth(20)),
+                                        child: Column(children: <Widget>[
+                                          Text(info.phone,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              )),
+                                          SizedBox(
+                                              height: ScreenUtil.instance
+                                                  .setWidth(18)),
+                                          Row(
+                                            children: names.length == 0
+                                                ? [
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 4),
+                                                        child: Text(
+                                                          "--",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.grey),
+                                                        ))
+                                                  ]
+                                                : names
+                                                    .asMap()
+                                                    .map((index, symbol) {
+                                                      return MapEntry(
+                                                          index,
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Container(
                                                                   margin: EdgeInsets
                                                                       .only(
+                                                                          left:
+                                                                              4),
+                                                                  child: Text(
+                                                                    symbol,
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .grey),
+                                                                  )),
+                                                              (names.length !=
+                                                                          1 &&
+                                                                      index !=
+                                                                          names.length -
+                                                                              1)
+                                                                  ? Container(
+                                                                      margin: EdgeInsets.only(
                                                                           left:
                                                                               2,
                                                                           right:
                                                                               2),
-                                                                  child: Text(
-                                                                    "/",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .grey),
-                                                                  ))
-                                                              : Container()
-                                                        ],
-                                                      ));
-                                                })
-                                                .values
-                                                .toList(),
-                                      )
-                                    ]));
+                                                                      child:
+                                                                          Text(
+                                                                        "/",
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.grey),
+                                                                      ))
+                                                                  : Container()
+                                                            ],
+                                                          ));
+                                                    })
+                                                    .values
+                                                    .toList(),
+                                          )
+                                        ])),
+                                    IconButton(
+                                      color: Colors.blueGrey,
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                                    context, '/open-manager-edit',
+                                                    arguments: OpenManagerOperation(
+                                                        '修改信息', info))
+                                                .then((result) {
+                                              OpenManagerInfo backInfo = result;
+                                            });
+                                      },
+                                    )
+                                  ],
+                                );
                               }))));
         }));
   }

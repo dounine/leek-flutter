@@ -189,25 +189,26 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
           ),
           body: new Builder(builder: (c) {
             _context = c;
-            return (_periods != null && _periods.keys.length == 0)
+            return (operation.info.add &&
+                    _periods != null &&
+                    _periods.keys.length == 0)
                 ? Container(
                     child: Center(
                       child: Text("已经全部添加完成、可以返回修改."),
                     ),
                   )
                 : Container(
-                    margin: EdgeInsets.all(10),
                     child: Column(children: <Widget>[
                       Container(
                         height: ScreenUtil.instance.setHeight(100),
                         child: Row(
                           children: <Widget>[
                             Container(
-                              margin: EdgeInsets.all(10),
+                              margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
                               child: Text("币种"),
                             ),
                             Container(
-                                margin: EdgeInsets.only(left: 20),
+                                margin: EdgeInsets.only(left: ScreenUtil.instance.setWidth(40)),
                                 child: operation.info.add
                                     ? (_periods == null
                                         ? SizedBox(
@@ -266,13 +267,13 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
                         ),
                       ),
                       SizedBox(
-                        height: 10,
+                        height: ScreenUtil.instance.setHeight(20),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Container(
-                            margin: EdgeInsets.all(10),
+                            margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
                             child: Text("类型"),
                           ),
                           Expanded(
