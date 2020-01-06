@@ -124,7 +124,7 @@ class _ContractManagerState extends State<ContractManager> {
                           child: Column(
                             children: <Widget>[
                               SizedBox(
-                                height: 40,
+                                height: ScreenUtil.instance.setHeight(80),
                               ),
                               Icon(
                                 Icons.inbox,

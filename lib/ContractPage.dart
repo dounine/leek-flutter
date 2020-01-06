@@ -140,7 +140,7 @@ class _ContractPageState extends State<ContractPage> {
                       child: Column(
                         children: <Widget>[
                           SizedBox(
-                            height: 40,
+                            height: ScreenUtil.instance.setHeight(80),
                           ),
                           Icon(
                             Icons.inbox,

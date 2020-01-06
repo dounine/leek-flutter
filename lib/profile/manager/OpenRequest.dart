@@ -164,7 +164,7 @@ class _OpenRequestState extends State<OpenRequest> {
                           child: Column(
                             children: <Widget>[
                               SizedBox(
-                                height: 40,
+                                height: ScreenUtil.instance.setHeight(80),
                               ),
                               Icon(
                                 Icons.inbox,
