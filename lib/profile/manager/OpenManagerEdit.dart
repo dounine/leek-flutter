@@ -55,7 +55,7 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
           "direction": direction
         };
         Response response =
-            await Config.dio.post("/open/info/admin", data: formData);
+            await Config.dio.post("/open/admin/info", data: formData);
         Map<String, dynamic> data = response.data;
         ScaffoldUtil.show(_context, data,
             msg: "开通" + (data["status"] == "ok" ? "成功" : "失败"));
@@ -100,7 +100,7 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
           _reqStatus = "${symbol}_${contractType}_${direction}_request";
         });
         Response response = await Config.dio.delete(
-            "/open/info/admin/${_phone}/${symbol}/${contractType}/${direction}");
+            "/open/admin/info/${_phone}/${symbol}/${contractType}/${direction}");
         Map<String, dynamic> data = response.data;
         ScaffoldUtil.show(_context, data,
             msg: "关闭" + (data["status"] == "ok" ? "成功" : "失败"));

@@ -76,7 +76,6 @@ class _ContractOpenState extends State<ContractOpen>
       Response response = await Config.dio
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> data = response.data;
-
       if (data["status"] == "ok" && data["data"] == null) {
         setState(() {
           _agree = "";
@@ -125,7 +124,7 @@ class _ContractOpenState extends State<ContractOpen>
             SizedBox(height: ScreenUtil.instance.setHeight(500)),
             Container(
               child: Text(
-                "您当前还没有开通这个功能、需要申请",
+                _agree == "true" ? "管理员已经关闭您的这个合约交易" : "您当前还没有开通这个功能、需要申请",
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             ),
@@ -134,25 +133,27 @@ class _ContractOpenState extends State<ContractOpen>
             ),
             _reqStatus == "request"
                 ? Center(child: CircularProgressIndicator())
-                : SizedBox(
-                    width: ScreenUtil.instance.setWidth(800),
-                    child: RaisedButton(
-                      child: Text(
-                        _agree == null
-                            ? "申请开通"
-                            : (_agree == ""
-                                ? "已申请、请等待审核"
-                                : (_agree == "false" ? "已拒绝、重新申请" : "已通过")),
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      color: Colors.lightBlue,
-                      onPressed: (_agree == null || _agree == "false")
-                          ? () {
-                              application();
-                            }
-                          : null,
-                    ),
-                  )
+                : _agree == "true"
+                    ? Container()
+                    : SizedBox(
+                        width: ScreenUtil.instance.setWidth(800),
+                        child: RaisedButton(
+                          child: Text(
+                            _agree == null
+                                ? "申请开通"
+                                : (_agree == ""
+                                    ? "已申请、请等待审核"
+                                    : (_agree == "false" ? "已拒绝、重新申请" : "已通过")),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: Colors.lightBlue,
+                          onPressed: (_agree == null || _agree == "false")
+                              ? () {
+                                  application();
+                                }
+                              : null,
+                        ),
+                      )
           ],
         ),
       );

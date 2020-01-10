@@ -53,7 +53,7 @@ class _OpenRequestState extends State<OpenRequest> {
         _reqStatus = "request";
       });
       Response response = await Config.dio.patch(
-          "/open/request/info/admin/${phone}/${symbol}/${contractType}/${direction}/${value}");
+          "/open/request/admin/info/${phone}/${symbol}/${contractType}/${direction}/${value}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         List<OpenRequestInfo> list = _listInfos.map((item) {

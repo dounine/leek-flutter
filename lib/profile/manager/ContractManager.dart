@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
+import 'package:leek/profile/manager/ContractManagerEdit.dart';
 import 'package:leek/store/UserStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +22,9 @@ class ContractManagerInfo {
   final bool thisWeek;
   final bool nextWeek;
   final bool add;
-  ContractManagerInfo(
-      this.symbol, this.quarter, this.thisWeek, this.nextWeek, this.add);
+  final List<ConfigInfo> configs;
+  ContractManagerInfo(this.symbol, this.quarter, this.thisWeek, this.nextWeek,
+      this.configs, this.add);
 }
 
 class ContractManagerOperation {
@@ -55,8 +57,20 @@ class _ContractManagerState extends State<ContractManager> {
       if (data["status"] == "ok") {
         List<dynamic> ll = data["data"];
         List<ContractManagerInfo> list = ll.map((item) {
-          return ContractManagerInfo(item["symbol"], item["quarterOpen"],
-              item["thisWeekOpen"], item["nextWeekOpen"], false);
+          List<dynamic> configs = item["configs"];
+          List<ConfigInfo> igs = configs.map((it) {
+            return ConfigInfo(
+                it["name"],
+                it["symbol"],
+                it["keyName"],
+                it["minValue"],
+                it["maxValue"],
+                it["defaultValue"],
+                it["fixed"],
+                it["setup"]);
+          }).toList();
+          return ContractManagerInfo(item["symbol"], item["quarter"],
+              item["thisWeek"], item["nextWeek"], igs, false);
         }).toList();
         setState(() {
           _reqStatus = data["status"];
@@ -95,8 +109,10 @@ class _ContractManagerState extends State<ContractManager> {
                 icon: Icon(Icons.add),
                 onPressed: () {
                   Navigator.pushNamed(context, '/contract-edit',
-                      arguments: ContractManagerOperation('添加',
-                          ContractManagerInfo("", false, false, false, true)));
+                      arguments: ContractManagerOperation(
+                          '添加',
+                          ContractManagerInfo(
+                              "", false, false, false, [], true)));
                 })
           ],
         ),
@@ -226,7 +242,8 @@ class _ContractManagerState extends State<ContractManager> {
                                                           ContractManagerOperation(
                                                               '修改信息', info))
                                                   .then((result) {
-                                                ContractManagerInfo backInfo = result;
+                                                ContractManagerInfo backInfo =
+                                                    result;
                                                 setState(() {
                                                   _listInfos =
                                                       _listInfos.map((item) {
@@ -237,6 +254,7 @@ class _ContractManagerState extends State<ContractManager> {
                                                           backInfo.quarter,
                                                           backInfo.thisWeek,
                                                           backInfo.nextWeek,
+                                                          backInfo.configs,
                                                           backInfo.add);
                                                     } else {
                                                       return item;

@@ -53,7 +53,7 @@ class _OpenManagerState extends State<OpenManager> {
       setState(() {
         _reqStatus = "request";
       });
-      Response response = await Config.dio.get("/open/info/admin/all");
+      Response response = await Config.dio.get("/open/admin/info/all");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         List<dynamic> ll = data["data"];

@@ -16,9 +16,21 @@ class ContractManagerEdit extends StatefulWidget {
   }
 }
 
+class ConfigInfo {
+  final String name;
+  final String symbol;
+  final String keyName;
+  final double minValue;
+  final double maxValue;
+  final double defaultValue;
+  final int fixed;
+  final double setup;
+  ConfigInfo(this.name, this.symbol, this.keyName, this.minValue, this.maxValue,
+      this.defaultValue, this.fixed, this.setup);
+}
+
 class _ContractManagerEditState extends State<ContractManagerEdit> {
   bool passwordHidden = true;
-  String _status = "normal";
   String _symbol = "";
   bool _quarter = false;
   bool _thisWeek = false;
@@ -81,32 +93,22 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
   void update(String contractType, bool value) async {
     try {
       setState(() {
-        _reqStatus = "request";
+        _reqStatus = "${contractType}_request";
       });
       Response response = await Config.dio.patch(
           "/contract/admin/info/auto/${_symbol}/${contractType}/${value}");
       Map<String, dynamic> data = response.data;
-      ScaffoldUtil.show(_context, data,
-          msg: "${value ? '开通' : '关闭'}" +
-              (data["status"] == "ok" ? "成功" : "失败"));
-      if (data["status"] == "ok") {
-        if (_status == "normal") {
-          setState(() {
-            _reqStatus = data["status"];
-            _status = 'locked';
-          });
-        } else {
-          setState(() {
-            _reqStatus = data["status"];
-            _status = 'normal';
-          });
-        }
-      } else {
-        ScaffoldUtil.show(_context, data);
+      if (data["status"] == "fail") {
+        ScaffoldUtil.show(_context, data,
+            msg: "${value ? '开通' : '关闭'}" + "失败:${data['msg']}");
       }
+
+      setState(() {
+        _reqStatus = contractType + "_" + data["status"];
+      });
     } catch (e) {
       setState(() {
-        _reqStatus = "timeout";
+        _reqStatus = contractType + "_timeout";
       });
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
@@ -117,7 +119,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
       setState(() {
         _reqStatus = "request";
       });
-      Response response = await Config.dio.get("/contract/admin/unUseList");
+      Response response = await Config.dio.get("/contract/admin/unuse/list");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         List<dynamic> list = data["data"];
@@ -166,8 +168,8 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
       onWillPop: () async {
         Navigator.pop(
             context,
-            ContractManagerInfo(
-                _symbol, _quarter, _thisWeek, _nextWeek, operation.info.add));
+            ContractManagerInfo(_symbol, _quarter, _thisWeek, _nextWeek,
+                operation.info.configs, operation.info.add));
         return false;
       },
       child: new Scaffold(
@@ -197,161 +199,268 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
                       child: Text("已经全部添加完成、可以返回修改."),
                     ),
                   )
-                : Container(
-                    child: Column(children: <Widget>[
-                      Container(
-                        height: ScreenUtil.instance.setHeight(100),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
-                              child: Text("币种"),
-                            ),
-                            Container(
-                                margin: EdgeInsets.only(left: ScreenUtil.instance.setWidth(40)),
-                                child: operation.info.add
-                                    ? (_periods == null
-                                        ? SizedBox(
+                : Column(children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: ScreenUtil.instance.setHeight(10)),
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.all(
+                                ScreenUtil.instance.setWidth(20)),
+                            child: Text("币种"),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(
+                                  left: ScreenUtil.instance.setWidth(40)),
+                              child: operation.info.add
+                                  ? (_periods == null
+                                      ? SizedBox(
+                                          width:
+                                              ScreenUtil.instance.setWidth(50),
+                                          height:
+                                              ScreenUtil.instance.setWidth(50),
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : Row(children: <Widget>[
+                                          DropdownButtonHideUnderline(
+                                            child: DropdownButton(
+                                              items: _periods.keys.map((name) {
+                                                return new DropdownMenuItem(
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      new Text(_periods[name]),
+                                                      _period == name
+                                                          ? Icon(
+                                                              Icons.arrow_left,
+                                                              color:
+                                                                  Colors.blue,
+                                                            )
+                                                          : Container()
+                                                    ],
+                                                  ),
+                                                  value: name,
+                                                );
+                                              }).toList(),
+                                              iconSize: 18,
+                                              hint: Text(
+                                                _periods[_period],
+                                              ),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _period = value;
+                                                });
+                                                // _choose(_symbol, _type);
+                                                Vibrate.feedback(
+                                                    FeedbackType.light);
+                                              },
+                                            ),
+                                          )
+                                        ]))
+                                  : Text(
+                                      operation.info.symbol,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    )),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Container(
+                          margin:
+                              EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
+                          child: Text("类型"),
+                        ),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Text("季度"),
+                                  _reqStatus == "quarter_request"
+                                      ? Container(
+                                          padding: EdgeInsets.only(
+                                              left: ScreenUtil.instance
+                                                  .setWidth(42),
+                                              right: ScreenUtil.instance
+                                                  .setWidth(42)),
+                                          child: SizedBox(
                                             width: ScreenUtil.instance
-                                                .setWidth(50),
+                                                .setWidth(40),
                                             height: ScreenUtil.instance
-                                                .setWidth(50),
+                                                .setWidth(40),
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
                                             ),
-                                          )
-                                        : Row(children: <Widget>[
-                                            DropdownButtonHideUnderline(
-                                              child: DropdownButton(
-                                                items:
-                                                    _periods.keys.map((name) {
-                                                  return new DropdownMenuItem(
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        new Text(
-                                                            _periods[name]),
-                                                        _period == name
-                                                            ? Icon(
-                                                                Icons
-                                                                    .arrow_left,
-                                                                color:
-                                                                    Colors.blue,
-                                                              )
-                                                            : Container()
-                                                      ],
-                                                    ),
-                                                    value: name,
-                                                  );
-                                                }).toList(),
-                                                iconSize: 18,
-                                                hint: Text(
-                                                  _periods[_period],
-                                                ),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _period = value;
-                                                  });
-                                                  // _choose(_symbol, _type);
-                                                  Vibrate.feedback(
-                                                      FeedbackType.light);
-                                                },
-                                              ),
-                                            )
-                                          ]))
-                                    : Text(
-                                        operation.info.symbol,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500),
-                                      )),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: ScreenUtil.instance.setHeight(20),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
-                            child: Text("类型"),
+                                          ))
+                                      : IconButton(
+                                          icon: Icon(
+                                            _quarter
+                                                ? Icons.check_box
+                                                : Icons.check_box_outline_blank,
+                                            color: _quarter
+                                                ? Colors.blue
+                                                : Colors.grey,
+                                          ),
+                                          onPressed: () {
+                                            if (!operation.info.add) {
+                                              update("quarter", !_quarter);
+                                            }
+                                            setState(() {
+                                              _quarter = !_quarter;
+                                            });
+                                          })
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text("本周"),
+                                  _reqStatus == "this_week_request"
+                                      ? Container(
+                                          padding: EdgeInsets.only(
+                                              left: ScreenUtil.instance
+                                                  .setWidth(42),
+                                              right: ScreenUtil.instance
+                                                  .setWidth(42)),
+                                          child: SizedBox(
+                                            width: ScreenUtil.instance
+                                                .setWidth(40),
+                                            height: ScreenUtil.instance
+                                                .setWidth(40),
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ))
+                                      : IconButton(
+                                          icon: Icon(
+                                            _thisWeek
+                                                ? Icons.check_box
+                                                : Icons.check_box_outline_blank,
+                                            color: _thisWeek
+                                                ? Colors.blue
+                                                : Colors.grey,
+                                          ),
+                                          onPressed: () {
+                                            if (!operation.info.add) {
+                                              update("this_week", !_thisWeek);
+                                            }
+                                            setState(() {
+                                              _thisWeek = !_thisWeek;
+                                            });
+                                          })
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text("下周"),
+                                  _reqStatus == "next_week_request"
+                                      ? Container(
+                                          padding: EdgeInsets.only(
+                                              left: ScreenUtil.instance
+                                                  .setWidth(42),
+                                              right: ScreenUtil.instance
+                                                  .setWidth(42)),
+                                          child: SizedBox(
+                                            width: ScreenUtil.instance
+                                                .setWidth(40),
+                                            height: ScreenUtil.instance
+                                                .setWidth(40),
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ))
+                                      : IconButton(
+                                          icon: Icon(
+                                            _nextWeek
+                                                ? Icons.check_box
+                                                : Icons.check_box_outline_blank,
+                                            color: _nextWeek
+                                                ? Colors.blue
+                                                : Colors.grey,
+                                          ),
+                                          onPressed: () {
+                                            if (!operation.info.add) {
+                                              update("next_week", !_nextWeek);
+                                            }
+                                            setState(() {
+                                              _nextWeek = !_nextWeek;
+                                            });
+                                          })
+                                ],
+                              )
+                            ],
                           ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Text("季度"),
-                                    IconButton(
-                                        icon: Icon(
-                                          _quarter
-                                              ? Icons.check_box
-                                              : Icons.check_box_outline_blank,
-                                          color: _quarter
-                                              ? Colors.blue
-                                              : Colors.grey,
+                        )
+                      ],
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: new ListView.separated(
+                            padding: EdgeInsets.all(5),
+                            itemCount: operation.info.configs.length,
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return new Container(
+                                  height: 1, color: Colors.grey[300]);
+                            },
+                            itemBuilder: (BuildContext context, int index) {
+                              ConfigInfo configInfo =
+                                  operation.info.configs[index];
+                              return Row(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.all(
+                                        ScreenUtil.instance.setWidth(20)),
+                                    child: Text(configInfo.name),
+                                  ),
+                                  Expanded(
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: <Widget>[
+                                        Container(
+                                          child: Text(
+                                              configInfo.minValue.toString()),
                                         ),
-                                        onPressed: () {
-                                          if (!operation.info.add) {
-                                            update("quarter", !_quarter);
-                                          }
-                                          setState(() {
-                                            _quarter = !_quarter;
-                                          });
-                                        })
-                                  ],
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text("本周"),
-                                    IconButton(
-                                        icon: Icon(
-                                          _thisWeek
-                                              ? Icons.check_box
-                                              : Icons.check_box_outline_blank,
-                                          color: _thisWeek
-                                              ? Colors.blue
-                                              : Colors.grey,
+                                        Container(
+                                          child: Text(
+                                              configInfo.maxValue.toString()),
                                         ),
-                                        onPressed: () {
-                                          if (!operation.info.add) {
-                                            update("this_week", !_thisWeek);
-                                          }
-                                          setState(() {
-                                            _thisWeek = !_thisWeek;
-                                          });
-                                        })
-                                  ],
-                                ),
-                                Row(
-                                  children: <Widget>[
-                                    Text("下周"),
-                                    IconButton(
-                                        icon: Icon(
-                                          _nextWeek
-                                              ? Icons.check_box
-                                              : Icons.check_box_outline_blank,
-                                          color: _nextWeek
-                                              ? Colors.blue
-                                              : Colors.grey,
+                                        Container(
+                                          child: Text(configInfo.defaultValue
+                                              .toString()),
                                         ),
-                                        onPressed: () {
-                                          if (!operation.info.add) {
-                                            update("next_week", !_nextWeek);
-                                          }
-                                          setState(() {
-                                            _nextWeek = !_nextWeek;
-                                          });
-                                        })
-                                  ],
-                                )
-                              ],
-                            ),
-                          )
-                        ],
+                                        Container(
+                                          child:
+                                              Text(configInfo.fixed.toString()),
+                                        ),
+                                        Container(
+                                          child:
+                                              Text(configInfo.setup.toString()),
+                                        ),
+                                      ])),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.chevron_right,
+                                      color: Colors.blue,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                          context, '/config-edit',
+                                          arguments: configInfo);
+                                    },
+                                  )
+                                ],
+                              );
+                            }),
                       ),
-                    ]));
+                    ),
+                  ]);
           })),
     );
   }

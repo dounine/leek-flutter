@@ -32,17 +32,17 @@ class OpenItem {
 class ContractInfo {
   final String symbol;
 
-  final bool quarterOpen;
-  final bool thisWeekOpen;
-  final bool nextWeekOpen;
+  final bool quarter;
+  final bool thisWeek;
+  final bool nextWeek;
   final String rise;
   final List<OpenItem> opens;
 
   ContractInfo(
       {this.symbol,
-      this.quarterOpen,
-      this.thisWeekOpen,
-      this.nextWeekOpen,
+      this.quarter,
+      this.thisWeek,
+      this.nextWeek,
       this.rise,
       this.opens});
 }
@@ -57,7 +57,7 @@ class _ContractPageState extends State<ContractPage> {
       setState(() {
         _reqStatus = "request";
       });
-      Response response = await Config.dio.get("/contract/listOpen");
+      Response response = await Config.dio.get("/contract/list");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         List<ContractInfo> tmpList = [];
@@ -71,9 +71,9 @@ class _ContractPageState extends State<ContractPage> {
           });
           tmpList.add(ContractInfo(
               symbol: item["symbol"],
-              quarterOpen: item["quarterOpen"],
-              thisWeekOpen: item["thisWeekOpen"],
-              nextWeekOpen: item["nextWeekOpen"],
+              quarter: item["quarter"],
+              thisWeek: item["thisWeek"],
+              nextWeek: item["nextWeek"],
               rise: "0.0",
               opens: openItems));
         });
