@@ -38,6 +38,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
   String _reqStatus = "";
   bool _add = false;
   String _period = "";
+  List<ConfigInfo> _configs;
   Map<String, String> _periods;
 
   @override
@@ -51,6 +52,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
         _thisWeek = userOperation.info.thisWeek;
         _nextWeek = userOperation.info.nextWeek;
         _add = userOperation.info.add;
+        _configs = userOperation.info.configs;
       });
     });
     queryUnUseList();
@@ -169,7 +171,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
         Navigator.pop(
             context,
             ContractManagerInfo(_symbol, _quarter, _thisWeek, _nextWeek,
-                operation.info.configs, operation.info.add));
+                _configs, operation.info.add));
         return false;
       },
       child: new Scaffold(
@@ -201,8 +203,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
                   )
                 : Column(children: <Widget>[
                     Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: ScreenUtil.instance.setHeight(10)),
+                      height: ScreenUtil.instance.setHeight(80),
                       child: Row(
                         children: <Widget>[
                           Container(
@@ -215,15 +216,25 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
                                   left: ScreenUtil.instance.setWidth(40)),
                               child: operation.info.add
                                   ? (_periods == null
-                                      ? SizedBox(
-                                          width:
-                                              ScreenUtil.instance.setWidth(50),
-                                          height:
-                                              ScreenUtil.instance.setWidth(50),
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )
+                                      ? _reqStatus == "timeout"
+                                          ? IconButton(
+                                              icon: Icon(
+                                                Icons.refresh,
+                                                color: Colors.blue,
+                                              ),
+                                              onPressed: () {
+                                                queryUnUseList();
+                                              },
+                                            )
+                                          : SizedBox(
+                                              width: ScreenUtil.instance
+                                                  .setWidth(50),
+                                              height: ScreenUtil.instance
+                                                  .setWidth(50),
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            )
                                       : Row(children: <Widget>[
                                           DropdownButtonHideUnderline(
                                             child: DropdownButton(
@@ -398,68 +409,88 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
                         )
                       ],
                     ),
-                    Expanded(
-                      child: Container(
-                        child: new ListView.separated(
-                            padding: EdgeInsets.all(5),
-                            itemCount: operation.info.configs.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return new Container(
-                                  height: 1, color: Colors.grey[300]);
-                            },
-                            itemBuilder: (BuildContext context, int index) {
-                              ConfigInfo configInfo =
-                                  operation.info.configs[index];
-                              return Row(
-                                children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.all(
-                                        ScreenUtil.instance.setWidth(20)),
-                                    child: Text(configInfo.name),
-                                  ),
-                                  Expanded(
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: <Widget>[
+                    (operation.info.add || _configs == null)
+                        ? Container()
+                        : Expanded(
+                            child: Container(
+                              child: new ListView.separated(
+                                  padding: EdgeInsets.all(5),
+                                  itemCount: _configs.length,
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return new Container(
+                                        height: 1, color: Colors.grey[300]);
+                                  },
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    ConfigInfo configInfo = _configs[index];
+                                    return Row(
+                                      children: <Widget>[
                                         Container(
-                                          child: Text(
-                                              configInfo.minValue.toString()),
+                                          margin: EdgeInsets.all(
+                                              ScreenUtil.instance.setWidth(20)),
+                                          child: Text(configInfo.name),
                                         ),
-                                        Container(
-                                          child: Text(
-                                              configInfo.maxValue.toString()),
-                                        ),
-                                        Container(
-                                          child: Text(configInfo.defaultValue
-                                              .toString()),
-                                        ),
-                                        Container(
-                                          child:
-                                              Text(configInfo.fixed.toString()),
-                                        ),
-                                        Container(
-                                          child:
-                                              Text(configInfo.setup.toString()),
-                                        ),
-                                      ])),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.chevron_right,
-                                      color: Colors.blue,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, '/config-edit',
-                                          arguments: configInfo);
-                                    },
-                                  )
-                                ],
-                              );
-                            }),
-                      ),
-                    ),
+                                        Expanded(
+                                            child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: <Widget>[
+                                              Container(
+                                                child: Text(configInfo.minValue
+                                                    .toString()),
+                                              ),
+                                              Container(
+                                                child: Text(configInfo.maxValue
+                                                    .toString()),
+                                              ),
+                                              Container(
+                                                child: Text(configInfo
+                                                    .defaultValue
+                                                    .toString()),
+                                              ),
+                                              Container(
+                                                child: Text(configInfo.fixed
+                                                    .toString()),
+                                              ),
+                                              Container(
+                                                child: Text(configInfo.setup
+                                                    .toString()),
+                                              ),
+                                            ])),
+                                        IconButton(
+                                          icon: Icon(
+                                            Icons.chevron_right,
+                                            color: Colors.blue,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                    context, '/config-edit',
+                                                    arguments: configInfo)
+                                                .then((result) {
+                                              ConfigInfo configInfo = result;
+                                              List<ConfigInfo> list = [];
+                                              operation.info.configs
+                                                  .forEach((item) {
+                                                if (item.keyName ==
+                                                    configInfo.keyName) {
+                                                  list.add(configInfo);
+                                                } else {
+                                                  list.add(item);
+                                                }
+                                              });
+                                              setState(() {
+                                                _configs = list;
+                                              });
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  }),
+                            ),
+                          ),
                   ]);
           })),
     );

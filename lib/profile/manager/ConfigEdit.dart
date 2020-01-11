@@ -21,11 +21,11 @@ class _ConfigEditState extends State<ConfigEdit> {
   String _name;
   String _symbol;
   String _keyName;
-  double _minValue = 0;
-  double _maxValue = 100;
-  double _defaultValue = 0;
+  String _minValue;
+  String _maxValue;
+  String _defaultValue;
   int _fixed = 0;
-  double _setup = 1;
+  String _setup;
   bool _user;
   String _reqStatus = "";
 
@@ -37,11 +37,11 @@ class _ConfigEditState extends State<ConfigEdit> {
         _name = info.name;
         _symbol = info.symbol;
         _keyName = info.keyName;
-        _minValue = info.minValue;
-        _maxValue = info.maxValue;
-        _defaultValue = info.defaultValue;
+        _minValue = info.minValue.toString();
+        _maxValue = info.maxValue.toString();
+        _defaultValue = info.defaultValue.toString();
         _fixed = info.fixed;
-        _setup = info.setup;
+        _setup = info.setup.toString();
       });
     });
     super.initState();
@@ -52,25 +52,35 @@ class _ConfigEditState extends State<ConfigEdit> {
     super.dispose();
   }
 
-  void update(String contractType, bool value) async {
+  void update() async {
     try {
       setState(() {
-        _reqStatus = "${contractType}_request";
+        _reqStatus = "request";
       });
-      Response response = await Config.dio.patch(
-          "/contract/admin/info/auto/${_symbol}/${contractType}/${value}");
+      Response response = await Config.dio.patch("/config/admin/info", data: {
+        "phone": "",
+        "symbol": _symbol,
+        "keyName": _keyName,
+        "minValue": num.parse(_minValue),
+        "maxValue": num.parse(_maxValue),
+        "defaultValue": num.parse(_defaultValue),
+        "fixed": _fixed,
+        "setup": num.parse(_setup),
+        "user": false
+      });
       Map<String, dynamic> data = response.data;
       if (data["status"] == "fail") {
-        ScaffoldUtil.show(_context, data,
-            msg: "${value ? '开通' : '关闭'}" + "失败:${data['msg']}");
+        ScaffoldUtil.show(_context, data);
+      } else {
+        ScaffoldUtil.show(_context, data, msg: "保存成功");
       }
 
       setState(() {
-        _reqStatus = contractType + "_" + data["status"];
+        _reqStatus = data["status"];
       });
     } catch (e) {
       setState(() {
-        _reqStatus = contractType + "_timeout";
+        _reqStatus = "timeout";
       });
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
@@ -86,8 +96,15 @@ class _ConfigEditState extends State<ConfigEdit> {
       onWillPop: () async {
         Navigator.pop(
             context,
-            ConfigInfo(_name, _symbol, _keyName, _minValue, _maxValue,
-                _defaultValue, _fixed, _setup));
+            ConfigInfo(
+                _name,
+                _symbol,
+                _keyName,
+                double.parse(_minValue),
+                double.parse(_maxValue),
+                double.parse(_defaultValue),
+                _fixed,
+                double.parse(_setup)));
         return false;
       },
       child: new Scaffold(
@@ -112,18 +129,167 @@ class _ConfigEditState extends State<ConfigEdit> {
                         keyboardType: TextInputType.text,
                         controller: TextEditingController.fromValue(
                             TextEditingValue(
-                                text: "",
+                                text: _minValue.toString(),
                                 selection: TextSelection.fromPosition(
                                     TextPosition(
                                         affinity: TextAffinity.downstream,
-                                        offset: "".length)))),
-                        decoration: InputDecoration(labelText: "最小值"),
-                        onChanged: (value) {},
+                                        offset: _minValue.toString().length)))),
+                        decoration: InputDecoration(labelText: "浮点数"),
+                        onChanged: (value) {
+                          setState(() {
+                            _minValue = value;
+                          });
+                        },
                       ),
                     ),
                   )
                 ],
-              )
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
+                    child: Text("最大值"),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        keyboardType: TextInputType.text,
+                        controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                                text: _maxValue.toString(),
+                                selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                        affinity: TextAffinity.downstream,
+                                        offset: _maxValue.toString().length)))),
+                        decoration: InputDecoration(labelText: "浮点数"),
+                        onChanged: (value) {
+                          setState(() {
+                            _maxValue = value;
+                          });
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
+                    child: Text("默认值"),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        keyboardType: TextInputType.text,
+                        controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                                text: _defaultValue.toString(),
+                                selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                        affinity: TextAffinity.downstream,
+                                        offset:
+                                            _defaultValue.toString().length)))),
+                        decoration: InputDecoration(labelText: "浮点数"),
+                        onChanged: (value) {
+                          setState(() {
+                            _defaultValue = value;
+                          });
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
+                    child: Text("保留小数"),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        keyboardType: TextInputType.number,
+                        controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                                text: _fixed.toString(),
+                                selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                        affinity: TextAffinity.downstream,
+                                        offset: _fixed.toString().length)))),
+                        decoration: InputDecoration(labelText: "整数"),
+                        onChanged: (value) {
+                          setState(() {
+                            _fixed = num.parse(value);
+                          });
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
+                    child: Text("步进数"),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        keyboardType: TextInputType.text,
+                        controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                                text: _setup.toString(),
+                                selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                        affinity: TextAffinity.downstream,
+                                        offset: _setup.toString().length)))),
+                        decoration: InputDecoration(labelText: "浮点数"),
+                        onChanged: (value) {
+                          setState(() {
+                            _setup = value;
+                          });
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: ScreenUtil.instance.setHeight(40),
+              ),
+              _reqStatus == "request"
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : FractionallySizedBox(
+                      widthFactor: 0.96,
+                      child: MaterialButton(
+                        color: Colors.blue,
+                        textColor: Colors.white,
+                        height: ScreenUtil.instance.setHeight(90),
+                        child: new Text("保存"),
+                        onPressed: (_minValue == "" ||
+                                _maxValue == "" ||
+                                _defaultValue == "" ||
+                                _setup == "")
+                            ? null
+                            : () {
+                                update();
+                              },
+                      ),
+                    )
             ]));
           })),
     );
