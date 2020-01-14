@@ -111,7 +111,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     return SingleChildScrollView(
       child: !contractStore.push_info
           ? Container(
-              margin: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
+              padding: EdgeInsets.all(ScreenUtil.instance.setWidth(200)),
               child: Center(
                 child: CircularProgressIndicator(),
               ),
