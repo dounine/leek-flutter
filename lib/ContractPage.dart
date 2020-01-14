@@ -199,7 +199,6 @@ class _ContractPageState extends State<ContractPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(data.symbol,
                           style: TextStyle(
-                              fontSize: 16,
                               color: Colors.black87,
                               fontWeight: FontWeight.w500)),
                     ),
@@ -227,7 +226,6 @@ class _ContractPageState extends State<ContractPage> {
                       child: Text("",
                           style: TextStyle(
                               color: Colors.black87,
-                              fontSize: 16,
                               fontWeight: FontWeight.bold)),
                     ),
                     Container(
@@ -253,7 +251,7 @@ class _ContractPageState extends State<ContractPage> {
                     "${data.rise}%",
                     style: TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               ),

@@ -116,8 +116,8 @@ class _PositionState extends State<Position> {
         _reqStatus = "request";
         _list = null;
       });
-      Response response =
-          await Config.dio.get("/contract/position/${symbol}/${contractType}/${direction}");
+      Response response = await Config.dio
+          .get("/contract/position/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         List<dynamic> orders = data["data"];
@@ -247,7 +247,7 @@ class _PositionState extends State<Position> {
               children: <Widget>[
                 Text(
                   "持仓量(张)",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
@@ -256,11 +256,11 @@ class _PositionState extends State<Position> {
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 SizedBox(
-                  height: ScreenUtil.instance.setHeight(20),
+                  height: ScreenUtil.instance.setHeight(30),
                 ),
                 Text(
                   "可平量(张)",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
@@ -274,7 +274,7 @@ class _PositionState extends State<Position> {
               children: <Widget>[
                 Text(
                   "开仓均价(USD)",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
@@ -283,11 +283,11 @@ class _PositionState extends State<Position> {
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 SizedBox(
-                  height: ScreenUtil.instance.setHeight(20),
+                  height: ScreenUtil.instance.setHeight(30),
                 ),
                 Text(
                   "持仓均价(USD)",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
@@ -301,7 +301,7 @@ class _PositionState extends State<Position> {
               children: <Widget>[
                 Text(
                   "收益(BTC)",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
@@ -311,11 +311,11 @@ class _PositionState extends State<Position> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
-                  height: ScreenUtil.instance.setHeight(20),
+                  height: ScreenUtil.instance.setHeight(30),
                 ),
                 Text(
                   "保证金(BTC)",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
@@ -329,7 +329,7 @@ class _PositionState extends State<Position> {
           ],
         ),
         SizedBox(
-          height: ScreenUtil.instance.setHeight(20),
+          height: ScreenUtil.instance.setHeight(30),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
