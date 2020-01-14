@@ -55,7 +55,6 @@ class _OpenRequestState extends State<OpenRequest> {
           "/open/request/admin/info/${phone}/${symbol}/${contractType}/${direction}/${value}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
-        Vibrate.feedback(FeedbackType.light);
         List<OpenRequestInfo> list = _listInfos.map((item) {
           if (item.phone == phone &&
               item.symbol == symbol &&
@@ -67,7 +66,7 @@ class _OpenRequestState extends State<OpenRequest> {
             return item;
           }
         }).toList();
-
+        Vibrate.feedback(FeedbackType.light);
         setState(() {
           _reqStatus = data["status"];
           _listInfos = list;
@@ -237,7 +236,8 @@ class _OpenRequestState extends State<OpenRequest> {
                                                 style: TextStyle(
                                                     color: Colors.grey)),
                                             Padding(
-                                              padding: const EdgeInsets.all(2.0),
+                                              padding:
+                                                  const EdgeInsets.all(2.0),
                                               child: Text("/",
                                                   style: TextStyle(
                                                       color: Colors.grey)),

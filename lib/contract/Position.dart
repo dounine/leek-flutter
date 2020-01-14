@@ -143,6 +143,7 @@ class _PositionState extends State<Position> {
         });
         Vibrate.feedback(FeedbackType.light);
       } else {
+        Vibrate.feedback(FeedbackType.warning);
         setState(() {
           _reqStatus = data["status"];
         });
@@ -155,6 +156,7 @@ class _PositionState extends State<Position> {
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       Future.delayed(Duration.zero, () {
         ScaffoldUtil.show(_context, {"status": "timeout"});
       });

@@ -95,14 +95,13 @@ class _ContractPageState extends State<ContractPage> {
             );
           }).toList();
           tmpList.add(ContractInfo(
-            symbol: item["symbol"],
-            quarter: item["quarter"],
-            thisWeek: item["thisWeek"],
-            nextWeek: item["nextWeek"],
-            rise: "0.0",
-            opens: openItems,
-            configs: configs
-          ));
+              symbol: item["symbol"],
+              quarter: item["quarter"],
+              thisWeek: item["thisWeek"],
+              nextWeek: item["nextWeek"],
+              rise: "0.0",
+              opens: openItems,
+              configs: configs));
         });
         setState(() {
           _reqStatus = data["status"];
@@ -113,6 +112,7 @@ class _ContractPageState extends State<ContractPage> {
         setState(() {
           _reqStatus = data["status"];
         });
+        Vibrate.feedback(FeedbackType.warning);
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
@@ -120,6 +120,7 @@ class _ContractPageState extends State<ContractPage> {
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/store/LoginStore.dart';
+import 'package:leek/store/SocketStore.dart';
 import 'package:leek/store/UserStore.dart';
 import 'package:provider/provider.dart';
 
@@ -54,6 +55,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     final LoginStore loginStore = Provider.of<LoginStore>(context);
+    final SocketStore socketStore = Provider.of<SocketStore>(context);
     final UserStore userStore = Provider.of<UserStore>(context);
     loginStore.nextAnimation((String status, String msg) {
       if (status == "ok") {
@@ -63,6 +65,7 @@ class _LoginPageState extends State<LoginPage>
             userStore.phone = loginStore.phone;
             userStore.init();
             loginStore.status = "";
+            socketStore.login();
           }
         });
         _controller.forward();

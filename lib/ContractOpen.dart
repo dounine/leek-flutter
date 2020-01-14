@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
+import 'package:vibrate/vibrate.dart';
 
 class ContractOpen extends StatefulWidget {
   final String symbol;
@@ -41,7 +42,9 @@ class _ContractOpenState extends State<ContractOpen>
         setState(() {
           _reqStatus = data["status"];
         });
+        Vibrate.feedback(FeedbackType.warning);
       } else {
+        Vibrate.feedback(FeedbackType.light);
         setState(() {
           _reqStatus = data["status"];
           _agree = "";
@@ -52,6 +55,7 @@ class _ContractOpenState extends State<ContractOpen>
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
@@ -67,7 +71,7 @@ class _ContractOpenState extends State<ContractOpen>
       Response response = await Config.dio
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> data = response.data;
-      print(data);
+      Vibrate.feedback(FeedbackType.light);
       if (data["status"] == "ok" && data["data"] == null) {
         setState(() {
           _agree = null;
@@ -90,6 +94,7 @@ class _ContractOpenState extends State<ContractOpen>
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

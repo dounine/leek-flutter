@@ -38,6 +38,16 @@ class SocketStore extends ChangeNotifier {
     _funs[name] = fun;
   }
 
+  void login() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String token = sharedPreferences.getString("token");
+    if (token != null && token != "") {
+      _channel.sink.add({"type": "login", "token": token});
+    } else {
+      print("token 为空、登录失败");
+    }
+  }
+
   void addConnectedListener(String name, Function fun) {
     _connectedFuns[name] = fun;
   }
