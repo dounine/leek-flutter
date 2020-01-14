@@ -121,7 +121,7 @@ class _ContractTradeState extends State<ContractTrade>
       ContractStore contractStore = Provider.of<ContractStore>(context);
       socketStore.addMsgListener("contract", contractStore.onMessage);
       pages = {
-        "操盘": Trades(),
+        "操盘": Trades(configs: contractInfo.configs),
         "委托": Entrust(),
         "持仓": Position(
           symbol: contractStore.symbol,

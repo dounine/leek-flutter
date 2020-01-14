@@ -305,7 +305,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
                             })
                       ])
                 : Padding(
-                    padding: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
+                    padding: EdgeInsets.all(ScreenUtil.instance.setWidth(200)),
                     child: Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -323,7 +323,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
                           color: Colors.black12,
                         ),
                         Text(
-                          "没有数据显示",
+                          "当前没有委托数据",
                           style: TextStyle(
                             color: Colors.black54,
                           ),

@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
 class Trades extends StatefulWidget {
-  Trades({Key key}) : super(key: key);
+  final List<ConfigInfo> configs;
+  Trades({Key key, @required this.configs}) : super(key: key);
 
   @override
   _TradesState createState() {
@@ -23,9 +24,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<Color> skeletonColor;
   CurvedAnimation curved;
+  List<ConfigInfo> configs;
 
   @override
   void initState() {
+    configs = widget.configs;
     controller = AnimationController(
         duration: const Duration(seconds: 1), lowerBound: 0.5, vsync: this);
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
@@ -62,6 +65,49 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     ContractStore contractStore = Provider.of<ContractStore>(context);
     SocketStore socketStore = Provider.of<SocketStore>(context);
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
+
+    ConfigInfo notFound = ConfigInfo("", 0, 100, 0, 0, "", 1, "");
+
+    ConfigInfo open_online =
+        configs.where((item) => item.keyName == "open_online").toList()[0] ??
+            notFound;
+    ConfigInfo open_rebound_price = configs
+            .where((item) => item.keyName == "open_rebound_price")
+            .toList()[0] ??
+        notFound;
+    ConfigInfo open_plan_price_spread = configs
+            .where((item) => item.keyName == "open_plan_price_spread")
+            .toList()[0] ??
+        notFound;
+    ConfigInfo open_schedue =
+        configs.where((item) => item.keyName == "open_schedue").toList()[0] ??
+            notFound;
+    ConfigInfo open_entrust_timeout = configs
+            .where((item) => item.keyName == "open_entrust_timeout")
+            .toList()[0] ??
+        notFound;
+    ConfigInfo open_volume =
+        configs.where((item) => item.keyName == "open_volume").toList()[0] ??
+            notFound;
+    ConfigInfo close_online =
+        configs.where((item) => item.keyName == "close_online").toList()[0] ??
+            notFound;
+    ConfigInfo close_rebound_price = configs
+            .where((item) => item.keyName == "close_rebound_price")
+            .toList()[0] ??
+        notFound;
+    ConfigInfo close_plan_price_spread = configs
+            .where((item) => item.keyName == "close_plan_price_spread")
+            .toList()[0] ??
+        notFound;
+    ConfigInfo close_entrust_timeout = configs
+            .where((item) => item.keyName == "close_entrust_timeout")
+            .toList()[0] ??
+        notFound;
+    ConfigInfo close_volume =
+        configs.where((item) => item.keyName == "close_volume").toList()[0] ??
+            notFound;
+
     return SingleChildScrollView(
       child: !contractStore.push_info
           ? Container(
@@ -157,12 +203,12 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                               )
                             : CustomliderWidget2(
                                 width: ScreenUtil.instance.setWidth(860),
-                                minValue: 0,
-                                maxValue: 100,
+                                minValue: open_online.minValue,
+                                maxValue: open_online.maxValue,
                                 defaultValue1: contractStore.openEntrustValue,
                                 defaultValue2: contractStore.openTradeValue,
-                                setup: 1.0,
-                                fixed: 2,
+                                setup: open_online.setup,
+                                fixed: open_online.fixed,
                                 eventName:
                                     "online_open_entrust_price,online_open_trade_price",
                                 onChange: (double oldValue, double newValue) =>
@@ -187,11 +233,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 0,
-                          maxValue: 50,
+                          minValue: open_rebound_price.minValue,
+                          maxValue: open_rebound_price.maxValue,
                           defaultValue: contractStore.open_rebound_price,
-                          setup: 1.0,
-                          fixed: 0,
+                          setup: open_rebound_price.setup,
+                          fixed: open_rebound_price.fixed,
                           eventName: "open_rebound_price",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_rebound_price = newValue;
@@ -225,11 +271,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 0,
-                          maxValue: 50,
+                          minValue: open_plan_price_spread.minValue,
+                          maxValue: open_plan_price_spread.maxValue,
                           defaultValue: contractStore.open_plan_price_spread,
-                          setup: 1.0,
-                          fixed: 2,
+                          setup: open_plan_price_spread.setup,
+                          fixed: open_plan_price_spread.fixed,
                           eventName: "open_plan_price_spread",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_plan_price_spread = newValue;
@@ -263,11 +309,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 0,
-                          maxValue: 120,
+                          minValue: open_schedue.minValue,
+                          maxValue: open_schedue.maxValue,
                           defaultValue: contractStore.open_schedue["length"],
-                          setup: 1.0,
-                          fixed: 0,
+                          setup: open_schedue.setup,
+                          fixed: open_schedue.fixed,
                           eventName: "open_schedue",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_schedue = {
@@ -307,12 +353,12 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 1,
-                          maxValue: 60,
+                          minValue: open_entrust_timeout.minValue,
+                          maxValue: open_entrust_timeout.maxValue,
                           defaultValue:
                               contractStore.open_entrust_timeout["length"],
-                          setup: 1.0,
-                          fixed: 0,
+                          setup: open_entrust_timeout.setup,
+                          fixed: open_entrust_timeout.fixed,
                           eventName: "open_entrust_timeout",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_entrust_timeout = {
@@ -352,11 +398,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 1,
-                          maxValue: 100,
+                          minValue: open_volume.minValue,
+                          maxValue: open_volume.maxValue,
                           defaultValue: contractStore.open_volume,
-                          fixed: 0,
-                          setup: 1.0,
+                          fixed: open_volume.fixed,
+                          setup: open_volume.setup,
                           eventName: "open_volume",
                           onChange: (num oldValue, num newValue) {
                             contractStore.open_volume = newValue;
@@ -398,8 +444,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                                 child: Text(
                                   "${i}倍",
                                   style: TextStyle(
-                                      color: i ==
-                                              contractStore.open_lever_rate
+                                      color: i == contractStore.open_lever_rate
                                           ? Colors.black
                                           : Colors.grey,
                                       fontWeight: FontWeight.bold),
@@ -498,12 +543,12 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                               )
                             : CustomliderWidget2(
                                 width: ScreenUtil.instance.setWidth(860),
-                                minValue: 0,
-                                maxValue: 100,
+                                minValue: close_online.minValue,
+                                maxValue: close_online.maxValue,
                                 defaultValue1: contractStore.closeEntrustValue,
                                 defaultValue2: contractStore.closeTradeValue,
-                                setup: 1.0,
-                                fixed: 2,
+                                setup: close_online.setup,
+                                fixed: close_online.fixed,
                                 eventName:
                                     "online_close_entrust_price,online_close_trade_price",
                                 onChange: (double oldValue, double newValue) =>
@@ -528,11 +573,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 0,
-                          maxValue: 50,
+                          minValue: close_rebound_price.minValue,
+                          maxValue: close_rebound_price.maxValue,
                           defaultValue: contractStore.close_rebound_price,
-                          setup: 1.0,
-                          fixed: 0,
+                          setup: close_rebound_price.setup,
+                          fixed: close_rebound_price.fixed,
                           eventName: "close_rebound_price",
                           onChange: (num oldValue, num newValue) {
                             contractStore.close_rebound_price = newValue;
@@ -566,11 +611,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 0,
-                          maxValue: 50,
+                          minValue: close_plan_price_spread.minValue,
+                          maxValue: close_plan_price_spread.maxValue,
                           defaultValue: contractStore.close_plan_price_spread,
-                          setup: 1.0,
-                          fixed: 2,
+                          setup: close_plan_price_spread.setup,
+                          fixed: close_plan_price_spread.fixed,
                           eventName: "close_plan_price_spread",
                           onChange: (num oldValue, num newValue) {
                             contractStore.close_plan_price_spread = newValue;
@@ -604,12 +649,12 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 1,
-                          maxValue: 60,
+                          minValue: close_entrust_timeout.minValue,
+                          maxValue: close_entrust_timeout.maxValue,
                           defaultValue:
                               contractStore.close_entrust_timeout["length"],
-                          setup: 1.0,
-                          fixed: 0,
+                          setup: close_entrust_timeout.setup,
+                          fixed: close_entrust_timeout.fixed,
                           eventName: "close_entrust_timeout",
                           onChange: (num oldValue, num newValue) {
                             contractStore.close_entrust_timeout = {
@@ -649,11 +694,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         ),
                         CustomliderWidget(
                           width: ScreenUtil.instance.setWidth(860),
-                          minValue: 1,
-                          maxValue: 100,
+                          minValue: close_volume.minValue,
+                          maxValue: close_volume.maxValue,
                           defaultValue: contractStore.close_volume,
-                          fixed: 0,
-                          setup: 1.0,
+                          fixed: close_volume.fixed,
+                          setup: close_volume.setup,
                           eventName: "close_volume",
                           onChange: (num oldValue, num newValue) {
                             contractStore.close_volume = newValue;

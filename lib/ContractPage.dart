@@ -19,6 +19,19 @@ class ContractPage extends StatefulWidget {
   }
 }
 
+class ConfigInfo {
+  final String keyName;
+  final num minValue;
+  final num maxValue;
+  final num defaultValue;
+  final int fixed;
+  final String name;
+  final num setup;
+  final String symbol;
+  ConfigInfo(this.keyName, this.minValue, this.maxValue, this.defaultValue,
+      this.fixed, this.name, this.setup, this.symbol);
+}
+
 class OpenItem {
   final String contractType;
   final String direction;
@@ -34,6 +47,7 @@ class ContractInfo {
   final bool nextWeek;
   final String rise;
   final List<OpenItem> opens;
+  final List<ConfigInfo> configs;
 
   ContractInfo(
       {this.symbol,
@@ -41,7 +55,8 @@ class ContractInfo {
       this.thisWeek,
       this.nextWeek,
       this.rise,
-      this.opens});
+      this.opens,
+      this.configs});
 }
 
 class _ContractPageState extends State<ContractPage> {
@@ -66,13 +81,28 @@ class _ContractPageState extends State<ContractPage> {
             openItems.add(OpenItem(
                 contractType: j["contractType"], direction: j["direction"]));
           });
+          List<ConfigInfo> configs =
+              (item["configs"] as List<dynamic>).map((citem) {
+            return ConfigInfo(
+              citem["keyName"],
+              citem["minValue"],
+              citem["maxValue"],
+              citem["defaultValue"],
+              citem["fixed"],
+              citem["name"],
+              citem["setup"],
+              citem["symbol"],
+            );
+          }).toList();
           tmpList.add(ContractInfo(
-              symbol: item["symbol"],
-              quarter: item["quarter"],
-              thisWeek: item["thisWeek"],
-              nextWeek: item["nextWeek"],
-              rise: "0.0",
-              opens: openItems));
+            symbol: item["symbol"],
+            quarter: item["quarter"],
+            thisWeek: item["thisWeek"],
+            nextWeek: item["nextWeek"],
+            rise: "0.0",
+            opens: openItems,
+            configs: configs
+          ));
         });
         setState(() {
           _reqStatus = data["status"];
@@ -247,8 +277,7 @@ class _ContractPageState extends State<ContractPage> {
                   child: Text(
                     "${data.rise}%",
                     style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500),
+                        color: Colors.white, fontWeight: FontWeight.w500),
                   ),
                 ),
               ),
