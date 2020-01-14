@@ -80,7 +80,6 @@ class _PositionState extends State<Position> {
     try {
       setState(() {
         _reqStatus = "request";
-        _list = null;
       });
       Response response = await Config.dio
           .delete("/contract/entrust/cancel/limit/${symbol}/${orderId}");
@@ -115,6 +114,7 @@ class _PositionState extends State<Position> {
     try {
       setState(() {
         _reqStatus = "request";
+        _list = null;
       });
       Response response =
           await Config.dio.get("/contract/position/${symbol}/${contractType}/${direction}");
