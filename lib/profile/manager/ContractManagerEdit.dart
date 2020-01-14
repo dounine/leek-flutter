@@ -272,6 +272,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
                                               onChanged: (value) {
                                                 setState(() {
                                                   _period = value;
+                                                  _symbol = value;
                                                 });
                                                 // _choose(_symbol, _type);
                                                 Vibrate.feedback(
