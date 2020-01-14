@@ -8,6 +8,7 @@ import 'package:leek/LoginPage.dart';
 import 'package:leek/Screen.dart';
 import 'package:leek/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vibrate/vibrate.dart';
 
 class UserStore extends ChangeNotifier {
   UserStore() {
@@ -114,13 +115,22 @@ class UserStore extends ChangeNotifier {
       "accessKey": _apiKey,
       "accessSecret": _apiSecret
     };
-    Response response = await Config.dio.post("/user/api", data: saveData);
-    Map<String, dynamic> result = response.data;
-    _status = result["status"];
-    if (callback != null) {
-      callback(_status, result["msg"] ?? "");
+    try {
+      Response response = await Config.dio.post("/user/api", data: saveData);
+      Map<String, dynamic> result = response.data;
+      if (result["status"] == "ok") {
+        Vibrate.feedback(FeedbackType.light);
+      } else {
+        Vibrate.feedback(FeedbackType.warning);
+      }
+      _status = result["status"];
+      if (callback != null) {
+        callback(_status, result["msg"] ?? "");
+      }
+      notifyListeners();
+    } catch (e) {
+      Vibrate.feedback(FeedbackType.warning);
     }
-    notifyListeners();
   }
 
   void initWebSession() async {

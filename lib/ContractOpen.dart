@@ -76,9 +76,10 @@ class _ContractOpenState extends State<ContractOpen>
       Response response = await Config.dio
           .get("/open/request/info/${symbol}/${contractType}/${direction}");
       Map<String, dynamic> data = response.data;
+      print(data);
       if (data["status"] == "ok" && data["data"] == null) {
         setState(() {
-          _agree = "";
+          _agree = null;
           _reqStatus = data["status"];
         });
       } else if (data["status"] == "ok" && data["data"] != null) {

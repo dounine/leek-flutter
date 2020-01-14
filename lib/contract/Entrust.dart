@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:leek/contract/LimitEntrust.dart';
+import 'package:leek/contract/PlanEntrust.dart';
+import 'package:leek/store/ContractStore.dart';
+import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
 class Entrust extends StatefulWidget {
@@ -11,6 +16,7 @@ class Entrust extends StatefulWidget {
 }
 
 class _EntrustState extends State<Entrust> {
+  String type = "limit";
   @override
   void initState() {
     super.initState();
@@ -23,60 +29,47 @@ class _EntrustState extends State<Entrust> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    ContractStore contractStore = Provider.of<ContractStore>(context);
     return Container(
-      child: Column(
-        children: <Widget>[
-          RaisedButton(
-            child: Text("heavy"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.heavy);
-            },
-          ),
-          RaisedButton(
-            child: Text("selection"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.selection);
-            },
-          ),
-          RaisedButton(
-            child: Text("warning"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.warning);
-            },
-          ),
-          RaisedButton(
-            child: Text("error"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.error);
-            },
-          ),
-          RaisedButton(
-            child: Text("success"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.success);
-            },
-          ),
-          RaisedButton(
-            child: Text("medium"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.medium);
-            },
-          ),
-          RaisedButton(
-            child: Text("light"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.light);
-            },
-          ),
-          RaisedButton(
-            child: Text("impact"),
-            onPressed: (){
-              Vibrate.feedback(FeedbackType.impact);
-            },
-          )
-        ],
-      )
-    );
+        child: Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            FlatButton(
+              textColor: type == "limit" ? Colors.black87 : Colors.grey,
+              onPressed: () {
+                setState(() {
+                  type = "limit";
+                });
+                Vibrate.feedback(FeedbackType.light);
+              },
+              child:
+                  Text("限价委托", style: TextStyle(fontWeight: FontWeight.w500)),
+            ),
+            FlatButton(
+              textColor: type == "plan" ? Colors.black87 : Colors.grey,
+              onPressed: () {
+                setState(() {
+                  type = "plan";
+                });
+                Vibrate.feedback(FeedbackType.light);
+              },
+              child:
+                  Text("计划委托", style: TextStyle(fontWeight: FontWeight.w500)),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: ScreenUtil.instance.setHeight(30),
+        ),
+        type == "limit"
+            ? LimitEntrust(
+                symbol: contractStore.symbol,
+                contractType: contractStore.contractType)
+            : PlanEntrust(
+                symbol: contractStore.symbol,
+                contractType: contractStore.contractType),
+      ],
+    ));
   }
 }

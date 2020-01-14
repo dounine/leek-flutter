@@ -5,6 +5,7 @@ import 'package:leek/Config.dart';
 import 'package:leek/store/UserStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
+import 'package:vibrate/vibrate.dart';
 
 class OpenRequest extends StatefulWidget {
   const OpenRequest({Key key}) : super(key: key);
@@ -56,6 +57,7 @@ class _OpenRequestState extends State<OpenRequest> {
           "/open/request/admin/info/${phone}/${symbol}/${contractType}/${direction}/${value}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
+        Vibrate.feedback(FeedbackType.light);
         List<OpenRequestInfo> list = _listInfos.map((item) {
           if (item.phone == phone &&
               item.symbol == symbol &&
@@ -73,7 +75,7 @@ class _OpenRequestState extends State<OpenRequest> {
           _listInfos = list;
         });
       } else {
-        print(data);
+        Vibrate.feedback(FeedbackType.warning);
         setState(() {
           _reqStatus = data["status"];
         });
@@ -84,6 +86,7 @@ class _OpenRequestState extends State<OpenRequest> {
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

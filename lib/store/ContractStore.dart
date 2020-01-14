@@ -34,7 +34,7 @@ class ContractStore extends ChangeNotifier {
   num _open_volume = 1;
   Map<String, dynamic> _open_schedue = {"length": 3, "unit": "seconds"};
   Map<String, dynamic> _open_entrust_timeout = {"length": 3, "unit": "seconds"};
-  String _open_lever_rate = "20";
+  int _open_lever_rate = 20;
 
   String _close_status = "--";
   bool _close_bind = false;
@@ -50,7 +50,7 @@ class ContractStore extends ChangeNotifier {
   bool get push_info => _push_info;
 
   String get open_status => _open_status;
-  String get open_lever_rate => _open_lever_rate;
+  int get open_lever_rate => _open_lever_rate;
   bool get open_enable => _open_enable;
   num get open_rebound_price => _open_rebound_price;
   num get open_plan_price_spread => _open_plan_price_spread;
@@ -85,7 +85,7 @@ class ContractStore extends ChangeNotifier {
     _open_rebound_price = value;
   }
 
-  set open_lever_rate(String value) {
+  set open_lever_rate(int value) {
     _open_lever_rate = value;
     notifyListeners();
   }
@@ -180,7 +180,6 @@ class ContractStore extends ChangeNotifier {
       // _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
     } else if (data["status"] == "ok" && data["type"] == "po") {
       var d = data["data"];
-      print(d);
       if (d["offset"] == "open") {
         if (d["tv"] != null) {
           _openTradeValue = d["tv"];
@@ -218,7 +217,6 @@ class ContractStore extends ChangeNotifier {
       }
     } else if (data["status"] == "ok" && data["type"] == "push_info") {
       var d = data["data"];
-      print(d);
       _push_info = true;
       if (d["open_enable"] != null) {
         _open_enable = d["open_enable"];

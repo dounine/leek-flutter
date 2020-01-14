@@ -70,8 +70,10 @@ class _ConfigEditState extends State<ConfigEdit> {
       });
       Map<String, dynamic> data = response.data;
       if (data["status"] == "fail") {
+        Vibrate.feedback(FeedbackType.warning);
         ScaffoldUtil.show(_context, data);
       } else {
+        Vibrate.feedback(FeedbackType.light);
         ScaffoldUtil.show(_context, data, msg: "保存成功");
       }
 
@@ -82,6 +84,7 @@ class _ConfigEditState extends State<ConfigEdit> {
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

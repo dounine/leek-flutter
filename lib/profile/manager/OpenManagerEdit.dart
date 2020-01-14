@@ -85,12 +85,14 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
             _list = copyList;
           });
         } else {
+          Vibrate.feedback(FeedbackType.warning);
           ScaffoldUtil.show(_context, data);
         }
       } catch (e) {
         setState(() {
           _reqStatus = "${symbol}_${contractType}_${direction}_timeout";
         });
+        Vibrate.feedback(FeedbackType.warning);
         ScaffoldUtil.show(_context,
             {"status": "${symbol}_${contractType}_${direction}_timeout"});
       }
@@ -130,12 +132,14 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
             _list = copyList;
           });
         } else {
+          Vibrate.feedback(FeedbackType.warning);
           ScaffoldUtil.show(_context, data);
         }
       } catch (e) {
         setState(() {
           _reqStatus = "${symbol}_${contractType}_${direction}_timeout";
         });
+        Vibrate.feedback(FeedbackType.warning);
         ScaffoldUtil.show(_context,
             {"status": "${symbol}_${contractType}_${direction}_timeout"});
       }

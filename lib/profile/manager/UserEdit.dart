@@ -6,6 +6,7 @@ import 'package:leek/profile/manager/User.dart';
 import 'package:leek/store/UserStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
+import 'package:vibrate/vibrate.dart';
 
 class UserEdit extends StatefulWidget {
   final String title;
@@ -50,6 +51,11 @@ class _UserEditState extends State<UserEdit> {
       Response response = await Config.dio.post("/user/admin/info",
           data: {"phone": _phone, "password": _password});
       Map<String, dynamic> data = response.data;
+      if (data["status"] == "ok") {
+        Vibrate.feedback(FeedbackType.light);
+      } else {
+        Vibrate.feedback(FeedbackType.warning);
+      }
       setState(() {
         _reqStatus = data["status"];
       });
@@ -59,6 +65,7 @@ class _UserEditState extends State<UserEdit> {
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
@@ -74,12 +81,18 @@ class _UserEditState extends State<UserEdit> {
       setState(() {
         _reqStatus = data["status"];
       });
+      if (data["status"] == "ok") {
+        Vibrate.feedback(FeedbackType.light);
+      } else {
+        Vibrate.feedback(FeedbackType.warning);
+      }
       ScaffoldUtil.show(_context, data,
           msg: "修改${data['status'] == 'ok' ? '成功' : '失败'}");
     } catch (e) {
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
@@ -96,6 +109,7 @@ class _UserEditState extends State<UserEdit> {
           msg: "${_status == 'normal' ? '锁定' : '解琐'}" +
               (data["status"] == "ok" ? "成功" : "失败"));
       if (data["status"] == "ok") {
+        Vibrate.feedback(FeedbackType.light);
         if (_status == "normal") {
           setState(() {
             _reqStatus = data["status"];
@@ -108,12 +122,14 @@ class _UserEditState extends State<UserEdit> {
           });
         }
       } else {
+        Vibrate.feedback(FeedbackType.warning);
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
       setState(() {
         _reqStatus = "timeout";
       });
+      Vibrate.feedback(FeedbackType.light);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

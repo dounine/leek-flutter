@@ -157,10 +157,10 @@ class _ContractPageState extends State<ContractPage> {
                       ),
                     )
                   : Container(
-                      child: new ListView.separated(
+                      child: ListView.separated(
                           itemCount: list.length,
                           separatorBuilder: (BuildContext context, int index) =>
-                              new Divider(
+                              const Divider(
                                 height: 1,
                               ),
                           itemBuilder: (BuildContext context, int index) {

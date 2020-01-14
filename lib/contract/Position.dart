@@ -22,7 +22,6 @@ class _PositionState extends State<Position> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       height: 100,
       child: Text("position"),

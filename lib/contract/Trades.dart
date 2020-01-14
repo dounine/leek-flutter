@@ -398,7 +398,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                                 child: Text(
                                   "${i}倍",
                                   style: TextStyle(
-                                      color: i.toString() ==
+                                      color: i ==
                                               contractStore.open_lever_rate
                                           ? Colors.black
                                           : Colors.grey,
@@ -406,7 +406,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                                 ),
                                 onTap: () {
                                   Vibrate.feedback(FeedbackType.selection);
-                                  contractStore.open_lever_rate = i.toString();
+                                  contractStore.open_lever_rate = i;
                                   socketStore.sendMessage({
                                     "type": "contract_update",
                                     "data": {

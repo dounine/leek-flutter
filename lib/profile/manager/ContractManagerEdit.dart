@@ -78,6 +78,11 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
           "nextWeek": _nextWeek
         });
         Map<String, dynamic> data = response.data;
+        if (data["status"] == "fail") {
+          Vibrate.feedback(FeedbackType.warning);
+        } else {
+          Vibrate.feedback(FeedbackType.light);
+        }
         setState(() {
           _reqStatus = data["status"];
         });
@@ -87,6 +92,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
         setState(() {
           _reqStatus = "timeout";
         });
+        Vibrate.feedback(FeedbackType.warning);
         ScaffoldUtil.show(_context, {"status": "timeout"});
       }
     }
@@ -101,8 +107,11 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
           "/contract/admin/info/auto/${_symbol}/${contractType}/${value}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "fail") {
+        Vibrate.feedback(FeedbackType.warning);
         ScaffoldUtil.show(_context, data,
             msg: "${value ? '开通' : '关闭'}" + "失败:${data['msg']}");
+      } else {
+        Vibrate.feedback(FeedbackType.light);
       }
 
       setState(() {
@@ -112,6 +121,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
       setState(() {
         _reqStatus = contractType + "_timeout";
       });
+      Vibrate.feedback(FeedbackType.warning);
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
