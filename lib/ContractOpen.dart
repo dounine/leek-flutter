@@ -2,16 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
-import 'package:leek/ContractPage.dart';
-import 'package:leek/contract/Contrast.dart';
-import 'package:leek/contract/Entrust.dart';
-import 'package:leek/contract/Position.dart';
-import 'package:leek/contract/Trades.dart';
-import 'package:leek/store/ContractStore.dart';
-import 'package:leek/store/SocketStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:provider/provider.dart';
-import 'package:vibrate/vibrate.dart';
 
 class ContractOpen extends StatefulWidget {
   final String symbol;

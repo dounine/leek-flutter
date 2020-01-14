@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/profile/manager/User.dart';
-import 'package:leek/store/UserStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
 class UserEdit extends StatefulWidget {

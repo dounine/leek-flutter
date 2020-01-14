@@ -6,12 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
-import 'package:leek/store/UserStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
-
-import 'ContractTrade.dart';
 
 class ContractPage extends StatefulWidget {
   ContractPage({Key key}) : super(key: key);

@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,9 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/ContractPage.dart';
 import 'package:leek/ContractTrade.dart';
-import 'package:leek/ContrastPage.dart';
-import 'package:leek/components/cslider.dart';
-import 'package:leek/components/flutter_range_slider.dart' as fsr;
 import 'package:leek/profile/Profile.dart';
 import 'package:leek/profile/auth/Api.dart';
 import 'package:leek/profile/auth/Auth.dart';

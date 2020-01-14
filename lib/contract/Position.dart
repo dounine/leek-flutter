@@ -2,9 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
-import 'package:leek/store/ContractStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:provider/provider.dart';
 import 'package:vibrate/vibrate.dart';
 
 class PositionOrder {
@@ -76,18 +74,19 @@ class _PositionState extends State<Position> {
     super.dispose();
   }
 
-  Future cancel(String orderId) async {
+  Future lightningClose(num volumn) async {
     try {
       setState(() {
         _reqStatus = "request";
       });
-      Response response = await Config.dio
-          .delete("/contract/entrust/cancel/limit/${symbol}/${orderId}");
+      Response response = await Config.dio.delete(
+          "/contract/position/lightning_close/${symbol}/${contractType}/${direction}/${volumn}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
         setState(() {
           _reqStatus = data["status"];
         });
+        query();
         Vibrate.feedback(FeedbackType.light);
       } else {
         setState(() {
@@ -354,7 +353,25 @@ class _PositionState extends State<Position> {
                   "闪电平仓",
                   style: TextStyle(color: Colors.blue),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return AlertDialog(
+                        title: Text('闪电平仓提示'),
+                        content: Text("确定要以最优30档闪电平仓么?"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('我确定'),
+                            onPressed: () {
+                              lightningClose(limitOrder.volume);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],

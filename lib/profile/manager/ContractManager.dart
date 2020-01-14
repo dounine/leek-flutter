@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/profile/manager/ContractManagerEdit.dart';
-import 'package:leek/store/UserStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:provider/provider.dart';
 
 class ContractManager extends StatefulWidget {
   const ContractManager({Key key}) : super(key: key);

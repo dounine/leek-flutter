@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
-import 'package:leek/profile/manager/ContractManager.dart';
 import 'package:leek/profile/manager/OpenManager.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:vibrate/vibrate.dart';

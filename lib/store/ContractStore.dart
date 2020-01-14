@@ -3,8 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:leek/Config.dart';
-import 'package:leek/store/SocketStore.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractStore extends ChangeNotifier {
