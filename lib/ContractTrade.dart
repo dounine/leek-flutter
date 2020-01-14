@@ -84,7 +84,7 @@ class _ContractTradeState extends State<ContractTrade>
     super.dispose();
   }
 
-  void choose(ContractInfo contractInfo) async {
+  void choose(ContractInfo contractInfo, String nname) async {
     ContractStore contractStore = Provider.of<ContractStore>(context);
     await contractStore.choose(contractInfo.symbol);
     _socketMsg = [
@@ -103,6 +103,11 @@ class _ContractTradeState extends State<ContractTrade>
       Provider.of<SocketStore>(context)
           .sendMessage({"type": "sub", "channels": _socketMsg});
     }
+    if (nname != null) {
+      setState(() {
+        navName = nname;
+      });
+    }
   }
 
   @override
@@ -112,13 +117,17 @@ class _ContractTradeState extends State<ContractTrade>
     ContractStore contractStore = Provider.of<ContractStore>(context);
     SocketStore socketStore = Provider.of<SocketStore>(context);
     if (pages == null) {
-      choose(contractInfo);
+      choose(contractInfo, null);
       ContractStore contractStore = Provider.of<ContractStore>(context);
       socketStore.addMsgListener("contract", contractStore.onMessage);
       pages = {
         "操盘": Trades(),
         "委托": Entrust(),
-        "持仓": Position(),
+        "持仓": Position(
+          symbol: contractStore.symbol,
+          contractType: contractStore.contractType,
+          direction: contractStore.direction,
+        ),
         "多空": Contrast()
       };
     }
@@ -235,7 +244,7 @@ class _ContractTradeState extends State<ContractTrade>
                                             "channels": _socketMsg
                                           });
                                           contractStore.contractType = key;
-                                          choose(contractInfo);
+                                          choose(contractInfo, null);
                                           Vibrate.feedback(FeedbackType.light);
                                           controller.reset();
                                           controller.forward();
@@ -298,7 +307,13 @@ class _ContractTradeState extends State<ContractTrade>
                     : Container(),
                 hasOpen
                     ? Expanded(
-                        child: pages[navName],
+                        child: navName == "持仓"
+                            ? new Position(
+                                symbol: contractStore.symbol,
+                                contractType: contractStore.contractType,
+                                direction: contractStore.direction,
+                              )
+                            : pages[navName],
                       )
                     : new ContractOpen(contractStore.symbol,
                         contractStore.contractType, contractStore.direction)
@@ -309,7 +324,7 @@ class _ContractTradeState extends State<ContractTrade>
             currentIndex: contractStore.direction == "buy" ? 0 : 1,
             onTap: (index) {
               contractStore.direction = (index == 0 ? "buy" : "sell");
-              choose(contractInfo);
+              choose(contractInfo, "操盘");
               Vibrate.feedback(FeedbackType.light);
             },
             items: const <BottomNavigationBarItem>[

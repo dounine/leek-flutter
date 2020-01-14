@@ -236,6 +236,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   "委托量(张)",
@@ -292,7 +293,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
               ],
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
                   "保证金(BTC)",
@@ -345,8 +346,9 @@ class _LimitEntrustState extends State<LimitEntrust> {
                               query();
                             })
                       ])
-                : Center(
-                    child: CircularProgressIndicator(),
+                : Padding(
+                    padding: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
+                    child: Center(child: CircularProgressIndicator()),
                   ))
             : (_list.length == 0)
                 ? Center(

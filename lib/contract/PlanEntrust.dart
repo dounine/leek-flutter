@@ -235,6 +235,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   "委托量(张)",
@@ -266,7 +267,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
               ],
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
                   "保证金(BTC)",
@@ -305,8 +306,11 @@ class _PlanEntrustState extends State<PlanEntrust> {
                               query();
                             })
                       ])
-                : Center(
-                    child: CircularProgressIndicator(),
+                : Padding(
+                    padding: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ))
             : (_list.length == 0)
                 ? Center(
