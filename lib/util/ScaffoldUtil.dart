@@ -13,6 +13,9 @@ class ScaffoldUtil {
       } else if (data["status"] == "timeout") {
         icon = Icons.access_time;
       }
+      String _msg =
+          msg ?? (data["status"] == "timeout" ? "请求超时,请重试" : data['msg']);
+      Scaffold.of(context).hideCurrentSnackBar();
       Scaffold.of(context).showSnackBar(SnackBar(
           content: Row(
         children: <Widget>[
@@ -24,7 +27,7 @@ class ScaffoldUtil {
             width: 0,
           ),
           new Text(
-            msg ?? (data["status"] == "timeout" ? "请求超时,请重试" : data['msg']),
+            _msg,
             style: TextStyle(
                 color: data["status"] != "ok" ? Colors.red : Colors.white),
           )
