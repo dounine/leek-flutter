@@ -70,6 +70,11 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
+  void writeDbAccount(String type, String value) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString(type, value);
+  }
+
   @override
   void dispose() {
     try {
@@ -246,6 +251,7 @@ class _LoginPageState extends State<LoginPage>
                               setState(() {
                                 _phone = value;
                               });
+                              writeDbAccount("phone", value);
                             },
                             decoration: InputDecoration(
                                 labelText: "Phone",
@@ -273,6 +279,7 @@ class _LoginPageState extends State<LoginPage>
                             setState(() {
                               _password = value;
                             });
+                            writeDbAccount("password", value);
                           },
                           decoration: InputDecoration(
                               labelText: "Password",
