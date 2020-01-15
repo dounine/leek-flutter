@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class OpenRequest extends StatefulWidget {
   const OpenRequest({Key key}) : super(key: key);
@@ -66,13 +66,13 @@ class _OpenRequestState extends State<OpenRequest> {
             return item;
           }
         }).toList();
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         setState(() {
           _reqStatus = data["status"];
           _listInfos = list;
         });
       } else {
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         setState(() {
           _reqStatus = data["status"];
         });
@@ -83,7 +83,7 @@ class _OpenRequestState extends State<OpenRequest> {
       setState(() {
         _reqStatus = "timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
@@ -110,11 +110,13 @@ class _OpenRequestState extends State<OpenRequest> {
           _reqStatus = data["status"];
           _listInfos = list;
         });
+        HapticFeedback.lightImpact();
       } else {
         print(data);
         setState(() {
           _reqStatus = data["status"];
         });
+        HapticFeedback.mediumImpact();
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
@@ -122,6 +124,7 @@ class _OpenRequestState extends State<OpenRequest> {
       setState(() {
         _reqStatus = "timeout";
       });
+      HapticFeedback.heavyImpact();
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

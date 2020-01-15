@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:leek/ContractOpen.dart';
 import 'package:leek/ContractPage.dart';
 import 'package:leek/contract/Contrast.dart';
@@ -9,7 +11,6 @@ import 'package:leek/contract/Trades.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
 import 'package:provider/provider.dart';
-import 'package:vibrate/vibrate.dart';
 
 class ContractTrade extends StatefulWidget {
   const ContractTrade({Key key}) : super(key: key);
@@ -39,7 +40,6 @@ class _ContractTradeState extends State<ContractTrade>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    Vibrate.feedback(FeedbackType.light);
     controller = new AnimationController(
         duration: const Duration(milliseconds: 500), vsync: this); //动画控制器
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
@@ -144,9 +144,24 @@ class _ContractTradeState extends State<ContractTrade>
             title: Consumer<SocketStore>(
               builder: (context, socketStore, child) {
                 return socketStore.status == SocketStatus.connected
-                    ? Text(
-                        contractInfo.symbol,
-                        style: TextStyle(color: Colors.white),
+                    ? Container(
+                        width: ScreenUtil.instance.setWidth(170),
+                        child: Row(
+                          children: <Widget>[
+                            SvgPicture.asset(
+                                "images/${contractInfo.symbol.toLowerCase()}.svg",
+                                width: ScreenUtil.instance.setWidth(50),
+                                height: ScreenUtil.instance.setWidth(50),
+                                semanticsLabel: contractInfo.symbol),
+                            SizedBox(
+                              width: ScreenUtil.instance.setWidth(10),
+                            ),
+                            Text(
+                              contractInfo.symbol,
+                              style: TextStyle(color: Colors.white),
+                            )
+                          ],
+                        ),
                       )
                     : SizedBox(
                         height: ScreenUtil.instance.setWidth(50),
@@ -245,7 +260,7 @@ class _ContractTradeState extends State<ContractTrade>
                                           });
                                           contractStore.contractType = key;
                                           choose(contractInfo, null);
-                                          Vibrate.feedback(FeedbackType.light);
+                                          HapticFeedback.selectionClick();
                                           controller.reset();
                                           controller.forward();
                                         },
@@ -295,7 +310,7 @@ class _ContractTradeState extends State<ContractTrade>
                                 setState(() {
                                   navName = name;
                                 });
-                                Vibrate.feedback(FeedbackType.light);
+                                HapticFeedback.selectionClick();
                               },
                               child: Text(name,
                                   style:
@@ -325,7 +340,7 @@ class _ContractTradeState extends State<ContractTrade>
             onTap: (index) {
               contractStore.direction = (index == 0 ? "buy" : "sell");
               choose(contractInfo, "操盘");
-              Vibrate.feedback(FeedbackType.light);
+              HapticFeedback.selectionClick();
             },
             items: const <BottomNavigationBarItem>[
               const BottomNavigationBarItem(

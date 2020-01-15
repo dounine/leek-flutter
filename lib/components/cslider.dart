@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
-import 'package:vibrate/vibrate.dart';
 
 class CustomliderWidget extends StatefulWidget {
   final double width;
@@ -159,7 +159,7 @@ class _CustomliderState extends State<CustomliderWidget>
           : (nextLeft > width ? width : nextLeft);
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
       if (this.value != nextValue.round().toDouble()) {
-        Vibrate.feedback(FeedbackType.selection);
+        HapticFeedback.lightImpact();
         widget.onChange(this.value, nextValue.round());
       }
       setState(() {

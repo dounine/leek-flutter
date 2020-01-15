@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class User extends StatefulWidget {
   const User({Key key}) : super(key: key);
@@ -58,7 +58,7 @@ class _UserState extends State<User> {
           return UserInfo(item["phone"], item["status"], item["password"],
               item["admin"], item["createTime"], false);
         }).toList();
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         setState(() {
           _reqStatus = data["status"];
           _listInfos = list;
@@ -67,14 +67,14 @@ class _UserState extends State<User> {
         setState(() {
           _reqStatus = data["status"];
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
-      Vibrate.feedback(FeedbackType.warning);
       setState(() {
         _reqStatus = "timeout";
       });
+      HapticFeedback.heavyImpact();
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

@@ -4,10 +4,10 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibrate/vibrate.dart';
 
 class OrdinalSales {
   final String year;
@@ -64,7 +64,7 @@ class _ContrastState extends State<Contrast> {
     Response response =
         await _dio.get(url, options: Options(headers: {"token": token}));
     Map<String, dynamic> result = response.data;
-    Vibrate.feedback(FeedbackType.success);
+    HapticFeedback.lightImpact();
     if (result["status"] == "ok") {
       List<dynamic> data = result["data"] as List<dynamic>;
       List<Map<String, dynamic>> list =
@@ -179,7 +179,7 @@ class _ContrastState extends State<Contrast> {
                             ),
                             onPressed: () {
                               _choose(_symbol, name);
-                              Vibrate.feedback(FeedbackType.light);
+                              HapticFeedback.selectionClick();
                             },
                           ),
                           Positioned(
@@ -266,7 +266,7 @@ class _ContrastState extends State<Contrast> {
                                 _period = value;
                               });
                               _choose(_symbol, _type);
-                              Vibrate.feedback(FeedbackType.light);
+                              HapticFeedback.selectionClick();
                             },
                           ),
                         ),

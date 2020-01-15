@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/profile/manager/ContractManagerEdit.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class ConfigEdit extends StatefulWidget {
   final String title;
@@ -69,10 +69,10 @@ class _ConfigEditState extends State<ConfigEdit> {
       });
       Map<String, dynamic> data = response.data;
       if (data["status"] == "fail") {
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         ScaffoldUtil.show(_context, data);
       } else {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         ScaffoldUtil.show(_context, data, msg: "保存成功");
       }
 
@@ -83,7 +83,7 @@ class _ConfigEditState extends State<ConfigEdit> {
       setState(() {
         _reqStatus = "timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }

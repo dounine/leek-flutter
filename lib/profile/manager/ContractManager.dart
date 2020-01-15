@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/profile/manager/ContractManagerEdit.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class ContractManager extends StatefulWidget {
   const ContractManager({Key key}) : super(key: key);
@@ -71,13 +71,13 @@ class _ContractManagerState extends State<ContractManager> {
           return ContractManagerInfo(item["symbol"], item["quarter"],
               item["thisWeek"], item["nextWeek"], igs, false);
         }).toList();
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         setState(() {
           _reqStatus = data["status"];
           _listInfos = list;
         });
       } else {
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         setState(() {
           _reqStatus = data["status"];
         });
@@ -85,7 +85,7 @@ class _ContractManagerState extends State<ContractManager> {
       }
     } catch (e) {
       print(e);
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       setState(() {
         _reqStatus = "timeout";
       });

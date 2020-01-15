@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class PositionOrder {
   final String direction;
@@ -87,12 +87,12 @@ class _PositionState extends State<Position> {
           _reqStatus = data["status"];
         });
         query();
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
         setState(() {
           _reqStatus = data["status"];
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         Future.delayed(Duration.zero, () {
           ScaffoldUtil.show(_context, data);
         });
@@ -102,7 +102,7 @@ class _PositionState extends State<Position> {
       setState(() {
         _reqStatus = "timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       Future.delayed(Duration.zero, () {
         ScaffoldUtil.show(_context, {"status": "timeout"});
       });
@@ -141,9 +141,9 @@ class _PositionState extends State<Position> {
           _reqStatus = data["status"];
           _list = limitOrders;
         });
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         setState(() {
           _reqStatus = data["status"];
         });
@@ -156,7 +156,7 @@ class _PositionState extends State<Position> {
       setState(() {
         _reqStatus = "timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       Future.delayed(Duration.zero, () {
         ScaffoldUtil.show(_context, {"status": "timeout"});
       });

@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class OpenManager extends StatefulWidget {
   const OpenManager({Key key}) : super(key: key);
@@ -73,7 +73,7 @@ class _OpenManagerState extends State<OpenManager> {
           });
           infos.add(OpenManagerInfo(item["phone"], l));
         });
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
         setState(() {
           _reqStatus = data["status"];
           _listInfos = infos;
@@ -82,12 +82,12 @@ class _OpenManagerState extends State<OpenManager> {
         setState(() {
           _reqStatus = data["status"];
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
       print(e);
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       setState(() {
         _reqStatus = "timeout";
       });

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:leek/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibrate/vibrate.dart';
 import 'package:web_socket_channel/io.dart';
 
 enum SocketStatus { close, connect, connected, closed }
@@ -71,7 +71,7 @@ class SocketStore extends ChangeNotifier {
   void onData(event) {
     if (_status != SocketStatus.connected) {
       _status = SocketStatus.connected;
-      Vibrate.feedback(FeedbackType.medium);
+      HapticFeedback.lightImpact();
       _connectedFuns.forEach((name, fun) {
         fun();
       });
@@ -84,13 +84,13 @@ class SocketStore extends ChangeNotifier {
 
   void onError(err) {
     print("socket 连接错误 ${err}");
-    Vibrate.feedback(FeedbackType.error);
+    HapticFeedback.heavyImpact();
   }
 
   void onDone() {
     new Timer(const Duration(seconds: 3), () {
       print("socket 关闭重新连接");
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.mediumImpact();
       _status = SocketStatus.closed;
       notifyListeners();
       init();

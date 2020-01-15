@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/LoginPage.dart';
 import 'package:leek/Screen.dart';
 import 'package:leek/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibrate/vibrate.dart';
 
 class UserStore extends ChangeNotifier {
   UserStore() {
@@ -119,9 +119,9 @@ class UserStore extends ChangeNotifier {
       Response response = await Config.dio.post("/user/api", data: saveData);
       Map<String, dynamic> result = response.data;
       if (result["status"] == "ok") {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
       }
       _status = result["status"];
       if (callback != null) {
@@ -129,7 +129,7 @@ class UserStore extends ChangeNotifier {
       }
       notifyListeners();
     } catch (e) {
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
     }
   }
 
@@ -163,6 +163,7 @@ class UserStore extends ChangeNotifier {
   void logout() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove("token");
+    HapticFeedback.lightImpact();
     init();
   }
 }

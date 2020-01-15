@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/animation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/components/cslider.dart';
-import 'package:vibrate/vibrate.dart';
 
 class CustomliderWidget2 extends StatefulWidget {
   final double width;
@@ -138,7 +137,7 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
           : (nextLeft > width ? width : nextLeft);
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
       if (this.value1 != nextValue.round().toDouble()) {
-        Vibrate.feedback(FeedbackType.selection);
+        HapticFeedback.selectionClick();
         widget.onChange(this.value1, nextValue.round());
       }
       setState(() {

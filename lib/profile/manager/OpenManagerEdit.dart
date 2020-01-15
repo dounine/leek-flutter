@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/profile/manager/OpenManager.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class OpenManagerEdit extends StatefulWidget {
   final String title;
@@ -83,15 +83,16 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                 "${symbol}_${contractType}_${direction}_" + data["status"];
             _list = copyList;
           });
+          HapticFeedback.lightImpact();
         } else {
-          Vibrate.feedback(FeedbackType.warning);
+          HapticFeedback.mediumImpact();
           ScaffoldUtil.show(_context, data);
         }
       } catch (e) {
         setState(() {
           _reqStatus = "${symbol}_${contractType}_${direction}_timeout";
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.heavyImpact();
         ScaffoldUtil.show(_context,
             {"status": "${symbol}_${contractType}_${direction}_timeout"});
       }
@@ -130,15 +131,16 @@ class _OpenManagerEditState extends State<OpenManagerEdit> {
                 "${symbol}_${contractType}_${direction}_" + data["status"];
             _list = copyList;
           });
+          HapticFeedback.lightImpact();
         } else {
-          Vibrate.feedback(FeedbackType.warning);
+          HapticFeedback.mediumImpact();
           ScaffoldUtil.show(_context, data);
         }
       } catch (e) {
         setState(() {
           _reqStatus = "${symbol}_${contractType}_${direction}_timeout";
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.heavyImpact();
         ScaffoldUtil.show(_context,
             {"status": "${symbol}_${contractType}_${direction}_timeout"});
       }

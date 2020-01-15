@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/profile/manager/ContractManager.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class ContractManagerEdit extends StatefulWidget {
   final String title;
@@ -79,9 +79,9 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
         });
         Map<String, dynamic> data = response.data;
         if (data["status"] == "fail") {
-          Vibrate.feedback(FeedbackType.warning);
+          HapticFeedback.mediumImpact();
         } else {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
         }
         setState(() {
           _reqStatus = data["status"];
@@ -92,7 +92,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
         setState(() {
           _reqStatus = "timeout";
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.heavyImpact();
         ScaffoldUtil.show(_context, {"status": "timeout"});
       }
     }
@@ -107,11 +107,11 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
           "/contract/admin/info/auto/${_symbol}/${contractType}/${value}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "fail") {
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         ScaffoldUtil.show(_context, data,
             msg: "${value ? '开通' : '关闭'}" + "失败:${data['msg']}");
       } else {
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       }
 
       setState(() {
@@ -121,7 +121,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
       setState(() {
         _reqStatus = contractType + "_timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
@@ -136,6 +136,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
       if (data["status"] == "ok") {
         List<dynamic> list = data["data"];
         Map<String, String> tmpMap = {};
+        HapticFeedback.lightImpact();
         list.asMap().forEach((index, item) {
           if (index == 0) {
             print(_period);
@@ -159,12 +160,14 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
         setState(() {
           _reqStatus = data["status"];
         });
+        HapticFeedback.mediumImpact();
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
       setState(() {
         _reqStatus = "timeout";
       });
+      HapticFeedback.heavyImpact();
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
@@ -274,9 +277,7 @@ class _ContractManagerEditState extends State<ContractManagerEdit> {
                                                   _period = value;
                                                   _symbol = value;
                                                 });
-                                                // _choose(_symbol, _type);
-                                                Vibrate.feedback(
-                                                    FeedbackType.light);
+                                                HapticFeedback.selectionClick();
                                               },
                                             ),
                                           )

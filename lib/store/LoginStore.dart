@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:leek/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibrate/vibrate.dart';
 
 class LoginStore extends ChangeNotifier {
   LoginStore() {
@@ -43,24 +43,24 @@ class LoginStore extends ChangeNotifier {
         SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         if (_status == "ok") {
-          Vibrate.feedback(FeedbackType.light);
+          HapticFeedback.lightImpact();
           await sharedPreferences.setString(
               "token", result["data"]["token"] ?? "");
           Config.setToken();
         } else {
-          Vibrate.feedback(FeedbackType.warning);
+          HapticFeedback.mediumImpact();
           await sharedPreferences.remove("token");
         }
         msg = result["msg"] ?? "";
         _next(_status, msg);
       } on DioError {
         _status = "fail";
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.heavyImpact();
         print("登录失败、请检查网络.");
         _next("fail", "登录失败、请检查网络.");
       } catch (e) {
         _status = "fail";
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.heavyImpact();
         print("登录失败、${msg}");
         _next("fail", "登录失败、${msg}");
       }

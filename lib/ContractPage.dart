@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
-import 'package:vibrate/vibrate.dart';
 
 class ContractPage extends StatefulWidget {
   ContractPage({Key key}) : super(key: key);
@@ -107,12 +108,12 @@ class _ContractPageState extends State<ContractPage> {
           _reqStatus = data["status"];
           list = tmpList;
         });
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
         setState(() {
           _reqStatus = data["status"];
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         ScaffoldUtil.show(_context, data);
       }
     } catch (e) {
@@ -120,7 +121,7 @@ class _ContractPageState extends State<ContractPage> {
       setState(() {
         _reqStatus = "timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       ScaffoldUtil.show(_context, {"status": "timeout"});
     }
   }
@@ -213,13 +214,26 @@ class _ContractPageState extends State<ContractPage> {
   Widget getRow(int index) {
     ContractInfo data = list[index];
     return Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+        padding: EdgeInsets.only(
+            left: ScreenUtil.instance.setWidth(30),
+            right: ScreenUtil.instance.setWidth(30),
+            top: ScreenUtil.instance.setWidth(20),
+            bottom: ScreenUtil.instance.setWidth(20)),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () => _onTap(index),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
+              Container(
+                padding:
+                    EdgeInsets.only(right: ScreenUtil.instance.setWidth(30)),
+                child: SvgPicture.asset(
+                    "images/${data.symbol.toLowerCase()}.svg",
+                    width: ScreenUtil.instance.setWidth(80),
+                    height: ScreenUtil.instance.setWidth(80),
+                    semanticsLabel: data.symbol),
+              ),
               Expanded(
                 child: Column(
                   children: <Widget>[
@@ -267,8 +281,8 @@ class _ContractPageState extends State<ContractPage> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(
-                    vertical: ScreenUtil.instance.setHeight(10),
-                    horizontal: ScreenUtil.instance.setWidth(30)),
+                    vertical: ScreenUtil.instance.setHeight(16),
+                    horizontal: ScreenUtil.instance.setWidth(34)),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                     color:

@@ -27,7 +27,6 @@ import 'package:leek/store/UserStore.dart';
 import 'package:leek/wallet/Wallet.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibrate/vibrate.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -148,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage>
   void _onChange(double oldValue, double newValue) {}
 
   void _onItemTapped(int index) {
-    Vibrate.feedback(FeedbackType.light);
+    HapticFeedback.selectionClick();
     setState(() {
       _selectedIndex = index;
     });

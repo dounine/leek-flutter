@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class LimitOrder {
   final String offset; //方向
@@ -82,12 +82,12 @@ class _LimitEntrustState extends State<LimitEntrust> {
             return item.order_id_str != orderId;
           }).toList();
         });
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
         setState(() {
           _reqStatus = data["status"];
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         Future.delayed(Duration.zero, () {
           ScaffoldUtil.show(_context, data);
         });
@@ -97,7 +97,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
       setState(() {
         _reqStatus = "timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       Future.delayed(Duration.zero, () {
         ScaffoldUtil.show(_context, {"status": "timeout"});
       });
@@ -137,11 +137,12 @@ class _LimitEntrustState extends State<LimitEntrust> {
           _reqStatus = data["status"];
           _list = limitOrders;
         });
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
         setState(() {
           _reqStatus = data["status"];
         });
+        HapticFeedback.mediumImpact();
         Future.delayed(Duration.zero, () {
           ScaffoldUtil.show(_context, data);
         });
@@ -151,6 +152,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
       setState(() {
         _reqStatus = "timeout";
       });
+      HapticFeedback.heavyImpact();
       Future.delayed(Duration.zero, () {
         ScaffoldUtil.show(_context, {"status": "timeout"});
       });

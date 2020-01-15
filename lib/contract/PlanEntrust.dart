@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
-import 'package:vibrate/vibrate.dart';
 
 class PlanOrder {
   final String offset; //方向
@@ -73,7 +73,6 @@ class _PlanEntrustState extends State<PlanEntrust> {
       Response response = await Config.dio
           .delete("/contract/entrust/cancel/plan/${symbol}/${orderId}");
       Map<String, dynamic> data = response.data;
-      print(data);
       if (data["status"] == "ok") {
         setState(() {
           _reqStatus = data["status"];
@@ -81,12 +80,12 @@ class _PlanEntrustState extends State<PlanEntrust> {
             return item.order_id_str != orderId;
           }).toList();
         });
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
         setState(() {
           _reqStatus = data["status"];
         });
-        Vibrate.feedback(FeedbackType.warning);
+        HapticFeedback.mediumImpact();
         Future.delayed(Duration.zero, () {
           ScaffoldUtil.show(_context, data);
         });
@@ -96,7 +95,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
       setState(() {
         _reqStatus = "timeout";
       });
-      Vibrate.feedback(FeedbackType.warning);
+      HapticFeedback.heavyImpact();
       Future.delayed(Duration.zero, () {
         ScaffoldUtil.show(_context, {"status": "timeout"});
       });
@@ -111,10 +110,8 @@ class _PlanEntrustState extends State<PlanEntrust> {
       Response response = await Config.dio
           .get("/contract/entrust/plan/${symbol}/${contractType}");
       Map<String, dynamic> data = response.data;
-      print(data);
       if (data["status"] == "ok") {
         Map<String, dynamic> dataMap = data["data"];
-        print(dataMap);
         List<dynamic> orders = dataMap["orders"];
         List<PlanOrder> limitOrders = orders.map((item) {
           return PlanOrder(
@@ -136,11 +133,12 @@ class _PlanEntrustState extends State<PlanEntrust> {
           _reqStatus = data["status"];
           _list = limitOrders;
         });
-        Vibrate.feedback(FeedbackType.light);
+        HapticFeedback.lightImpact();
       } else {
         setState(() {
           _reqStatus = data["status"];
         });
+        HapticFeedback.mediumImpact();
         Future.delayed(Duration.zero, () {
           ScaffoldUtil.show(_context, data);
         });
@@ -150,6 +148,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
       setState(() {
         _reqStatus = "timeout";
       });
+      HapticFeedback.heavyImpact();
       Future.delayed(Duration.zero, () {
         ScaffoldUtil.show(_context, {"status": "timeout"});
       });

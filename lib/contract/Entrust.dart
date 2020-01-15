@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/contract/LimitEntrust.dart';
 import 'package:leek/contract/PlanEntrust.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:provider/provider.dart';
-import 'package:vibrate/vibrate.dart';
 
 class Entrust extends StatefulWidget {
   Entrust({Key key}) : super(key: key);
@@ -41,7 +41,7 @@ class _EntrustState extends State<Entrust> {
                 setState(() {
                   type = "limit";
                 });
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.selectionClick();
               },
               child:
                   Text("限价委托", style: TextStyle(fontWeight: FontWeight.w500)),
@@ -52,7 +52,7 @@ class _EntrustState extends State<Entrust> {
                 setState(() {
                   type = "plan";
                 });
-                Vibrate.feedback(FeedbackType.light);
+                HapticFeedback.selectionClick();
               },
               child:
                   Text("计划委托", style: TextStyle(fontWeight: FontWeight.w500)),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Wallet extends StatefulWidget {
   Wallet({Key key}) : super(key: key);
@@ -22,6 +23,42 @@ class _WalletState extends State<Wallet> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("你的钱包空空如也"));
+    return Padding(
+      padding: const EdgeInsets.all(30),
+      child: Column(
+        children: <Widget>[
+          FlatButton(
+            child: Text("heavyImpact"),
+            onPressed: () {
+              HapticFeedback.heavyImpact();
+            },
+          ),
+          FlatButton(
+            child: Text("lightImpact"),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+            },
+          ),
+          FlatButton(
+            child: Text("mediumImpact()"),
+            onPressed: () {
+              HapticFeedback.mediumImpact();
+            },
+          ),
+          FlatButton(
+            child: Text("selectionClick()"),
+            onPressed: () {
+              HapticFeedback.selectionClick();
+            },
+          ),
+          FlatButton(
+            child: Text("vibrate()"),
+            onPressed: () {
+              HapticFeedback.vibrate();
+            },
+          )
+        ],
+      ),
+    );
   }
 }

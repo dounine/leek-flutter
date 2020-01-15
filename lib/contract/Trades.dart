@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/ContractPage.dart';
 import 'package:leek/components/cslider.dart';
@@ -6,7 +7,6 @@ import 'package:leek/components/cslider2.dart';
 import 'package:leek/store/ContractStore.dart';
 import 'package:leek/store/SocketStore.dart';
 import 'package:provider/provider.dart';
-import 'package:vibrate/vibrate.dart';
 
 class Trades extends StatefulWidget {
   final List<ConfigInfo> configs;
@@ -450,7 +450,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 onTap: () {
-                                  Vibrate.feedback(FeedbackType.selection);
+                                  HapticFeedback.selectionClick();
                                   contractStore.open_lever_rate = i;
                                   socketStore.sendMessage({
                                     "type": "contract_update",
