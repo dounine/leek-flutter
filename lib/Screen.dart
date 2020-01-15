@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Screen extends StatefulWidget {
   Screen({Key key}) : super(key: key);
@@ -41,6 +42,7 @@ class _ScreenState extends State<Screen> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Scaffold(
       body: Container(
         color: Colors.blue,
@@ -48,7 +50,8 @@ class _ScreenState extends State<Screen> with SingleTickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-                margin: EdgeInsets.only(top: 140),
+                margin:
+                    EdgeInsets.only(top: ScreenUtil.instance.setHeight(300)),
                 child: AnimatedBuilder(
                   animation: _doubleAnim,
                   builder: (context, _) {
