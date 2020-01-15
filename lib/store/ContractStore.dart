@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:leek/Config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,6 +215,7 @@ class ContractStore extends ChangeNotifier {
         }
       }
     } else if (data["status"] == "ok" && data["type"] == "push_info") {
+      HapticFeedback.lightImpact();
       var d = data["data"];
       _push_info = true;
       if (d["open_enable"] != null) {
