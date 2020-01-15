@@ -9,7 +9,6 @@ import 'package:leek/ContractTrade.dart';
 import 'package:leek/profile/Profile.dart';
 import 'package:leek/profile/auth/Api.dart';
 import 'package:leek/profile/auth/Auth.dart';
-import 'package:leek/profile/auth/Session.dart';
 import 'package:leek/profile/manager/ConfigEdit.dart';
 import 'package:leek/profile/manager/ContractManager.dart';
 import 'package:leek/profile/manager/ContractManagerEdit.dart';
@@ -30,10 +29,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-//  Config.setToken();
   Config.dio.interceptors
       .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-    //dio.lock()是先锁定请求不发送出去，当整个取值添加到请求头后再dio.unlock()解锁发送出去
+    //是先锁定请求不发送出去，当整个取值添加到请求头后再dio.unlock()解锁发送出去
     Config.dio.lock();
     Future<dynamic> future = Future(() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -106,7 +104,6 @@ class MyApp extends StatelessWidget {
             "/home": (BuildContext context) => const HomePage(),
             "/contractTrade": (BuildContext context) => const ContractTrade(),
             "/auth": (BuildContext context) => const Auth(),
-            "/session": (BuildContext context) => const Session(),
             "/manager": (BuildContext context) => const Manager(),
             "/user": (BuildContext context) => const User(),
             "/user-edit": (BuildContext context) => const UserEdit(),

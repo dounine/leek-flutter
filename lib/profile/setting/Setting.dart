@@ -84,16 +84,19 @@ class Setting extends StatelessWidget {
                         ))),
               ),
               SizedBox(
-                height: ScreenUtil.instance.setHeight(40),
+                height: ScreenUtil.instance.setHeight(60),
               ),
               Container(
                   color: Colors.white,
                   child: SizedBox(
                     width: double.infinity,
-                    height: ScreenUtil.instance.setHeight(120),
+                    height: ScreenUtil.instance.setHeight(100),
                     child: RaisedButton(
-                        color: Colors.white,
-                        child: Text("退出登录"),
+                        color: Colors.grey[200],
+                        child: Text(
+                          "退出登录",
+                          style: TextStyle( fontWeight: FontWeight.w500),
+                        ),
                         onPressed: () {
                           Provider.of<UserStore>(context).logout();
                           Navigator.pop(context);
