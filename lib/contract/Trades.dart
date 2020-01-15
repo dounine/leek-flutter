@@ -50,6 +50,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
   }
 
   _switchChange(bool value) {
+    HapticFeedback.selectionClick();
     if (!value) {
       controller.stop();
     } else {
@@ -202,6 +203,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                                 ),
                               )
                             : CustomliderWidget2(
+                                splits: 3,
                                 width: ScreenUtil.instance.setWidth(860),
                                 minValue: open_online.minValue,
                                 maxValue: open_online.maxValue,
@@ -232,6 +234,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: open_rebound_price.minValue,
                           maxValue: open_rebound_price.maxValue,
@@ -270,6 +273,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: open_plan_price_spread.minValue,
                           maxValue: open_plan_price_spread.maxValue,
@@ -308,6 +312,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: open_schedue.minValue,
                           maxValue: open_schedue.maxValue,
@@ -352,6 +357,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: open_entrust_timeout.minValue,
                           maxValue: open_entrust_timeout.maxValue,
@@ -397,6 +403,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: open_volume.minValue,
                           maxValue: open_volume.maxValue,
@@ -542,6 +549,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                                 ),
                               )
                             : CustomliderWidget2(
+                                splits: 3,
                                 width: ScreenUtil.instance.setWidth(860),
                                 minValue: close_online.minValue,
                                 maxValue: close_online.maxValue,
@@ -572,6 +580,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: close_rebound_price.minValue,
                           maxValue: close_rebound_price.maxValue,
@@ -610,6 +619,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: close_plan_price_spread.minValue,
                           maxValue: close_plan_price_spread.maxValue,
@@ -648,6 +658,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: close_entrust_timeout.minValue,
                           maxValue: close_entrust_timeout.maxValue,
@@ -693,6 +704,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         CustomliderWidget(
+                          splits: 3,
                           width: ScreenUtil.instance.setWidth(860),
                           minValue: close_volume.minValue,
                           maxValue: close_volume.maxValue,

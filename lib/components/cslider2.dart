@@ -17,6 +17,7 @@ class CustomliderWidget2 extends StatefulWidget {
   final num setup;
   final num fixed;
   final String eventName;
+  final int splits;
 
   const CustomliderWidget2(
       {Key key,
@@ -28,6 +29,7 @@ class CustomliderWidget2 extends StatefulWidget {
       @required this.setup,
       @required this.fixed,
       @required this.onChange,
+      @required this.splits,
       this.eventName})
       : super(key: key);
 
@@ -77,7 +79,6 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
 
   @override
   void initState() {
-
     fixed = widget.fixed;
     width = widget.width;
     setup = widget.setup.toDouble();
@@ -118,12 +119,12 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
     }
 
     //分隔线
-    splits = [
-//      Container(
-//        width: 2.0,
-//        color: Colors.white,
-//      )
-    ];
+    splits = [for (var i = 0; i < 3; i += 1) i].map((i) {
+      return Container(
+        width: 1,
+        color: Colors.white54,
+      );
+    }).toList();
 
     super.initState();
   }
@@ -191,7 +192,7 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
           width: this.width,
           height: ScreenUtil.instance.setWidth(this.height),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: splits,
           ),
         ),

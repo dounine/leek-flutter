@@ -17,19 +17,21 @@ class CustomliderWidget extends StatefulWidget {
   final num fixed;
   final String eventName;
   final bool animation;
+  final int splits;
 
-  const CustomliderWidget(
-      {Key key,
-      @required this.width,
-      @required this.minValue,
-      @required this.maxValue,
-      @required this.defaultValue,
-      @required this.setup,
-      @required this.fixed,
-      @required this.onChange,
-      this.eventName,
-      this.animation})
-      : super(key: key);
+  const CustomliderWidget({
+    Key key,
+    @required this.width,
+    @required this.minValue,
+    @required this.maxValue,
+    @required this.defaultValue,
+    @required this.setup,
+    @required this.fixed,
+    @required this.onChange,
+    @required this.splits,
+    this.eventName,
+    this.animation
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CustomliderState();
@@ -130,12 +132,12 @@ class _CustomliderState extends State<CustomliderWidget>
     }
 
     //分隔线
-    splits = [
-//      Container(
-//        width: 2.0,
-//        color: Colors.white,
-//      )
-    ];
+    splits = [for (var i = 0; i < 3; i += 1) i].map((i) {
+      return Container(
+        width: 1,
+        color: Colors.white54,
+      );
+    }).toList();
     super.initState();
   }
 
@@ -158,14 +160,14 @@ class _CustomliderState extends State<CustomliderWidget>
           ? minValue * baseWidth
           : (nextLeft > width ? width : nextLeft);
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
-      if (this.value != nextValue.round().toDouble()) {
-        HapticFeedback.lightImpact();
-        widget.onChange(this.value, nextValue.round());
-      }
       setState(() {
         value = nextValue.round().toDouble();
         left = boundaryLeft;
       });
+      if (this.value != nextValue.round().toDouble()) {
+        HapticFeedback.lightImpact();
+        widget.onChange(this.value, nextValue.round());
+      }
     }
   }
 
@@ -212,7 +214,7 @@ class _CustomliderState extends State<CustomliderWidget>
           width: this.width,
           height: ScreenUtil.instance.setWidth(this.height),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: splits,
           ),
         ),
@@ -229,7 +231,10 @@ class _CustomliderState extends State<CustomliderWidget>
         Positioned(
             left: left -
                 ScreenUtil.instance.setWidth(pointWidth) / 2 -
-                (value + incrmentValue).toStringAsFixed(fixed).length * 4.5 / 2 + 5,
+                (value + incrmentValue).toStringAsFixed(fixed).length *
+                    4.5 /
+                    2 +
+                5,
             top: ScreenUtil.instance
                 .setWidth(-(pointHeight - height) / 2 - pointHeight),
             child: SlideTransition(
