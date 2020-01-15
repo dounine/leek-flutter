@@ -72,13 +72,13 @@ class UserStore extends ChangeNotifier {
         Response response = await Config.dio.get("/user/valid");
         Map<String, dynamic> result = response.data;
         if (result["status"] == "ok") {
-          _widget = MyHomePage();
+          _widget = HomePage();
         } else {
           _widget = LoginPage();
         }
       } catch (e) {
         new Timer(const Duration(seconds: 3), () {
-          print("超时、重新验证");
+          print("token验证超时、3秒后重新验证");
           init();
         });
       }

@@ -44,9 +44,9 @@ class LoginStore extends ChangeNotifier {
             await SharedPreferences.getInstance();
         if (_status == "ok") {
           HapticFeedback.lightImpact();
-          await sharedPreferences.setString(
-              "token", result["data"]["token"] ?? "");
-          Config.setToken();
+          String token = result["data"]["token"];
+          await sharedPreferences.setString("token", token);
+          Config.setDioHeaderToken(token);
         } else {
           HapticFeedback.mediumImpact();
           await sharedPreferences.remove("token");

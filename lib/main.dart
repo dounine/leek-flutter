@@ -103,7 +103,7 @@ class MyApp extends StatelessWidget {
             },
           ),
           routes: <String, WidgetBuilder>{
-            "/home": (BuildContext context) => const MyHomePage(),
+            "/home": (BuildContext context) => const HomePage(),
             "/contractTrade": (BuildContext context) => const ContractTrade(),
             "/auth": (BuildContext context) => const Auth(),
             "/session": (BuildContext context) => const Session(),
@@ -113,7 +113,8 @@ class MyApp extends StatelessWidget {
             "/open-request": (BuildContext context) => const OpenRequest(),
             "/open-manager": (BuildContext context) => const OpenManager(),
             "/config-edit": (BuildContext context) => const ConfigEdit(),
-            "/open-manager-edit": (BuildContext context) => const OpenManagerEdit(),
+            "/open-manager-edit": (BuildContext context) =>
+                const OpenManagerEdit(),
             "/contract-manager": (BuildContext context) =>
                 const ContractManager(),
             "/contract-edit": (BuildContext context) =>
@@ -125,15 +126,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key key, this.title}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
+class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 1;
   double _lowerValue = 10.0;

@@ -10,17 +10,17 @@ class PushEvent {
 }
 
 class Config {
-  static final String httpUrl = "http://localhost:9000";
-  static final String wsUrl = "ws://localhost:9000";
+  // static final String httpUrl = "http://localhost:9000";
+  // static final String wsUrl = "ws://localhost:9000";
+  static final String httpUrl = "https://leek-akka.herokuapp.com";
+  static final String wsUrl = "wss://leek-akka.herokuapp.com";
   static final EventBus eventBus = EventBus();
   static final Dio dio = new Dio(BaseOptions(
       baseUrl: httpUrl,
       connectTimeout: 5000,
       receiveTimeout: 5000,
       sendTimeout: 5000));
-  static final setToken = () async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String token = sharedPreferences.getString("token") ?? "";
+  static get setDioHeaderToken => (String token) async {
     Config.dio.options.headers["token"] = token;
   };
 }

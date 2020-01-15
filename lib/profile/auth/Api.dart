@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:leek/store/UserStore.dart';
-import 'package:provider/provider.dart';
+import 'package:leek/Config.dart';
+import 'package:leek/util/ScaffoldUtil.dart';
 
 class Api extends StatefulWidget {
   const Api({Key key}) : super(key: key);
@@ -15,6 +17,7 @@ class Api extends StatefulWidget {
 class _ApiState extends State<Api> {
   @override
   void initState() {
+    query();
     super.initState();
   }
 
@@ -23,191 +26,182 @@ class _ApiState extends State<Api> {
     super.dispose();
   }
 
-  UserStore userStore;
-  String status;
-  String preApiKey;
-  String preApiSecret;
+  String _accessKey = "";
+  String _accessSecret = "";
+  String _reqStatus = "";
+  bool _showSecret = false;
   BuildContext _context;
+
+  void query() async {
+    try {
+      setState(() {
+        _reqStatus = "request";
+      });
+      Response response = await Config.dio.get("/user/api");
+      Map<String, dynamic> data = response.data;
+      if (data["status"] == "ok") {
+        HapticFeedback.lightImpact();
+        setState(() {
+          _accessKey = data["data"]["accessKey"];
+          _accessSecret = data["data"]["accessSecret"];
+          _reqStatus = data["status"];
+        });
+      } else {
+        setState(() {
+          _reqStatus = data["status"];
+        });
+        HapticFeedback.mediumImpact();
+      }
+    } catch (e) {
+      print(e);
+      setState(() {
+        _reqStatus = "timeout";
+      });
+      HapticFeedback.heavyImpact();
+      ScaffoldUtil.show(_context, {"status": "timeout"});
+    }
+  }
+
+  void update() async {
+    try {
+      setState(() {
+        _reqStatus = "request";
+      });
+      Response response = await Config.dio.post("/user/api",
+          data: {"accessKey": _accessKey, "accessSecret": _accessSecret});
+      Map<String, dynamic> data = response.data;
+      if (data["status"] == "ok") {
+        ScaffoldUtil.show(_context, {"status": "ok", "msg": "修改成功"});
+        HapticFeedback.lightImpact();
+      } else {
+        HapticFeedback.mediumImpact();
+        ScaffoldUtil.show(_context, data);
+      }
+      setState(() {
+        _reqStatus = data["status"];
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        _reqStatus = "timeout";
+      });
+      HapticFeedback.heavyImpact();
+      ScaffoldUtil.show(_context, {"status": "timeout"});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    if (userStore == null) {
-      userStore = Provider.of<UserStore>(context);
-      userStore.initApi((status, msg) {
-        if (status != "ok" && _context != null) {
-          Scaffold.of(_context).showSnackBar(SnackBar(
-              content: Row(
-            children: <Widget>[
-              Icon(Icons.error_outline),
-              SizedBox(
-                width: 10,
-              ),
-              new Text(""),
-              SizedBox(
-                width: 0,
-              ),
-              new Text(
-                msg,
-                style: TextStyle(color: Colors.red),
-              )
-            ],
-          )));
-        }
-      });
-      preApiKey = userStore.apiKey;
-      status = userStore.status;
-      preApiSecret = userStore.apiSecret;
-    }
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Scaffold(
         appBar: AppBar(
           title: const Text("API授权"),
         ),
-        body: new Builder(
-          builder: (context) {
-            _context = context;
-            return Container(
-              color: Colors.grey[100],
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: ScreenUtil.instance.setHeight(20),
-                  ),
-                  Container(
+        body: new Builder(builder: (c) {
+          _context = c;
+          return Container(
+            color: Colors.grey[100],
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: ScreenUtil.instance.setHeight(20),
+                ),
+                Container(
                     color: Colors.white,
                     padding: EdgeInsets.only(
                         left: ScreenUtil.instance.setWidth(40),
                         right: ScreenUtil.instance.setWidth(40),
                         bottom: ScreenUtil.instance.setHeight(20)),
-                    child: Consumer<UserStore>(
-                      builder: (_, store, child) {
-                        return TextField(
-                            keyboardType: TextInputType.text,
-                            onChanged: (value) {
-                              store.apiKey = value;
-                            },
-                            controller: TextEditingController.fromValue(
-                                TextEditingValue(
-                                    text: store.apiKey,
-                                    selection: TextSelection.fromPosition(
-                                        TextPosition(
-                                            affinity: TextAffinity.downstream,
-                                            offset: store.apiKey.length)))),
-                            decoration: InputDecoration(
-                                labelText: "Key", helperText: "密钥Key"));
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: ScreenUtil.instance.setHeight(40),
-                  ),
-                  Container(
+                    child: TextField(
+                        keyboardType: TextInputType.text,
+                        onChanged: (value) {
+                          setState(() {
+                            _accessKey = value;
+                          });
+                        },
+                        controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                                text: _accessKey,
+                                selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                        affinity: TextAffinity.downstream,
+                                        offset: _accessKey.length)))),
+                        decoration: InputDecoration(
+                            labelText: "Key", helperText: "密钥Key"))),
+                SizedBox(
+                  height: ScreenUtil.instance.setHeight(40),
+                ),
+                Container(
                     color: Colors.white,
                     padding: EdgeInsets.only(
                         left: ScreenUtil.instance.setWidth(40),
                         right: ScreenUtil.instance.setWidth(40),
                         bottom: ScreenUtil.instance.setHeight(20)),
-                    child: Consumer<UserStore>(
-                      builder: (_, store, child) {
-                        return TextField(
-                            keyboardType: TextInputType.text,
-                            obscureText: !store.showSecret,
-                            onChanged: (value) {
-                              store.apiSecret = value;
-                            },
-                            controller: TextEditingController.fromValue(
-                                TextEditingValue(
-                                    text: store.apiSecret,
-                                    selection: TextSelection.fromPosition(
-                                        TextPosition(
-                                            affinity: TextAffinity.downstream,
-                                            offset: store.apiSecret.length)))),
-                            decoration: InputDecoration(
-                                suffixIcon: IconButton(
-                                    onPressed: () {
-                                      store.showSecret = !store.showSecret;
-                                    },
-                                    icon: Icon(
-                                      Icons.visibility,
-                                      color: Colors.blue[200],
-                                    )),
-                                labelText: "Secret",
-                                helperText: "密钥Secret"));
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: ScreenUtil.instance.setHeight(40),
-                  ),
-                  Container(
-                      margin: EdgeInsets.symmetric(
-                          horizontal: ScreenUtil.instance.setWidth(20)),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "登录网页火币后、在API管理可创建API Key\n创建的时候权限设置需要勾选交易选项",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )),
-                  SizedBox(
-                    height: ScreenUtil.instance.setHeight(30),
-                  ),
-                  Consumer<UserStore>(
-                    builder: (_, store, child) {
-                      return (store.status == "request" || store.status == "")
-                          ? Center(
-                              child: CircularProgressIndicator(),
-                            )
-                          : ((store.apiKey == "" || store.apiSecret == "")
-                              ? Container()
-                              : FractionallySizedBox(
-                                  widthFactor: 0.96,
-                                  child: MaterialButton(
-                                    color: Colors.blue,
-                                    textColor: Colors.white,
-                                    height: ScreenUtil.instance.setHeight(90),
-                                    child: new Text("保存"),
-                                    onPressed: () {
-                                      userStore.saveApi((status, msg) {
-                                        if (status != "success") {
-                                          preApiKey = userStore.apiKey;
-                                          preApiSecret = userStore.apiSecret;
-                                        }
-                                        Scaffold.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Row(
-                                          children: <Widget>[
-                                            Icon(status == "success"
-                                                ? Icons.check_circle_outline
-                                                : Icons.error_outline),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            new Text(
-                                              status == "success" ? "保存成功" : "",
-                                            ),
-                                            SizedBox(
-                                              width:
-                                                  status == "success" ? 10 : 0,
-                                            ),
-                                            new Text(
-                                              msg,
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            )
-                                          ],
-                                        )));
-                                      });
-                                    },
-                                  ),
-                                ));
-                    },
-                  ),
-                ],
-              ),
-            );
-          },
-        ));
+                    child: TextField(
+                        keyboardType: TextInputType.text,
+                        obscureText: !_showSecret,
+                        onChanged: (value) {
+                          setState(() {
+                            _accessSecret = value;
+                          });
+                        },
+                        controller: TextEditingController.fromValue(
+                            TextEditingValue(
+                                text: _accessSecret,
+                                selection: TextSelection.fromPosition(
+                                    TextPosition(
+                                        affinity: TextAffinity.downstream,
+                                        offset: _accessSecret.length)))),
+                        decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _showSecret = !_showSecret;
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.visibility,
+                                  color: Colors.blue[200],
+                                )),
+                            labelText: "Secret",
+                            helperText: "密钥Secret"))),
+                SizedBox(
+                  height: ScreenUtil.instance.setHeight(40),
+                ),
+                Container(
+                    margin: EdgeInsets.symmetric(
+                        horizontal: ScreenUtil.instance.setWidth(20)),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "登录网页火币后、在API管理可创建API Key\n创建的时候权限设置需要勾选交易选项",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )),
+                SizedBox(
+                  height: ScreenUtil.instance.setHeight(30),
+                ),
+                _reqStatus == "request"
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : ((_accessKey == "" || _accessSecret == "")
+                        ? Container()
+                        : FractionallySizedBox(
+                            widthFactor: 0.96,
+                            child: MaterialButton(
+                              color: Colors.blue,
+                              textColor: Colors.white,
+                              height: ScreenUtil.instance.setHeight(90),
+                              child: new Text("保存"),
+                              onPressed: () {
+                                update();
+                              },
+                            ),
+                          )),
+              ],
+            ),
+          );
+        }));
   }
 }

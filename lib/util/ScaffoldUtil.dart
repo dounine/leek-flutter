@@ -24,7 +24,7 @@ class ScaffoldUtil {
             width: 0,
           ),
           new Text(
-            msg ?? (data["status"] == "timeout" ? "请求超时" : data['msg']),
+            msg ?? (data["status"] == "timeout" ? "请求超时,请重试" : data['msg']),
             style: TextStyle(
                 color: data["status"] != "ok" ? Colors.red : Colors.white),
           )

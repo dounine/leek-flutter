@@ -1,9 +1,14 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:leek/Config.dart';
 import 'package:leek/store/LoginStore.dart';
 import 'package:leek/store/SocketStore.dart';
 import 'package:leek/store/UserStore.dart';
+import 'package:leek/util/ScaffoldUtil.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -19,9 +24,14 @@ class _LoginPageState extends State<LoginPage>
   AnimationController _controller;
   Animation<double> _scaleCurved;
   Animation<double> buttonSqueezeAnimation;
+  String _phone = "";
+  String _password = "";
+  String _reqStatus = "";
+  bool _passwordHidden = true;
 
   @override
   void initState() {
+    readDbAccount();
     _controller = new AnimationController(
         duration: Duration(milliseconds: 1000), vsync: this);
 
@@ -37,7 +47,27 @@ class _LoginPageState extends State<LoginPage>
     ).animate(CurvedAnimation(
         parent: _controller,
         curve: new Interval(0.5, 0.9, curve: Curves.easeInOut)));
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Future.delayed(Duration.zero, () {
+          UserStore userStore = Provider.of<UserStore>(context);
+          userStore.phone = _phone;
+          userStore.init();
+        });
+      }
+    });
     super.initState();
+  }
+
+  void readDbAccount() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String phone = sharedPreferences.getString("phone") ?? "";
+    String password = sharedPreferences.getString("password") ?? "";
+    setState(() {
+      _phone = phone;
+      _password = password;
+    });
   }
 
   @override
@@ -51,286 +81,308 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
+  bool get isValid {
+    return RegExp(
+                r"^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$")
+            .hasMatch(_phone) &&
+        _password.length >= 6;
+  }
+
+  void login() async {
+    if (this.isValid) {
+      try {
+        _reqStatus = "request";
+        Response response = await Config.dio.post("/user/login",
+            data: {"phone": _phone, "password": _password});
+        Map<String, dynamic> data = response.data;
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        if (data["status"] == "ok") {
+          HapticFeedback.lightImpact();
+          String token = data["data"]["token"];
+          await sharedPreferences.setString("token", data["data"]["token"]);
+          Config.setDioHeaderToken(token);
+          HapticFeedback.lightImpact();
+        } else {
+          HapticFeedback.mediumImpact();
+          await sharedPreferences.remove("token");
+          ScaffoldUtil.show(_context, data);
+        }
+
+        if (data["status"] == "ok") {
+          _controller.forward();
+          FocusScope.of(context).requestFocus(FocusNode());
+        } else {
+          showDialog<void>(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: Text('登录提示'),
+                content: Text(data["msg"]),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('确认'),
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        _reqStatus = data["status"];
+      } catch (e) {
+        _reqStatus = "timeout";
+        HapticFeedback.heavyImpact();
+        ScaffoldUtil.show(_context, {"status": "timeout"});
+      }
+    }
+  }
+
+  BuildContext _context;
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
-    final LoginStore loginStore = Provider.of<LoginStore>(context);
-    final SocketStore socketStore = Provider.of<SocketStore>(context);
-    final UserStore userStore = Provider.of<UserStore>(context);
-    loginStore.nextAnimation((String status, String msg) {
-      if (status == "ok") {
-        loginStore.status = "ok";
-        _controller.addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            userStore.phone = loginStore.phone;
-            userStore.init();
-            loginStore.status = "";
-            socketStore.login();
-          }
-        });
-        _controller.forward();
-        FocusScope.of(context).requestFocus(FocusNode());
-      } else {
-        try {
-          _controller?.reset();
-        } catch (e) {}
-        loginStore.status = "";
-        showDialog<void>(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return AlertDialog(
-              title: Text('登录提示'),
-              content: Text(msg),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('确认'),
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-    });
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                height: ScreenUtil.instance.setHeight(540),
-                child: Stack(
-                  alignment: Alignment.topRight,
-                  children: <Widget>[
-                    Positioned(
-                      right: 0,
-                      child: Image.asset("images/login-top.png"),
-                    ),
-                    Positioned(
-                        bottom: ScreenUtil.instance.setHeight(20),
-                        left: ScreenUtil.instance.setWidth(40),
-                        child: Image.asset(
-                          "images/leek.png",
-                          width: ScreenUtil.instance.setWidth(120),
-                        )),
-                    Positioned(
-                      left: ScreenUtil.instance.setWidth(180),
-                      bottom: ScreenUtil.instance.setHeight(32),
-                      child: Text(
-                        "Leek",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black54),
-                      ),
-                    ),
-                    Positioned(
-                      top: ScreenUtil.instance.setHeight(160),
-                      right: ScreenUtil.instance.setWidth(80),
-                      child: Image.asset(
-                        "images/leek-white.png",
-                        width: ScreenUtil.instance.setWidth(120),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: ScreenUtil.instance.setHeight(60),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(
-                    horizontal: ScreenUtil.instance.setWidth(50)),
-                decoration: new BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(4.0),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.greenAccent[100],
-                        offset: Offset(10.0, 10.0),
-                        blurRadius: ScreenUtil.instance.setWidth(80))
-                  ],
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
-                  child: Column(
+    return new Builder(builder: (c) {
+      _context = c;
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  height: ScreenUtil.instance.setHeight(540),
+                  child: Stack(
+                    alignment: Alignment.topRight,
                     children: <Widget>[
-                      Container(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Login",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
+                      Positioned(
+                        right: 0,
+                        child: Image.asset("images/login-top.png"),
+                      ),
+                      Positioned(
+                          bottom: ScreenUtil.instance.setHeight(20),
+                          left: ScreenUtil.instance.setWidth(40),
+                          child: Image.asset(
+                            "images/leek.png",
+                            width: ScreenUtil.instance.setWidth(120),
+                          )),
+                      Positioned(
+                        left: ScreenUtil.instance.setWidth(180),
+                        bottom: ScreenUtil.instance.setHeight(32),
+                        child: Text(
+                          "Leek",
+                          style: TextStyle(
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                              color: Colors.black54),
                         ),
                       ),
-                      SizedBox(
-                        height: ScreenUtil.instance.setHeight(20),
-                      ),
-                      Container(
-                        child: Consumer<LoginStore>(
-                          builder: (_, login, child) {
-                            return TextField(
-                              keyboardType: TextInputType.phone,
-                              controller: TextEditingController.fromValue(
-                                  TextEditingValue(
-                                      text: login.phone,
-                                      selection: TextSelection.fromPosition(
-                                          TextPosition(
-                                              affinity: TextAffinity.downstream,
-                                              offset: login.phone.length)))),
-                              onChanged: (value) {
-                                login.change("phone", value);
-                              },
-                              decoration: InputDecoration(
-                                  labelText: "Phone",
-                                  suffixIcon: Icon(
-                                    Icons.phone,
-                                    color: Colors.blue[200],
-                                  )),
-                            );
-                          },
+                      Positioned(
+                        top: ScreenUtil.instance.setHeight(160),
+                        right: ScreenUtil.instance.setWidth(80),
+                        child: Image.asset(
+                          "images/leek-white.png",
+                          width: ScreenUtil.instance.setWidth(120),
                         ),
-                      ),
-                      SizedBox(
-                        height: ScreenUtil.instance.setHeight(20),
-                      ),
-                      Container(child: Consumer<LoginStore>(
-                        builder: (_, login, child) {
-                          return TextField(
-                            obscureText: login.passwordHidden,
-                            keyboardType: TextInputType.visiblePassword,
-                            controller: TextEditingController.fromValue(
-                                TextEditingValue(
-                                    text: login.password,
-                                    selection: TextSelection.fromPosition(
-                                        TextPosition(
-                                            affinity: TextAffinity.downstream,
-                                            offset: login.password.length)))),
-                            onChanged: (value) {
-                              login.change("password", value);
-                            },
-                            decoration: InputDecoration(
-                                labelText: "Password",
-                                suffixIcon: IconButton(
-                                    onPressed: () {
-                                      login.passwordHidden =
-                                          !login.passwordHidden;
-                                    },
-                                    icon: Icon(
-                                      Icons.visibility,
-                                      color: Colors.blue[200],
-                                    ))),
-                          );
-                        },
-                      )),
-                      SizedBox(
-                        height: ScreenUtil.instance.setHeight(20),
-                      ),
-                      Container(
-                        padding:
-                            EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
-                        alignment: Alignment.center,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            "忘记密码?",
-                            style: TextStyle(color: Colors.blue[300]),
-                          ),
-                        ),
-                      ),
+                      )
                     ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: ScreenUtil.instance.setHeight(50),
-              ),
-              ScaleTransition(
-                  scale: _scaleCurved,
-                  child: Container(
-                    height: ScreenUtil.instance.setHeight(100),
-                    child: AnimatedBuilder(
-                      animation: buttonSqueezeAnimation,
-                      builder: (context, _) {
-                        if (buttonSqueezeAnimation.value == 60.0 &&
-                            loginStore.status == "") {
-                          _controller.stop();
-                          loginStore.login();
-                        }
-                        return Container(
-                          width: buttonSqueezeAnimation.value,
-                          height: ScreenUtil.instance.setHeight(100),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(
-                                ScreenUtil.instance.setWidth(60)),
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.white,
-                                  Colors.blue,
-                                ]),
-                          ),
-                          child: RaisedButton(
-                            color: Colors.transparent,
-                            child: buttonSqueezeAnimation.value > 80
-                                ? Text(
-                                    "登录",
-                                    style: TextStyle(
-                                        letterSpacing: 2.0,
-                                        color: Colors.white),
-                                  )
-                                : SizedBox(
-                                    width: ScreenUtil.instance.setWidth(50),
-                                    height: ScreenUtil.instance.setWidth(50),
-                                    child: _scaleCurved.value < 2
-                                        ? new CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor:
-                                                new AlwaysStoppedAnimation(
-                                                    Colors.white))
-                                        : null,
-                                  ),
-                            textColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    ScreenUtil.instance.setWidth(60))),
-                            onPressed: loginStore.isValid
-                                ? () {
-                                    _controller.reset();
-                                    _controller.forward();
-                                  }
-                                : null,
-                          ),
-                        );
-                      },
-                    ),
-                  )),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                    minHeight: ScreenUtil.instance.setHeight(540)),
-                child: Container(
-                  alignment: Alignment.bottomCenter,
-                  child: Image.asset("images/login-bottom.png"),
+                SizedBox(
+                  height: ScreenUtil.instance.setHeight(60),
                 ),
-              ),
-            ],
+                Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: ScreenUtil.instance.setWidth(50)),
+                  decoration: new BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4.0),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.greenAccent[100],
+                          offset: Offset(10.0, 10.0),
+                          blurRadius: ScreenUtil.instance.setWidth(80))
+                    ],
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(ScreenUtil.instance.setWidth(40)),
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: ScreenUtil.instance.setHeight(20),
+                        ),
+                        Container(
+                          child: TextField(
+                            keyboardType: TextInputType.phone,
+                            controller: TextEditingController.fromValue(
+                                TextEditingValue(
+                                    text: _phone,
+                                    selection: TextSelection.fromPosition(
+                                        TextPosition(
+                                            affinity: TextAffinity.downstream,
+                                            offset: _phone.length)))),
+                            onChanged: (value) {
+                              setState(() {
+                                _phone = value;
+                              });
+                            },
+                            decoration: InputDecoration(
+                                labelText: "Phone",
+                                suffixIcon: Icon(
+                                  Icons.phone,
+                                  color: Colors.blue[200],
+                                )),
+                          ),
+                        ),
+                        SizedBox(
+                          height: ScreenUtil.instance.setHeight(20),
+                        ),
+                        Container(
+                            child: TextField(
+                          obscureText: _passwordHidden,
+                          keyboardType: TextInputType.visiblePassword,
+                          controller: TextEditingController.fromValue(
+                              TextEditingValue(
+                                  text: _password,
+                                  selection: TextSelection.fromPosition(
+                                      TextPosition(
+                                          affinity: TextAffinity.downstream,
+                                          offset: _password.length)))),
+                          onChanged: (value) {
+                            setState(() {
+                              _password = value;
+                            });
+                          },
+                          decoration: InputDecoration(
+                              labelText: "Password",
+                              suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _passwordHidden = _passwordHidden;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.visibility,
+                                    color: Colors.blue[200],
+                                  ))),
+                        )),
+                        SizedBox(
+                          height: ScreenUtil.instance.setHeight(20),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.all(ScreenUtil.instance.setWidth(20)),
+                          alignment: Alignment.center,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              "忘记密码?",
+                              style: TextStyle(color: Colors.blue[300]),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: ScreenUtil.instance.setHeight(50),
+                ),
+                ScaleTransition(
+                    scale: _scaleCurved,
+                    child: Container(
+                      height: ScreenUtil.instance.setHeight(100),
+                      child: AnimatedBuilder(
+                        animation: buttonSqueezeAnimation,
+                        builder: (context, _) {
+                          if (buttonSqueezeAnimation.value == 60.0 &&
+                              (_reqStatus == "" || _reqStatus == "fail")) {
+                            _controller.stop();
+                            login();
+                          }
+                          return Container(
+                            width: buttonSqueezeAnimation.value,
+                            height: ScreenUtil.instance.setHeight(100),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  ScreenUtil.instance.setWidth(60)),
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.white,
+                                    Colors.blue,
+                                  ]),
+                            ),
+                            child: RaisedButton(
+                              color: Colors.transparent,
+                              child: buttonSqueezeAnimation.value > 80
+                                  ? Text(
+                                      "登录",
+                                      style: TextStyle(
+                                          letterSpacing: 2.0,
+                                          color: Colors.white),
+                                    )
+                                  : SizedBox(
+                                      width: ScreenUtil.instance.setWidth(50),
+                                      height: ScreenUtil.instance.setWidth(50),
+                                      child: _scaleCurved.value < 2
+                                          ? new CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              valueColor:
+                                                  new AlwaysStoppedAnimation(
+                                                      Colors.white))
+                                          : null,
+                                    ),
+                              textColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      ScreenUtil.instance.setWidth(60))),
+                              onPressed: isValid
+                                  ? () {
+                                      _controller.reset();
+                                      _controller.forward();
+                                    }
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    )),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      minHeight: ScreenUtil.instance.setHeight(540)),
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    child: Image.asset("images/login-bottom.png"),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
