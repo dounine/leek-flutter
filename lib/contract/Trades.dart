@@ -130,6 +130,15 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 value: contractStore.open_enable,
                 onChanged: (bool value) {
                   contractStore.open_enable = value;
+                  socketStore.sendMessage({
+                  "type": "contract_update",
+                  "data": {
+                    "symbol": contractStore.symbol,
+                    "contractType": contractStore.contractType,
+                    "direction": contractStore.direction,
+                    "open_enable": value
+                  }
+                });
                 },
               )
             ],
@@ -174,7 +183,9 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     fixed: open_online.fixed,
                     eventName:
                         "online_open_entrust_price,online_open_trade_price",
-                    onChange: (double oldValue, double newValue) => {},
+                    onChange: (double oldValue, double newValue){
+                      print(newValue);
+                    },
                   )
           ],
         ),
