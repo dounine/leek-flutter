@@ -81,6 +81,11 @@ class ContractStore extends ChangeNotifier {
 
   set push_info(bool value) {
     _push_info = value;
+
+    _openEntrustValue = -1;
+    _openEntrustPrice = -1;
+    _openTradeValue = -1;
+    _openTradePrice = -1;
   }
 
   set open_rebound_price(num value) {
@@ -112,7 +117,7 @@ class ContractStore extends ChangeNotifier {
     _open_enable = value;
   }
 
-  set screen(bool value){
+  set screen(bool value) {
     _screen = value;
   }
 
@@ -211,8 +216,8 @@ class ContractStore extends ChangeNotifier {
         }
         if (d["ev"] != null) {
           _closeEntrustValue = d["ev"];
-          Config.eventBus
-              .fire(PushEvent("online_close_entrust_price", _closeEntrustValue));
+          Config.eventBus.fire(
+              PushEvent("online_close_entrust_price", _closeEntrustValue));
         }
         if (d["tp"] != null) {
           _closeTradePrice = d["tp"];
@@ -231,27 +236,26 @@ class ContractStore extends ChangeNotifier {
       if (d["open_rebound_price"] != null) {
         _open_rebound_price = d["open_rebound_price"];
         Config.eventBus
-              .fire(PushEvent("open_rebound_price", _open_rebound_price));
+            .fire(PushEvent("open_rebound_price", _open_rebound_price));
       }
       if (d["open_plan_price_spread"] != null) {
         _open_plan_price_spread = d["open_plan_price_spread"];
         Config.eventBus
-              .fire(PushEvent("open_plan_price_spread", _open_plan_price_spread));
+            .fire(PushEvent("open_plan_price_spread", _open_plan_price_spread));
       }
       if (d["open_volume"] != null) {
         _open_volume = d["open_volume"];
-        Config.eventBus
-              .fire(PushEvent("open_volume", _open_volume));
+        Config.eventBus.fire(PushEvent("open_volume", _open_volume));
       }
       if (d["open_schedue"] != null) {
         _open_schedue = d["open_schedue"];
         Config.eventBus
-              .fire(PushEvent("open_schedue", _open_schedue["length"]));
+            .fire(PushEvent("open_schedue", _open_schedue["length"]));
       }
       if (d["open_entrust_timeout"] != null) {
         _open_entrust_timeout = d["open_entrust_timeout"];
-        Config.eventBus
-              .fire(PushEvent("open_entrust_timeout", _open_entrust_timeout["length"]));
+        Config.eventBus.fire(
+            PushEvent("open_entrust_timeout", _open_entrust_timeout["length"]));
       }
       if (d["open_lever_rate"] != null) {
         _open_lever_rate = d["open_lever_rate"];
@@ -266,17 +270,16 @@ class ContractStore extends ChangeNotifier {
       if (d["close_rebound_price"] != null) {
         _close_rebound_price = d["close_rebound_price"];
         Config.eventBus
-              .fire(PushEvent("close_rebound_price", _close_rebound_price));
+            .fire(PushEvent("close_rebound_price", _close_rebound_price));
       }
       if (d["close_plan_price_spread"] != null) {
         _close_plan_price_spread = d["close_plan_price_spread"];
-        Config.eventBus
-              .fire(PushEvent("close_plan_price_spread", _close_plan_price_spread));
+        Config.eventBus.fire(
+            PushEvent("close_plan_price_spread", _close_plan_price_spread));
       }
       if (d["close_volume"] != null) {
         _close_volume = d["close_volume"];
-        Config.eventBus
-              .fire(PushEvent("close_volume", _close_volume));
+        Config.eventBus.fire(PushEvent("close_volume", _close_volume));
       }
       if (d["close_status"] != null) {
         _close_status = d["close_status"];
@@ -284,12 +287,12 @@ class ContractStore extends ChangeNotifier {
       if (d["close_schedue"] != null) {
         _close_schedue = d["close_schedue"];
         Config.eventBus
-              .fire(PushEvent("close_schedue", _close_schedue["length"]));
+            .fire(PushEvent("close_schedue", _close_schedue["length"]));
       }
       if (null != d["close_entrust_timeout"]) {
         _close_entrust_timeout = d["close_entrust_timeout"];
-        Config.eventBus
-              .fire(PushEvent("close_entrust_timeout", _close_entrust_timeout["length"]));
+        Config.eventBus.fire(PushEvent(
+            "close_entrust_timeout", _close_entrust_timeout["length"]));
       }
     }
     notifyListeners();
