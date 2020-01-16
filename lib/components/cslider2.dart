@@ -55,9 +55,9 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
   double _left2 = 0.0;
   double initial = 0.0;
 
-  double pointWidth1 = 40;
+  double pointWidth1 = 30;
   double pointHeight1 = 80;
-  double pointBorderWidth1 = 16;
+  double pointBorderWidth1 = 8;
   double pointBorderRadius1 = 60;
 
   double pointWidth2 = 30;
