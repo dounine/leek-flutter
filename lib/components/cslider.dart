@@ -162,7 +162,7 @@ class _CustomliderState extends State<CustomliderWidget>
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
       if (this.value != nextValue.round().toDouble()) {
         HapticFeedback.lightImpact();
-        widget.onChange(this.value, nextValue.round());
+        widget.onChange(this.value, double.parse(nextValue.toStringAsFixed(fixed)));
       }
       setState(() {
         value = nextValue.round().toDouble();
