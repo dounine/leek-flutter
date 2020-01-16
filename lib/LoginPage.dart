@@ -54,6 +54,7 @@ class _LoginPageState extends State<LoginPage>
           UserStore userStore = Provider.of<UserStore>(context);
           userStore.phone = _phone;
           userStore.init();
+          Provider.of<SocketStore>(context).login();
         });
       }
     });

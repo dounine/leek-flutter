@@ -42,7 +42,7 @@ class SocketStore extends ChangeNotifier {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString("token");
     if (token != null && token != "") {
-      _channel.sink.add({"type": "login", "token": token});
+      _channel?.sink.add({"type": "login", "token": token});
     } else {
       print("token 为空、登录失败");
     }
@@ -92,7 +92,7 @@ class SocketStore extends ChangeNotifier {
       print("socket 关闭重新连接");
       HapticFeedback.mediumImpact();
       _status = SocketStatus.closed;
-      notifyListeners();
+      notifyListeners();  
       init();
     });
   }

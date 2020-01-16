@@ -19,19 +19,19 @@ class CustomliderWidget extends StatefulWidget {
   final bool animation;
   final int splits;
 
-  const CustomliderWidget({
-    Key key,
-    @required this.width,
-    @required this.minValue,
-    @required this.maxValue,
-    @required this.defaultValue,
-    @required this.setup,
-    @required this.fixed,
-    @required this.onChange,
-    @required this.splits,
-    this.eventName,
-    this.animation
-  }) : super(key: key);
+  const CustomliderWidget(
+      {Key key,
+      @required this.width,
+      @required this.minValue,
+      @required this.maxValue,
+      @required this.defaultValue,
+      @required this.setup,
+      @required this.fixed,
+      @required this.onChange,
+      @required this.splits,
+      this.eventName,
+      this.animation})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CustomliderState();
@@ -160,14 +160,14 @@ class _CustomliderState extends State<CustomliderWidget>
           ? minValue * baseWidth
           : (nextLeft > width ? width : nextLeft);
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
-      setState(() {
-        value = nextValue.round().toDouble();
-        left = boundaryLeft;
-      });
       if (this.value != nextValue.round().toDouble()) {
         HapticFeedback.lightImpact();
         widget.onChange(this.value, nextValue.round());
       }
+      setState(() {
+        value = nextValue.round().toDouble();
+        left = boundaryLeft;
+      });
     }
   }
 

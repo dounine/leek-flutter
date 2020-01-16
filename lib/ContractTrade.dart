@@ -186,17 +186,23 @@ class _ContractTradeState extends State<ContractTrade>
                               left: ScreenUtil.instance.setWidth(20)),
                           child: Column(
                             children: <Widget>[
-                              Container(
-                                width: ScreenUtil.instance.setWidth(300),
-                                child: Text(
-                                  contractStore.cny == ""
-                                      ? "--"
-                                      : contractStore.cny,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
+                              Consumer<ContractStore>(
+                                  builder: (context, cs, child) {
+                                return cs.screen
+                                    ? Container()
+                                    : Container(
+                                        width:
+                                            ScreenUtil.instance.setWidth(300),
+                                        child: Text(
+                                          contractStore.cny == ""
+                                              ? "--"
+                                              : contractStore.cny,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      );
+                              }),
                               Container(
                                 width: ScreenUtil.instance.setWidth(300),
                                 child: Text(
@@ -221,105 +227,127 @@ class _ContractTradeState extends State<ContractTrade>
                         )
                       ],
                     )),
-                SizedBox(
-                  height: ScreenUtil.instance.setHeight(10),
-                ),
-                Container(
-                  margin:
-                      EdgeInsets.only(left: ScreenUtil.instance.setWidth(20)),
-                  child: Row(
-                    children: _types
-                        .map((key, value) {
-                          return MapEntry(
-                              key,
-                              Container(
-                                  child: Stack(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: ScreenUtil.instance.setWidth(20)),
-                                    child: Container(
-                                      width: ScreenUtil.instance.setWidth(150),
-                                      margin: EdgeInsets.all(
-                                          ScreenUtil.instance.setWidth(10)),
-                                      child: GestureDetector(
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color:
-                                                  contractStore.contractType ==
-                                                          key
-                                                      ? Colors.black
-                                                      : Colors.grey),
-                                        ),
-                                        onTap: () {
-                                          socketStore.sendMessage({
-                                            "type": "unsub",
-                                            "channels": _socketMsg
-                                          });
-                                          contractStore.contractType = key;
-                                          choose(contractInfo, null);
-                                          HapticFeedback.selectionClick();
-                                          controller.reset();
-                                          controller.forward();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    right: ScreenUtil.instance.setWidth(22),
-                                    bottom: ScreenUtil.instance.setWidth(4),
-                                    child: FadeTransition(
-                                      opacity: new Tween(begin: 0.0, end: 1.0)
-                                          .animate(curved),
-                                      child: Icon(
-                                        Icons.brightness_1,
-                                        size: ScreenUtil.instance.setWidth(24),
-                                        color: contractStore.contractType == key
-                                            ? Colors.lightBlueAccent
-                                            : Colors.transparent,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )));
-                        })
-                        .values
-                        .toList(),
-                  ),
-                ),
-                SizedBox(
-                  height: ScreenUtil.instance.setHeight(40),
-                ),
-                hasOpen
-                    ? Container(
-                        height: ScreenUtil.instance.setHeight(80),
-                        decoration: ShapeDecoration(
-                          shape: Border(
-                              bottom: BorderSide(color: Colors.grey[100])),
-                        ),
-                        child: Row(
-                            children: pages.keys.map((name) {
-                          return Expanded(
-                            child: FlatButton(
-                              textColor: navName == name
-                                  ? Colors.black87
-                                  : Colors.grey,
-                              onPressed: () {
-                                setState(() {
-                                  navName = name;
-                                });
-                                HapticFeedback.selectionClick();
-                              },
-                              child: Text(name,
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.w500)),
+                Consumer<ContractStore>(builder: (context, cs, child) {
+                  return cs.screen
+                      ? Container()
+                      : Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: ScreenUtil.instance.setHeight(10),
                             ),
-                          );
-                        }).toList()),
-                      )
-                    : Container(),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  left: ScreenUtil.instance.setWidth(20)),
+                              child: Row(
+                                children: _types
+                                    .map((key, value) {
+                                      return MapEntry(
+                                          key,
+                                          Container(
+                                              child: Stack(
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: ScreenUtil.instance
+                                                        .setWidth(20)),
+                                                child: Container(
+                                                  width: ScreenUtil.instance
+                                                      .setWidth(150),
+                                                  margin: EdgeInsets.all(
+                                                      ScreenUtil.instance
+                                                          .setWidth(10)),
+                                                  child: GestureDetector(
+                                                    child: Text(
+                                                      value,
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: contractStore
+                                                                      .contractType ==
+                                                                  key
+                                                              ? Colors.black
+                                                              : Colors.grey),
+                                                    ),
+                                                    onTap: () {
+                                                      socketStore.sendMessage({
+                                                        "type": "unsub",
+                                                        "channels": _socketMsg
+                                                      });
+                                                      contractStore
+                                                          .contractType = key;
+                                                      choose(
+                                                          contractInfo, null);
+                                                      HapticFeedback
+                                                          .selectionClick();
+                                                      controller.reset();
+                                                      controller.forward();
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              Positioned(
+                                                right: ScreenUtil.instance
+                                                    .setWidth(22),
+                                                bottom: ScreenUtil.instance
+                                                    .setWidth(4),
+                                                child: FadeTransition(
+                                                  opacity: new Tween(
+                                                          begin: 0.0, end: 1.0)
+                                                      .animate(curved),
+                                                  child: Icon(
+                                                    Icons.brightness_1,
+                                                    size: ScreenUtil.instance
+                                                        .setWidth(24),
+                                                    color: contractStore
+                                                                .contractType ==
+                                                            key
+                                                        ? Colors.lightBlueAccent
+                                                        : Colors.transparent,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          )));
+                                    })
+                                    .values
+                                    .toList(),
+                              ),
+                            ),
+                            SizedBox(
+                              height: ScreenUtil.instance.setHeight(40),
+                            ),
+                            hasOpen
+                                ? Container(
+                                    height: ScreenUtil.instance.setHeight(80),
+                                    decoration: ShapeDecoration(
+                                      shape: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey[100])),
+                                    ),
+                                    child: Row(
+                                        children: pages.keys.map((name) {
+                                      return Expanded(
+                                        child: FlatButton(
+                                          textColor: navName == name
+                                              ? Colors.black87
+                                              : Colors.grey,
+                                          onPressed: () {
+                                            setState(() {
+                                              navName = name;
+                                            });
+                                            HapticFeedback.selectionClick();
+                                          },
+                                          child: Text(name,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500)),
+                                        ),
+                                      );
+                                    }).toList()),
+                                  )
+                                : Container(),
+                          ],
+                        );
+                }),
                 hasOpen
                     ? Expanded(
                         child: navName == "持仓"
@@ -335,20 +363,22 @@ class _ContractTradeState extends State<ContractTrade>
               ],
             ),
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: contractStore.direction == "buy" ? 0 : 1,
-            onTap: (index) {
-              contractStore.direction = (index == 0 ? "buy" : "sell");
-              choose(contractInfo, "操盘");
-              HapticFeedback.selectionClick();
-            },
-            items: const <BottomNavigationBarItem>[
-              const BottomNavigationBarItem(
-                  icon: Icon(Icons.trending_up), title: Text("追涨")),
-              const BottomNavigationBarItem(
-                  icon: Icon(Icons.trending_down), title: Text("杀跌")),
-            ],
-          ),
+          bottomNavigationBar: contractStore.screen
+              ? null
+              : BottomNavigationBar(
+                  currentIndex: contractStore.direction == "buy" ? 0 : 1,
+                  onTap: (index) {
+                    contractStore.direction = (index == 0 ? "buy" : "sell");
+                    choose(contractInfo, "操盘");
+                    HapticFeedback.selectionClick();
+                  },
+                  items: const <BottomNavigationBarItem>[
+                    const BottomNavigationBarItem(
+                        icon: Icon(Icons.trending_up), title: Text("追涨")),
+                    const BottomNavigationBarItem(
+                        icon: Icon(Icons.trending_down), title: Text("杀跌")),
+                  ],
+                ),
         ),
         onWillPop: () async {
           Navigator.pop(context, _socketMsg);

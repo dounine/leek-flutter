@@ -15,6 +15,7 @@ class ContractStore extends ChangeNotifier {
   String _cny = "";
   String _rise = "0.0";
   double _open = 0.0;
+  bool _screen = false;
   bool _push_info = false;
   num _openEntrustValue = -1;
   num _openEntrustPrice = -1;
@@ -47,6 +48,8 @@ class ContractStore extends ChangeNotifier {
   };
 
   bool get push_info => _push_info;
+
+  bool get screen => _screen;
 
   String get open_status => _open_status;
   int get open_lever_rate => _open_lever_rate;
@@ -107,6 +110,10 @@ class ContractStore extends ChangeNotifier {
 
   set open_enable(bool value) {
     _open_enable = value;
+  }
+
+  set screen(bool value){
+    _screen = value;
   }
 
   set close_bind(bool value) {
