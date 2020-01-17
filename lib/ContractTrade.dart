@@ -25,10 +25,9 @@ class _ContractTradeState extends State<ContractTrade>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   Map<String, Widget> pages;
   PageView pageView;
-  List<dynamic> _socketMsg;
   String navName = "操盘";
   ContractInfo contractInfo;
-
+  List<dynamic> socketMsg;
   AnimationController controller;
   CurvedAnimation curved;
   Map<String, String> _types = {
@@ -52,8 +51,24 @@ class _ContractTradeState extends State<ContractTrade>
   }
 
   void onConnect() {
-    Provider.of<SocketStore>(context)
-        .sendMessage({"type": "sub", "channels": _socketMsg});
+    ContractStore contractStore = Provider.of<ContractStore>(context);
+    contractStore.push_info = false;
+    socketMsg = [
+      {
+        "type": "contract",
+        "json":
+            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}","offset":"${contractStore.open_switch ? 'open' : 'close'}"}'
+      }
+    ];
+    var hasOpen = contractInfo.opens
+        .where((item) =>
+            item.contractType == contractStore.contractType &&
+            item.direction == contractStore.direction)
+        .isNotEmpty;
+    if (hasOpen) {
+      Provider.of<SocketStore>(context)
+          .sendMessage({"type": "sub", "channels": socketMsg});
+    }
   }
 
   @override
@@ -87,11 +102,11 @@ class _ContractTradeState extends State<ContractTrade>
   void choose(ContractInfo contractInfo, String nname) async {
     ContractStore contractStore = Provider.of<ContractStore>(context);
     await contractStore.choose(contractInfo.symbol);
-    _socketMsg = [
+    socketMsg = [
       {
         "type": "contract",
         "json":
-            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}"}'
+            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}","offset":"${contractStore.open_switch ? 'open' : 'close'}"}'
       }
     ];
     var hasOpen = contractInfo.opens
@@ -101,7 +116,7 @@ class _ContractTradeState extends State<ContractTrade>
         .isNotEmpty;
     if (hasOpen) {
       Provider.of<SocketStore>(context)
-          .sendMessage({"type": "sub", "channels": _socketMsg});
+          .sendMessage({"type": "sub", "channels": socketMsg});
     }
     if (nname != null) {
       setState(() {
@@ -271,7 +286,7 @@ class _ContractTradeState extends State<ContractTrade>
                                                     onTap: () {
                                                       socketStore.sendMessage({
                                                         "type": "unsub",
-                                                        "channels": _socketMsg
+                                                        "channels": socketMsg
                                                       });
                                                       contractStore
                                                           .contractType = key;
@@ -381,7 +396,20 @@ class _ContractTradeState extends State<ContractTrade>
                 ),
         ),
         onWillPop: () async {
-          Navigator.pop(context, _socketMsg);
+          ContractStore contractStore = Provider.of<ContractStore>(context);
+          var hasOpen = contractInfo.opens
+              .where((item) =>
+                  item.contractType == contractStore.contractType &&
+                  item.direction == contractStore.direction)
+              .isNotEmpty;
+          List<dynamic> socketMsg = [
+            {
+              "type": "contract",
+              "json":
+                  '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}","offset":"${contractStore.open_switch ? 'open' : 'close'}"}'
+            }
+          ];
+          Navigator.pop(context, socketMsg);
           return false;
         });
   }

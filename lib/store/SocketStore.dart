@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -26,10 +27,20 @@ class SocketStore extends ChangeNotifier {
   void connect() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString("token");
+    String platform = "unkown";
+    if(Platform.isAndroid){
+      platform = "android";
+    }else if(Platform.isIOS){
+      platform = "ios";
+    }else if(Platform.isMacOS){
+      platform = "macOs";
+    }else if(Platform.isLinux){
+      platform = "linux";
+    }
     if (token != "") {
-      _channel = IOWebSocketChannel.connect("${Config.wsUrl}/ws?token=$token");
+      _channel = IOWebSocketChannel.connect("${Config.wsUrl}/ws?platform=${platform}&token=$token");
     } else {
-      _channel = IOWebSocketChannel.connect("${Config.wsUrl}/ws");
+      _channel = IOWebSocketChannel.connect("${Config.wsUrl}/ws?platform=${platform}");
     }
     _channel.stream.listen(this.onData, onError: onError, onDone: onDone);
   }

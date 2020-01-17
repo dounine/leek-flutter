@@ -17,11 +17,14 @@ class ContractStore extends ChangeNotifier {
   double _open = 0.0;
   bool _screen = false;
   bool _push_info = false;
+  bool _open_switch = true;
   num _openEntrustValue = -1;
+  num _openInitPrice = -1;
   num _openEntrustPrice = -1;
   num _openTradeValue = -1;
   num _openTradePrice = -1;
 
+  num _closeInitPrice = -1;
   num _closeEntrustValue = -1;
   num _closeEntrustPrice = -1;
   num _closeTradeValue = -1;
@@ -51,32 +54,60 @@ class ContractStore extends ChangeNotifier {
 
   bool get screen => _screen;
 
+  bool get open_switch => _open_switch;
+
   String get open_status => _open_status;
+
   int get open_lever_rate => _open_lever_rate;
+
   bool get open_enable => _open_enable;
+
   num get open_rebound_price => _open_rebound_price;
+
   num get open_plan_price_spread => _open_plan_price_spread;
+
   num get open_volume => _open_volume;
+
+  num get openInitPrice => _openInitPrice;
+
+  num get closeInitPrice => _closeInitPrice;
+
   num get openEntrustValue => _openEntrustValue;
+
   num get openEntrustPrice => _openEntrustPrice;
+
   num get openTradePrice => _openTradePrice;
+
   num get openTradeValue => _openTradeValue;
+
   num get closeEntrustValue => _closeEntrustValue;
+
   num get closeEntrustPrice => _closeEntrustPrice;
+
   num get closeTradePrice => _closeTradePrice;
+
   num get closeTradeValue => _closeTradeValue;
+
   Map<String, dynamic> get open_schedue => _open_schedue;
+
   Map<String, dynamic> get open_entrust_timeout => _open_entrust_timeout;
 
   String get close_status => _close_status;
+
   bool get close_bind => _close_bind;
+
   num get close_rebound_price => _close_rebound_price;
+
   num get close_plan_price_spread => _close_plan_price_spread;
+
   num get close_volume => _close_volume;
+
   Map<String, dynamic> get close_schedue => _close_schedue;
+
   Map<String, dynamic> get close_entrust_timeout => _close_entrust_timeout;
 
   String get symbol => _symbol;
+
   double get open => _open;
 
   set push_info(bool value) {
@@ -86,10 +117,22 @@ class ContractStore extends ChangeNotifier {
     _openEntrustPrice = -1;
     _openTradeValue = -1;
     _openTradePrice = -1;
+    _openInitPrice = -1;
+
+    _closeEntrustValue = -1;
+    _closeEntrustPrice = -1;
+    _closeTradeValue = -1;
+    _closeTradePrice = -1;
+    _closeInitPrice = -1;
   }
 
   set open_rebound_price(num value) {
     _open_rebound_price = value;
+  }
+
+  set open_switch(bool value) {
+    _open_switch = value;
+    notifyListeners();
   }
 
   set open_lever_rate(int value) {
@@ -115,6 +158,12 @@ class ContractStore extends ChangeNotifier {
 
   set open_enable(bool value) {
     _open_enable = value;
+    if (value == false) {
+      _openEntrustValue = -1;
+      _openEntrustPrice = -1;
+      _closeEntrustValue = -1;
+      _closeEntrustPrice = -1;
+    }
   }
 
   set screen(bool value) {
@@ -191,7 +240,8 @@ class ContractStore extends ChangeNotifier {
       // _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
     } else if (data["status"] == "ok" && data["type"] == "po") {
       var d = data["data"];
-      if (d["offset"] == "open") {
+      print("推送 po ${d}");
+      if (d["o"] == "o") {
         if (d["tv"] != null) {
           _openTradeValue = d["tv"];
           Config.eventBus
@@ -208,7 +258,10 @@ class ContractStore extends ChangeNotifier {
         if (d["ep"] != null) {
           _openEntrustPrice = d["ep"];
         }
-      } else if (d["offset"] == "close") {
+        if (d["ip"] != null) {
+          _openInitPrice = d["ip"];
+        }
+      } else if (d["o"] == "c") {
         if (d["tv"] != null) {
           _closeTradeValue = d["tv"];
           Config.eventBus
@@ -225,13 +278,21 @@ class ContractStore extends ChangeNotifier {
         if (d["ep"] != null) {
           _closeEntrustPrice = d["ep"];
         }
+        if (d["ip"] != null) {
+          _closeInitPrice = d["ip"];
+        }
       }
     } else if (data["status"] == "ok" && data["type"] == "push_info") {
+      print("推送消息push_info");
       HapticFeedback.lightImpact();
       var d = data["data"];
       _push_info = true;
       if (d["open_enable"] != null) {
         _open_enable = d["open_enable"];
+        _openEntrustValue = -1;
+        _openEntrustPrice = -1;
+        _closeEntrustValue = -1;
+        _closeEntrustPrice = -1;
       }
       if (d["open_rebound_price"] != null) {
         _open_rebound_price = d["open_rebound_price"];

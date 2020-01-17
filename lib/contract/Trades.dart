@@ -26,7 +26,6 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
   Animation<Color> skeletonColor;
   CurvedAnimation curved;
   List<ConfigInfo> configs;
-  bool openIcon = true;
 
   @override
   void initState() {
@@ -63,8 +62,34 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     });
   }
 
+  BuildContext bc;
+  void choose(bool open) async {
+    ContractStore contractStore = Provider.of<ContractStore>(bc);
+    List<dynamic> unsub = [
+      {
+        "type": "contract",
+        "json":
+            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}","offset":"${contractStore.open_switch ? 'open' : 'close'}"}'
+      }
+    ];
+    Provider.of<SocketStore>(context)
+        .sendMessage({"type": "unsub", "channels": unsub});
+    contractStore.open_switch = open;
+    await contractStore.choose(contractStore.symbol);
+    List<dynamic> _socketMsg = [
+      {
+        "type": "contract",
+        "json":
+            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}","offset":"${open ? 'open' : 'close'}"}'
+      }
+    ];
+    Provider.of<SocketStore>(context)
+        .sendMessage({"type": "sub", "channels": _socketMsg});
+  }
+
   @override
   Widget build(BuildContext context) {
+    bc = context;
     ContractStore contractStore = Provider.of<ContractStore>(context);
     SocketStore socketStore = Provider.of<SocketStore>(context);
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
@@ -131,14 +156,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 onChanged: (bool value) {
                   contractStore.open_enable = value;
                   socketStore.sendMessage({
-                  "type": "contract_update",
-                  "data": {
-                    "symbol": contractStore.symbol,
-                    "contractType": contractStore.contractType,
-                    "direction": contractStore.direction,
-                    "open_enable": value
-                  }
-                });
+                    "type": "contract_update",
+                    "data": {
+                      "symbol": contractStore.symbol,
+                      "contractType": contractStore.contractType,
+                      "direction": contractStore.direction,
+                      "open_enable": value
+                    }
+                  });
                 },
               )
             ],
@@ -183,8 +208,8 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     fixed: open_online.fixed,
                     eventName:
                         "online_open_entrust_price,online_open_trade_price",
-                    onChange: (double oldValue, double newValue){
-                      print(newValue);
+                    onChange: (double oldValue, double newValue) {
+                      print(newValue + contractStore.openInitPrice);
                     },
                   )
           ],
@@ -215,14 +240,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               eventName: "open_rebound_price",
               animation: false,
               onChange: (num oldValue, num newValue) {
-                contractStore.open_rebound_price = newValue;
+                contractStore.open_rebound_price = double.parse(newValue.toStringAsFixed(open_rebound_price.fixed));
                 socketStore.sendMessage({
                   "type": "contract_update",
                   "data": {
                     "symbol": contractStore.symbol,
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
-                    "open_rebound_price": newValue.toString()
+                    "open_rebound_price": newValue.toStringAsFixed(open_rebound_price.fixed)
                   }
                 });
               },
@@ -255,14 +280,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               eventName: "open_plan_price_spread",
               animation: false,
               onChange: (num oldValue, num newValue) {
-                contractStore.open_plan_price_spread = newValue;
+                contractStore.open_plan_price_spread = double.parse(newValue.toStringAsFixed(open_plan_price_spread.fixed));
                 socketStore.sendMessage({
                   "type": "contract_update",
                   "data": {
                     "symbol": contractStore.symbol,
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
-                    "open_plan_price_spread": newValue.toString()
+                    "open_plan_price_spread": newValue.toStringAsFixed(open_plan_price_spread.fixed)
                   }
                 });
               },
@@ -295,7 +320,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               eventName: "open_schedue",
               onChange: (num oldValue, num newValue) {
                 contractStore.open_schedue = {
-                  "length": newValue,
+                  "length": newValue.toInt(),
                   "unit": "seconds"
                 };
                 socketStore.sendMessage({
@@ -304,7 +329,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     "symbol": contractStore.symbol,
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
-                    "open_schedue": {"length": newValue, "unit": "seconds"}
+                    "open_schedue": {"length": newValue.toInt(), "unit": "seconds"}
                   }
                 });
               },
@@ -337,7 +362,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               eventName: "open_entrust_timeout",
               onChange: (num oldValue, num newValue) {
                 contractStore.open_entrust_timeout = {
-                  "length": newValue,
+                  "length": newValue.toInt(),
                   "unit": "seconds"
                 };
                 socketStore.sendMessage({
@@ -347,7 +372,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
                     "open_entrust_timeout": {
-                      "length": newValue,
+                      "length": newValue.toInt(),
                       "unit": "seconds"
                     }
                   }
@@ -554,14 +579,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               fixed: close_rebound_price.fixed,
               eventName: "close_rebound_price",
               onChange: (num oldValue, num newValue) {
-                contractStore.close_rebound_price = newValue;
+                contractStore.close_rebound_price = double.parse(newValue.toStringAsFixed(close_rebound_price.fixed));
                 socketStore.sendMessage({
                   "type": "contract_update",
                   "data": {
                     "symbol": contractStore.symbol,
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
-                    "close_rebound_price": newValue.toString()
+                    "close_rebound_price": newValue.toStringAsFixed(close_rebound_price.fixed)
                   }
                 });
               },
@@ -593,14 +618,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               fixed: close_plan_price_spread.fixed,
               eventName: "close_plan_price_spread",
               onChange: (num oldValue, num newValue) {
-                contractStore.close_plan_price_spread = newValue;
+                contractStore.close_plan_price_spread = double.parse(newValue.toStringAsFixed(close_plan_price_spread.fixed));
                 socketStore.sendMessage({
                   "type": "contract_update",
                   "data": {
                     "symbol": contractStore.symbol,
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
-                    "close_plan_price_spread": newValue.toString()
+                    "close_plan_price_spread": newValue.toStringAsFixed(close_plan_price_spread.fixed)
                   }
                 });
               },
@@ -633,7 +658,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               eventName: "close_entrust_timeout",
               onChange: (num oldValue, num newValue) {
                 contractStore.close_entrust_timeout = {
-                  "length": newValue,
+                  "length": newValue.toInt(),
                   "unit": "seconds"
                 };
                 socketStore.sendMessage({
@@ -643,7 +668,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
                     "close_entrust_timeout": {
-                      "length": newValue,
+                      "length": newValue.toInt(),
                       "unit": "seconds"
                     }
                   }
@@ -709,53 +734,49 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               Row(
                 children: <Widget>[
                   IconButton(
-                    color: openIcon ? Colors.blue : Colors.grey,
+                    color:
+                        contractStore.open_switch ? Colors.blue : Colors.grey,
                     icon: Icon(Icons.invert_colors),
                     onPressed: () {
-                      setState(() {
-                        openIcon = true;
-                        Future.delayed(new Duration(milliseconds: 100), () {
-                          Config.eventBus.fire(PushEvent(
-                              "online_open_trade_price",
-                              contractStore.openTradeValue));
-                          Config.eventBus.fire(PushEvent("open_rebound_price",
-                              contractStore.open_rebound_price));
-                          Config.eventBus.fire(PushEvent(
-                              "open_plan_price_spread",
-                              contractStore.open_plan_price_spread));
-                          Config.eventBus.fire(PushEvent(
-                              "open_volume", contractStore.open_volume));
-                          Config.eventBus.fire(PushEvent("open_schedue",
-                              contractStore.open_schedue["length"]));
-                          Config.eventBus.fire(PushEvent("open_entrust_timeout",
-                              contractStore.open_entrust_timeout["length"]));
-                        });
+                      Future.delayed(new Duration(milliseconds: 100), () {
+                        Config.eventBus.fire(PushEvent(
+                            "online_open_trade_price",
+                            contractStore.openTradeValue));
+                        Config.eventBus.fire(PushEvent("open_rebound_price",
+                            contractStore.open_rebound_price));
+                        Config.eventBus.fire(PushEvent("open_plan_price_spread",
+                            contractStore.open_plan_price_spread));
+                        Config.eventBus.fire(PushEvent(
+                            "open_volume", contractStore.open_volume));
+                        Config.eventBus.fire(PushEvent("open_schedue",
+                            contractStore.open_schedue["length"]));
+                        Config.eventBus.fire(PushEvent("open_entrust_timeout",
+                            contractStore.open_entrust_timeout["length"]));
+                        choose(true);
                       });
                     },
                   ),
                   IconButton(
-                    color: !openIcon ? Colors.blue : Colors.grey,
+                    color:
+                        !contractStore.open_switch ? Colors.blue : Colors.grey,
                     icon: Icon(Icons.invert_colors_off),
                     onPressed: () {
-                      setState(() {
-                        openIcon = false;
-                        Future.delayed(new Duration(milliseconds: 100), () {
-                          Config.eventBus.fire(PushEvent(
-                              "online_close_trade_price",
-                              contractStore.closeTradeValue));
-                          Config.eventBus.fire(PushEvent("close_rebound_price",
-                              contractStore.close_rebound_price));
-                          Config.eventBus.fire(PushEvent(
-                              "close_plan_price_spread",
-                              contractStore.close_plan_price_spread));
-                          Config.eventBus.fire(PushEvent(
-                              "close_volume", contractStore.close_volume));
-                          Config.eventBus.fire(PushEvent("close_schedue",
-                              contractStore.close_schedue["length"]));
-                          Config.eventBus.fire(PushEvent(
-                              "close_entrust_timeout",
-                              contractStore.close_entrust_timeout["length"]));
-                        });
+                      Future.delayed(new Duration(milliseconds: 100), () {
+                        Config.eventBus.fire(PushEvent(
+                            "online_close_trade_price",
+                            contractStore.closeTradeValue));
+                        Config.eventBus.fire(PushEvent("close_rebound_price",
+                            contractStore.close_rebound_price));
+                        Config.eventBus.fire(PushEvent(
+                            "close_plan_price_spread",
+                            contractStore.close_plan_price_spread));
+                        Config.eventBus.fire(PushEvent(
+                            "close_volume", contractStore.close_volume));
+                        Config.eventBus.fire(PushEvent("close_schedue",
+                            contractStore.close_schedue["length"]));
+                        Config.eventBus.fire(PushEvent("close_entrust_timeout",
+                            contractStore.close_entrust_timeout["length"]));
+                        choose(false);
                       });
                     },
                   )
@@ -811,7 +832,8 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 ),
               )
             : Column(
-                children: openIcon ? openWidgets : closeWidgets,
+                children:
+                    contractStore.open_switch ? openWidgets : closeWidgets,
               )
       ],
     ));
