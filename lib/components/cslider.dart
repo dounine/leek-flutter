@@ -144,7 +144,7 @@ class _CustomliderState extends State<CustomliderWidget>
   void _onPanStart(DragStartDetails details) {
     this.initial = details.globalPosition.dx;
     this._left = this.left;
-    if (animation) {
+    if (animation != null && animation) {
       this.controller.forward();
     }
     setState(() {
@@ -162,7 +162,7 @@ class _CustomliderState extends State<CustomliderWidget>
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
       if (this.value != nextValue.round().toDouble()) {
         HapticFeedback.lightImpact();
-        widget.onChange(this.value, double.parse(nextValue.toStringAsFixed(fixed)));
+        widget.onChange(this.value, nextValue.toDouble());
       }
       setState(() {
         value = nextValue.round().toDouble();
@@ -174,7 +174,7 @@ class _CustomliderState extends State<CustomliderWidget>
   void _onPanEnd(DragEndDetails details) {
     this.initial = 0.0;
     this._left = 0.0;
-    if (animation) {
+    if (animation != null && animation) {
       this.controller.reverse();
     }
     double preValue = this.left / this.baseWidth / this.setup;

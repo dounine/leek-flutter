@@ -139,7 +139,7 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
       if (this.value1 != nextValue.round().toDouble()) {
         HapticFeedback.selectionClick();
-        widget.onChange(this.value1, double.parse(nextValue.toStringAsFixed(fixed)));
+        widget.onChange(this.value1, nextValue.toDouble());
       }
       setState(() {
         value1 = nextValue.round().toDouble();
