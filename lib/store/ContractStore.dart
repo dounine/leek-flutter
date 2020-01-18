@@ -11,6 +11,7 @@ class ContractStore extends ChangeNotifier {
   String _contractType;
   String _direction = "buy";
 
+  String _err_msg = "";
   String _usdt = "";
   String _cny = "";
   String _rise = "0.0";
@@ -49,6 +50,8 @@ class ContractStore extends ChangeNotifier {
     "length": 3,
     "unit": "seconds"
   };
+
+  String get err_msg => _err_msg;
 
   bool get push_info => _push_info;
 
@@ -133,6 +136,10 @@ class ContractStore extends ChangeNotifier {
   set open_switch(bool value) {
     _open_switch = value;
     notifyListeners();
+  }
+
+  set err_msg(String value) {
+    _err_msg = value;
   }
 
   set open_lever_rate(int value) {
@@ -240,7 +247,6 @@ class ContractStore extends ChangeNotifier {
       // _rise = ((usdtPrice - _open) / _open * 100).toStringAsFixed(2);
     } else if (data["status"] == "ok" && data["type"] == "po") {
       var d = data["data"];
-      print("推送 po ${d}");
       if (d["o"] == "o") {
         if (d["tv"] != null) {
           _openTradeValue = d["tv"];
@@ -282,12 +288,19 @@ class ContractStore extends ChangeNotifier {
           _closeInitPrice = d["ip"];
         }
       }
-    } else if (data["status"] == "ok" && data["type"] == "push_info") {
-      print("推送消息push_info");
-      HapticFeedback.lightImpact();
+    }
+    if (data["status"] == "ok" && data["type"] == "push_info") {
       var d = data["data"];
-      _push_info = true;
-      if (d["open_enable"] != null) {
+      print("推送消息push_info ${d}");
+      if (d["err_msg"] != null) {
+        _err_msg = d["_err_msg"];
+      } else {
+        if (_push_info == false) {
+          HapticFeedback.lightImpact();
+        }
+        _push_info = true;
+      }
+      if (d["open_enable"] != null && d["open_enable"] == false) {
         _open_enable = d["open_enable"];
         _openEntrustValue = -1;
         _openEntrustPrice = -1;

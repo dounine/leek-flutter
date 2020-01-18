@@ -19,7 +19,7 @@ class CustomliderWidget extends StatefulWidget {
   final bool animation;
   final int splits;
 
-  const CustomliderWidget(
+  CustomliderWidget(
       {Key key,
       @required this.width,
       @required this.minValue,
@@ -77,7 +77,6 @@ class _CustomliderState extends State<CustomliderWidget>
   bool animation = false;
   bool enableTouch = true; //是否允许触摸
   double value = 0.0; //默认值
-  double incrmentValue = 0.0;
   int fixed = 0;
   double minValue = 0.0; //最小值
   double maxValue = 0.0; //最大值
@@ -125,7 +124,7 @@ class _CustomliderState extends State<CustomliderWidget>
         if (event.name == widget.eventName) {
           setState(() {
             value = event.value * 1.0;
-            left = baseWidth * value;
+            left = baseWidth * event.value;
           });
         }
       });
@@ -138,6 +137,7 @@ class _CustomliderState extends State<CustomliderWidget>
         color: Colors.white54,
       );
     }).toList();
+
     super.initState();
   }
 
@@ -231,9 +231,7 @@ class _CustomliderState extends State<CustomliderWidget>
         Positioned(
             left: left -
                 ScreenUtil.instance.setWidth(pointWidth) / 2 -
-                (value + incrmentValue).toStringAsFixed(fixed).length *
-                    4.5 /
-                    2 +
+                value.toStringAsFixed(fixed).length * 4.5 / 2 +
                 5,
             top: ScreenUtil.instance
                 .setWidth(-(pointHeight - height) / 2 - pointHeight),
@@ -245,7 +243,7 @@ class _CustomliderState extends State<CustomliderWidget>
                 child: TextSize(
                     pointBorderRadius:
                         ScreenUtil.instance.setWidth(pointBorderRadius),
-                    value: value + incrmentValue,
+                    value: value,
                     valueFixed: fixed),
               ),
             )),
