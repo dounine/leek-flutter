@@ -91,9 +91,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     Provider.of<SocketStore>(context)
         .sendMessage({"type": "unsub", "channels": unsub});
     contractStore.open_switch = open;
-    Future.delayed(const Duration(milliseconds: 50), () {
-      sub(open);
-    });
+    sub(open);
   }
 
   @override
@@ -587,13 +585,13 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("close_rebound_price"),
               splits: 3,
               width: ScreenUtil.instance.setWidth(860),
               minValue: close_rebound_price.minValue,
               maxValue: close_rebound_price.maxValue,
-              defaultValue: close_rebound_price.defaultValue,
+              defaultValue: contractStore.close_rebound_price,
               setup: close_rebound_price.setup,
               fixed: close_rebound_price.fixed,
               eventName: "close_rebound_price",
@@ -785,7 +783,6 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     EdgeInsets.only(right: ScreenUtil.instance.setWidth(20)),
                 child: Row(
                   children: <Widget>[
-
                     IconButton(
                       color:
                           contractStore.open_switch ? Colors.blue : Colors.grey,
