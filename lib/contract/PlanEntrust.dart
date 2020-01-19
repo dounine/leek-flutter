@@ -270,7 +270,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "保证金(BTC)",
+                  "委托价(BTC)",
                   style: TextStyle(color: Colors.grey),
                 ),
                 SizedBox(
