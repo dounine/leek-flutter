@@ -284,7 +284,7 @@ class _PositionState extends State<Position> {
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
                 ),
-                Text(limitOrder.cost_open.toString(),
+                Text(limitOrder.cost_open.toStringAsFixed(2),
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 SizedBox(
@@ -297,7 +297,7 @@ class _PositionState extends State<Position> {
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
                 ),
-                Text(limitOrder.cost_hold.toString(),
+                Text(limitOrder.cost_hold.toStringAsFixed(2),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500))
               ],
             ),
@@ -312,7 +312,7 @@ class _PositionState extends State<Position> {
                   height: ScreenUtil.instance.setHeight(10),
                 ),
                 Text(
-                  limitOrder.profit.toStringAsFixed(8),
+                  limitOrder.profit.toStringAsFixed(4),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
@@ -326,7 +326,7 @@ class _PositionState extends State<Position> {
                   height: ScreenUtil.instance.setHeight(10),
                 ),
                 Text(
-                  limitOrder.position_margin.toStringAsFixed(8),
+                  limitOrder.position_margin.toStringAsFixed(4),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 )
               ],
@@ -441,10 +441,6 @@ class _PositionState extends State<Position> {
                     ),
                   )
                 : Container(
-                    margin:
-                        EdgeInsets.only(top: ScreenUtil.instance.setHeight(40)),
-                    padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil.instance.setWidth(40)),
                     child: new ListView.separated(
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
@@ -454,7 +450,12 @@ class _PositionState extends State<Position> {
                               height: 1,
                             ),
                         itemBuilder: (BuildContext context, int index) {
-                          return getRow(index);
+                          return Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: ScreenUtil.instance.setWidth(20)),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtil.instance.setWidth(30)),
+                              child: getRow(index));
                         }),
                   ),
       );

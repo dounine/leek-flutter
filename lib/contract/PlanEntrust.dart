@@ -261,7 +261,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
                 ),
                 Text(
                     (limitOrder.trigger_type == "ge" ? "≥" : "≤") +
-                        limitOrder.trigger_price.toString(),
+                        limitOrder.trigger_price.toStringAsFixed(2),
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               ],
@@ -277,7 +277,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
                   height: ScreenUtil.instance.setHeight(10),
                 ),
                 Text(
-                  limitOrder.order_price.toStringAsFixed(8),
+                  limitOrder.order_price.toStringAsFixed(2),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ],
@@ -334,8 +334,6 @@ class _PlanEntrustState extends State<PlanEntrust> {
                     ),
                   )
                 : Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil.instance.setWidth(40)),
                     child: new ListView.separated(
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
@@ -345,7 +343,12 @@ class _PlanEntrustState extends State<PlanEntrust> {
                               height: 1,
                             ),
                         itemBuilder: (BuildContext context, int index) {
-                          return getRow(index);
+                          return Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: ScreenUtil.instance.setWidth(20)),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtil.instance.setWidth(30)),
+                              child: getRow(index));
                         }),
                   ),
       );

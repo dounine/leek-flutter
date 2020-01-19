@@ -272,7 +272,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
                 SizedBox(
                   height: ScreenUtil.instance.setHeight(10),
                 ),
-                Text(limitOrder.price.toString(),
+                Text(limitOrder.price.toStringAsFixed(2),
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 SizedBox(
@@ -288,7 +288,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
                 Text(
                     limitOrder.trade_avg_price == null
                         ? ""
-                        : limitOrder.trade_avg_price.toString(),
+                        : limitOrder.trade_avg_price.toStringAsFixed(2),
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500))
               ],
             ),
@@ -303,7 +303,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
                   height: ScreenUtil.instance.setHeight(10),
                 ),
                 Text(
-                  limitOrder.margin_frozen.toStringAsFixed(8),
+                  limitOrder.margin_frozen.toStringAsFixed(4),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
@@ -317,7 +317,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
                   height: ScreenUtil.instance.setHeight(10),
                 ),
                 Text(
-                  limitOrder.fee.toString(),
+                  limitOrder.fee.toStringAsFixed(4),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 )
               ],
@@ -372,8 +372,6 @@ class _LimitEntrustState extends State<LimitEntrust> {
                     ),
                   )
                 : Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: ScreenUtil.instance.setWidth(40)),
                     child: new ListView.separated(
                         shrinkWrap: true,
                         physics: BouncingScrollPhysics(),
@@ -383,7 +381,12 @@ class _LimitEntrustState extends State<LimitEntrust> {
                               height: 1,
                             ),
                         itemBuilder: (BuildContext context, int index) {
-                          return getRow(index);
+                          return Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: ScreenUtil.instance.setWidth(20)),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtil.instance.setWidth(30)),
+                              child: getRow(index));
                         }),
                   ),
       );

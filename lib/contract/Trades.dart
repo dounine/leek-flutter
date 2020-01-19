@@ -479,7 +479,8 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
-                      if (contractStore.open_enable == false) {
+                      if (contractStore.open_enable == false &&
+                          !contractStore.locked) {
                         HapticFeedback.selectionClick();
                         contractStore.open_lever_rate = i;
                         socketStore.sendMessage({
