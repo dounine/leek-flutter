@@ -18,6 +18,7 @@ class CustomliderWidget2 extends StatefulWidget {
   final num fixed;
   final String eventName;
   final int splits;
+  final bool touch;
 
   const CustomliderWidget2(
       {Key key,
@@ -30,6 +31,7 @@ class CustomliderWidget2 extends StatefulWidget {
       @required this.fixed,
       @required this.onChange,
       @required this.splits,
+      @required this.touch,
       this.eventName})
       : super(key: key);
 
@@ -96,27 +98,27 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
     if (value2 != -1) {
       left2 = baseWidth * value2;
     }
-    if (widget.eventName != null) {
-      subEvent = Config.eventBus.on<PushEvent>().listen((event) {
-        var i = 1;
-        widget.eventName.split(",").forEach((eventName) {
-          if (event.name == eventName) {
-            if (i == 1) {
-              setState(() {
-                value1 = event.value * 1.0;
-                left1 = baseWidth * value1;
-              });
-            } else {
-              setState(() {
-                value2 = event.value * 1.0;
-                left2 = baseWidth * value2;
-              });
-            }
-          }
-          i = i + 1;
-        });
-      });
-    }
+//    if (widget.eventName != null) {
+//      subEvent = Config.eventBus.on<PushEvent>().listen((event) {
+//        var i = 1;
+//        widget.eventName.split(",").forEach((eventName) {
+//          if (event.name == eventName) {
+//            if (i == 1) {
+//              setState(() {
+//                value1 = event.value * 1.0;
+//                left1 = baseWidth * value1;
+//              });
+//            } else {
+//              setState(() {
+//                value2 = event.value * 1.0;
+//                left2 = baseWidth * value2;
+//              });
+//            }
+//          }
+//          i = i + 1;
+//        });
+//      });
+//    }
 
     //分隔线
     splits = [for (var i = 0; i < 3; i += 1) i].map((i) {
@@ -130,41 +132,45 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
-    double moveWidth = details.globalPosition.dx + this.initial;
-    if (moveWidth != 0) {
-      double nextLeft = _left1 + details.globalPosition.dx - this.initial;
-      double boundaryLeft = nextLeft < minValue * baseWidth
-          ? minValue * baseWidth
-          : (nextLeft > width ? width : nextLeft);
-      double nextValue = boundaryLeft / this.baseWidth / this.setup;
-      if (this.value1 != nextValue.round().toDouble()) {
-        HapticFeedback.selectionClick();
-        widget.onChange(this.value1, nextValue.toDouble());
+    if (widget.touch) {
+      double moveWidth = details.globalPosition.dx + this.initial;
+      if (moveWidth != 0) {
+        double nextLeft = _left1 + details.globalPosition.dx - this.initial;
+        double boundaryLeft = nextLeft < minValue * baseWidth
+            ? minValue * baseWidth
+            : (nextLeft > width ? width : nextLeft);
+        double nextValue = boundaryLeft / this.baseWidth / this.setup;
+        if (this.value1 != nextValue.round().toDouble()) {
+          HapticFeedback.selectionClick();
+          widget.onChange(this.value1, nextValue.toDouble());
+        }
+        setState(() {
+          value1 = nextValue.round().toDouble();
+          left1 = boundaryLeft;
+        });
       }
-      setState(() {
-        value1 = nextValue.round().toDouble();
-        left1 = boundaryLeft;
-      });
     }
   }
 
   void _onPanStart(DragStartDetails details) {
-    this.initial = details.globalPosition.dx;
-    this._left1 = this.left1;
-    setState(() {
-      pointScale = 1.2;
-    });
+    if (widget.touch) {
+      this.initial = details.globalPosition.dx;
+      this._left1 = this.left1;
+      setState(() {
+        pointScale = 1.2;
+      });
+    }
   }
 
   void _onPanEnd(DragEndDetails details) {
     this.initial = 0.0;
     this._left1 = 0.0;
-    double preValue = this.left1 / this.baseWidth / this.setup;
-    int latestLeft = preValue.round();
-    setState(() {
-      pointScale = 1.0;
-      left1 = latestLeft * this.baseWidth * this.setup;
-    });
+//    double preValue = this.left1 / this.baseWidth / this.setup;
+//    int latestLeft = preValue.round();
+//    setState(() {
+//      pointScale = 1.0;
+//      left1 = latestLeft * this.baseWidth * this.setup;
+//    });
   }
 
   @override
@@ -175,6 +181,19 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
 
   @override
   Widget build(BuildContext context) {
+    value1 = widget.defaultValue1.toDouble();
+    value2 = widget.defaultValue2.toDouble();
+
+    //基数、每个值占多少宽度
+    baseWidth = width / maxValue;
+
+    if (value1 != -1) {
+      left1 = baseWidth * value1;
+    }
+    if (value2 != -1) {
+      left2 = baseWidth * value2;
+    }
+
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Stack(
       overflow: Overflow.visible,

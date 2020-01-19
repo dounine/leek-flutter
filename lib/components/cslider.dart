@@ -20,20 +20,20 @@ class CustomliderWidget extends StatefulWidget {
   final int splits;
   final bool touch;
 
-  CustomliderWidget(
-      {Key key,
-      @required this.width,
-      @required this.minValue,
-      @required this.maxValue,
-      @required this.defaultValue,
-      @required this.setup,
-      @required this.fixed,
-      @required this.onChange,
-      @required this.splits,
-      this.eventName,
-      this.animation,
-      this.touch})
-      : super(key: key);
+  const CustomliderWidget({
+    Key key,
+    @required this.width,
+    @required this.minValue,
+    @required this.maxValue,
+    @required this.defaultValue,
+    @required this.setup,
+    @required this.fixed,
+    @required this.onChange,
+    @required this.splits,
+    @required this.touch,
+    this.eventName,
+    this.animation,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CustomliderState();
@@ -77,8 +77,6 @@ class _CustomliderState extends State<CustomliderWidget>
   AnimationController controller;
   CurvedAnimation curved;
   bool animation = false;
-  bool touch = true;
-  bool enableTouch = true; //是否允许触摸
   double value = 0.0; //默认值
   int fixed = 0;
   double minValue = 0.0; //最小值
@@ -109,9 +107,6 @@ class _CustomliderState extends State<CustomliderWidget>
     controller = new AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this); //动画控制器
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
-    if (widget.touch != null) {
-      touch = widget.touch;
-    }
     fixed = widget.fixed;
     width = widget.width;
     animation = widget.animation;
@@ -122,18 +117,7 @@ class _CustomliderState extends State<CustomliderWidget>
 
     //基数、每个值占多少宽度
     baseWidth = width / maxValue;
-
     left = baseWidth * value;
-    if (widget.eventName != null) {
-      subEvent = Config.eventBus.on<PushEvent>().listen((event) {
-        if (event.name == widget.eventName) {
-          setState(() {
-            value = event.value * 1.0;
-            left = baseWidth * event.value;
-          });
-        }
-      });
-    }
 
     //分隔线
     splits = [for (var i = 0; i < 3; i += 1) i].map((i) {
@@ -147,18 +131,20 @@ class _CustomliderState extends State<CustomliderWidget>
   }
 
   void _onPanStart(DragStartDetails details) {
-    this.initial = details.globalPosition.dx;
-    this._left = this.left;
-    if (animation != null && animation) {
-      this.controller.forward();
+    if (widget.touch) {
+      this.initial = details.globalPosition.dx;
+      this._left = this.left;
+      if (animation != null && animation) {
+        this.controller.forward();
+      }
+      setState(() {
+        pointScale = 1.2;
+      });
     }
-    setState(() {
-      pointScale = 1.2;
-    });
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
-    if (touch) {
+    if (widget.touch) {
       double moveWidth = details.globalPosition.dx + this.initial;
       if (moveWidth != 0) {
         double nextLeft = _left + details.globalPosition.dx - this.initial;
@@ -179,7 +165,7 @@ class _CustomliderState extends State<CustomliderWidget>
   }
 
   void _onPanEnd(DragEndDetails details) {
-    if (touch) {
+    if (widget.touch) {
       this.initial = 0.0;
       this._left = 0.0;
       if (animation != null && animation) {
@@ -205,6 +191,12 @@ class _CustomliderState extends State<CustomliderWidget>
 
   @override
   Widget build(BuildContext context) {
+
+    value = widget.defaultValue.toDouble();
+    //基数、每个值占多少宽度
+    baseWidth = width / maxValue;
+    left = baseWidth * value;
+
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
     return Stack(
       overflow: Overflow.visible,
@@ -218,7 +210,7 @@ class _CustomliderState extends State<CustomliderWidget>
                     child: Container(
                       width: this.width,
                       height: ScreenUtil.instance.setWidth(this.sliderHeight),
-                      color: touch ? const Color(0xffcfcfc0) : Colors.grey[300],
+                      color: widget.touch ? const Color(0xffcfcfc0) : Colors.grey[300],
                     )))),
         Container(
           width: this.width,
@@ -276,7 +268,7 @@ class _CustomliderState extends State<CustomliderWidget>
                     color: Colors.transparent,
                     shadowColor: Colors.green,
                     child: Opacity(
-                      opacity: touch ? 1 : 0.3,
+                      opacity: widget.touch ? 1 : 0.3,
                       child: Container(
                         decoration: new BoxDecoration(
                             border: Border.all(

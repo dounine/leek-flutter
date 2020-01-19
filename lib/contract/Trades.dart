@@ -159,18 +159,20 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               ),
               Switch(
                 value: contractStore.open_enable,
-                onChanged: (bool value) {
-                  contractStore.open_enable = value;
-                  socketStore.sendMessage({
-                    "type": "contract_update",
-                    "data": {
-                      "symbol": contractStore.symbol,
-                      "contractType": contractStore.contractType,
-                      "direction": contractStore.direction,
-                      "open_enable": value
-                    }
-                  });
-                },
+                onChanged: contractStore.locked
+                    ? null
+                    : (bool value) {
+                        contractStore.open_enable = value;
+                        socketStore.sendMessage({
+                          "type": "contract_update",
+                          "data": {
+                            "symbol": contractStore.symbol,
+                            "contractType": contractStore.contractType,
+                            "direction": contractStore.direction,
+                            "open_enable": value
+                          }
+                        });
+                      },
               )
             ],
           ),
@@ -204,9 +206,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   )
-                : new CustomliderWidget2(
+                : CustomliderWidget2(
                     key: ObjectKey("online_open_trade_price"),
                     splits: 3,
+                    touch: !contractStore.locked,
                     width: ScreenUtil.instance.setWidth(860),
                     minValue: open_online.minValue,
                     maxValue: open_online.maxValue,
@@ -237,9 +240,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("open_rebound_price"),
               splits: 3,
+              touch: !contractStore.locked,
               width: ScreenUtil.instance.setWidth(860),
               minValue: open_rebound_price.minValue,
               maxValue: open_rebound_price.maxValue,
@@ -280,9 +284,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("open_plan_price_spread"),
               splits: 3,
+              touch: !contractStore.locked,
               width: ScreenUtil.instance.setWidth(860),
               minValue: open_plan_price_spread.minValue,
               maxValue: open_plan_price_spread.maxValue,
@@ -323,9 +328,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("open_schedue"),
               splits: 3,
+              touch: !contractStore.locked,
               width: ScreenUtil.instance.setWidth(860),
               minValue: open_schedue.minValue,
               maxValue: open_schedue.maxValue,
@@ -369,9 +375,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("open_entrust_timeout"),
               splits: 3,
+              touch: !contractStore.locked,
               width: ScreenUtil.instance.setWidth(860),
               minValue: open_entrust_timeout.minValue,
               maxValue: open_entrust_timeout.maxValue,
@@ -415,9 +422,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("open_volume"),
               splits: 3,
+              touch: !contractStore.locked,
               width: ScreenUtil.instance.setWidth(860),
               minValue: open_volume.minValue,
               maxValue: open_volume.maxValue,
@@ -471,17 +479,19 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                           fontWeight: FontWeight.bold),
                     ),
                     onTap: () {
-                      HapticFeedback.selectionClick();
-                      contractStore.open_lever_rate = i;
-                      socketStore.sendMessage({
-                        "type": "contract_update",
-                        "data": {
-                          "symbol": contractStore.symbol,
-                          "contractType": contractStore.contractType,
-                          "direction": contractStore.direction,
-                          "open_lever_rate": i.toString()
-                        }
-                      });
+                      if (contractStore.open_enable == false) {
+                        HapticFeedback.selectionClick();
+                        contractStore.open_lever_rate = i;
+                        socketStore.sendMessage({
+                          "type": "contract_update",
+                          "data": {
+                            "symbol": contractStore.symbol,
+                            "contractType": contractStore.contractType,
+                            "direction": contractStore.direction,
+                            "open_lever_rate": i.toString()
+                          }
+                        });
+                      }
                     },
                   );
                 }).toList(),
@@ -556,9 +566,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   )
-                : new CustomliderWidget2(
+                : CustomliderWidget2(
                     key: ObjectKey("online_close_trade_price"),
                     splits: 3,
+                    touch: !contractStore.locked,
                     width: ScreenUtil.instance.setWidth(860),
                     minValue: close_online.minValue,
                     maxValue: close_online.maxValue,
@@ -590,6 +601,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
             CustomliderWidget(
               key: ObjectKey("close_rebound_price"),
               splits: 3,
+              touch: !contractStore.locked,
               width: ScreenUtil.instance.setWidth(860),
               minValue: close_rebound_price.minValue,
               maxValue: close_rebound_price.maxValue,
@@ -629,9 +641,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("close_plan_price_spread"),
               splits: 3,
+              touch: !contractStore.locked,
               width: ScreenUtil.instance.setWidth(860),
               minValue: close_plan_price_spread.minValue,
               maxValue: close_plan_price_spread.maxValue,
@@ -671,8 +684,9 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("close_entrust_timeout"),
+              touch: !contractStore.locked,
               splits: 3,
               width: ScreenUtil.instance.setWidth(860),
               minValue: close_entrust_timeout.minValue,
@@ -717,7 +731,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 style: TextStyle(color: Colors.blueGrey),
               ),
             ),
-            new CustomliderWidget(
+            CustomliderWidget(
               key: ObjectKey("close_volume"),
               touch: false,
               splits: 3,
@@ -774,8 +788,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       width: ScreenUtil.instance.setWidth(100),
                       child: IconButton(
                         color: Colors.black54,
-                        icon: Icon(Icons.lock_outline, size: 22),
-                        onPressed: () {},
+                        icon: Icon(
+                            contractStore.locked == true
+                                ? Icons.lock_outline
+                                : Icons.lock_open,
+                            size: 22),
+                        onPressed: () {
+                          contractStore.locked = !contractStore.locked;
+                        },
                       ),
                     )
                   ],
