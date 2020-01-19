@@ -111,7 +111,7 @@ class _ConfigEditState extends State<ConfigEdit> {
       },
       child: new Scaffold(
           appBar: AppBar(
-            title: Text("修改信息"),
+            title: Text("修改${_name}信息"),
           ),
           body: new Builder(builder: (c) {
             _context = c;

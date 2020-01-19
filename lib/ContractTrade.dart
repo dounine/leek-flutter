@@ -52,7 +52,7 @@ class _ContractTradeState extends State<ContractTrade>
 
   void onConnect() {
     ContractStore contractStore = Provider.of<ContractStore>(context);
-    contractStore.push_info = false;
+//    contractStore.push_info = false;
     socketMsg = [
       {
         "type": "contract",
@@ -156,6 +156,17 @@ class _ContractTradeState extends State<ContractTrade>
     return WillPopScope(
         child: new Scaffold(
           appBar: new AppBar(
+            actions: [
+              Container(
+                margin: EdgeInsets.symmetric(
+                    horizontal: ScreenUtil.instance.setWidth(30)),
+                child: contractStore.screen
+                    ? (Icon(contractStore.direction == "buy"
+                        ? Icons.trending_up
+                        : Icons.trending_down))
+                    : Container(),
+              )
+            ],
             title: Consumer<SocketStore>(
               builder: (context, socketStore, child) {
                 return socketStore.status == SocketStatus.connected
@@ -174,7 +185,7 @@ class _ContractTradeState extends State<ContractTrade>
                             Text(
                               contractInfo.symbol,
                               style: TextStyle(color: Colors.white),
-                            )
+                            ),
                           ],
                         ),
                       )

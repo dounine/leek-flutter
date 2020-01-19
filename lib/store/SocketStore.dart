@@ -72,7 +72,6 @@ class SocketStore extends ChangeNotifier {
   }
 
   void sendMessage(Map<String, dynamic> data) {
-    print("消息发送${data}");
     String sendMessage = jsonEncode(data);
     if (_status == SocketStatus.connected) {
       _channel.sink.add(sendMessage);

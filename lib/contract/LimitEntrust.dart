@@ -214,7 +214,7 @@ class _LimitEntrustState extends State<LimitEntrust> {
             ),
             ConstrainedBox(
               constraints: BoxConstraints(
-                  maxWidth: ScreenUtil.instance.setWidth(160),
+                  maxWidth: ScreenUtil.instance.setWidth(180),
                   maxHeight: ScreenUtil.instance.setHeight(60)),
               child: FlatButton(
                 color: Colors.grey[200],

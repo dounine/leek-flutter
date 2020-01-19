@@ -85,13 +85,13 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
       {
         "type": "contract",
         "json":
-        '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}","offset":"${contractStore.open_switch ? 'open' : 'close'}"}'
+            '{"symbol":"${contractStore.symbol}","contractType":"${contractStore.contractType}","direction":"${contractStore.direction}","offset":"${contractStore.open_switch ? 'open' : 'close'}"}'
       }
     ];
     Provider.of<SocketStore>(context)
         .sendMessage({"type": "unsub", "channels": unsub});
     contractStore.open_switch = open;
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 50), () {
       sub(open);
     });
   }
@@ -183,7 +183,8 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
         ],
       ),
       Container(
-        padding: EdgeInsets.only(top: 30, bottom: 30),
+        padding:
+            EdgeInsets.symmetric(vertical: ScreenUtil.instance.setHeight(60)),
         child: Row(
           children: <Widget>[
             Container(
@@ -427,14 +428,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               setup: open_volume.setup,
               eventName: "open_volume",
               onChange: (num oldValue, num newValue) {
-                contractStore.open_volume = newValue;
+                contractStore.open_volume = newValue.toInt();
                 socketStore.sendMessage({
                   "type": "contract_update",
                   "data": {
                     "symbol": contractStore.symbol,
                     "contractType": contractStore.contractType,
                     "direction": contractStore.direction,
-                    "open_volume": newValue.toString()
+                    "open_volume": newValue.toInt()
                   }
                 });
               },
@@ -494,47 +495,42 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     ];
 
     List<Widget> closeWidgets = [
-      Container(
-        padding: EdgeInsets.only(
-            top: ScreenUtil.instance.setHeight(30),
-            bottom: ScreenUtil.instance.setHeight(30)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(
-                      left: ScreenUtil.instance.setWidth(30),
-                      right: ScreenUtil.instance.setWidth(30)),
-                  child: Text(
-                    "绑定",
-                    style: TextStyle(color: Colors.blueGrey),
-                  ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                    left: ScreenUtil.instance.setWidth(30),
+                    right: ScreenUtil.instance.setWidth(30)),
+                child: Text(
+                  "绑定",
+                  style: TextStyle(color: Colors.blueGrey),
                 ),
-                Switch(
-                  value: contractStore.close_bind,
-                  onChanged: (bool value) {
-                    contractStore.close_bind = value;
-                    socketStore.sendMessage({
-                      "type": "contract_update",
-                      "data": {
-                        "symbol": contractStore.symbol,
-                        "contractType": contractStore.contractType,
-                        "direction": contractStore.direction,
-                        "close_bind": value
-                      }
-                    });
-                  },
-                )
-              ],
-            ),
-            Container(
-              padding: EdgeInsets.only(right: ScreenUtil.instance.setWidth(60)),
-              child: Text(contractStore.close_status),
-            )
-          ],
-        ),
+              ),
+              Switch(
+                value: contractStore.close_bind,
+                onChanged: (bool value) {
+                  contractStore.close_bind = value;
+                  socketStore.sendMessage({
+                    "type": "contract_update",
+                    "data": {
+                      "symbol": contractStore.symbol,
+                      "contractType": contractStore.contractType,
+                      "direction": contractStore.direction,
+                      "close_bind": value
+                    }
+                  });
+                },
+              )
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(right: ScreenUtil.instance.setWidth(60)),
+            child: Text(contractStore.close_status),
+          )
+        ],
       ),
       Container(
         padding:
@@ -761,46 +757,10 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  IconButton(
-                    color:
-                        contractStore.open_switch ? Colors.blue : Colors.grey,
-                    icon: Icon(Icons.invert_colors),
-                    onPressed: () {
-                      choose(true);
-                    },
-                  ),
-                  IconButton(
-                    color:
-                        !contractStore.open_switch ? Colors.blue : Colors.grey,
-                    icon: Icon(Icons.invert_colors_off),
-                    onPressed: () {
-                      choose(false);
-                    },
-                  )
-                ],
-              ),
               Container(
-                margin:
-                    EdgeInsets.only(right: ScreenUtil.instance.setWidth(20)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    SizedBox(
-                      width: ScreenUtil.instance.setWidth(100),
-                      child: IconButton(
-                        color: Colors.black54,
-                        icon: Icon(
-                            contractStore.screen
-                                ? Icons.fullscreen_exit
-                                : Icons.fullscreen,
-                            size: 22),
-                        onPressed: () {
-                          contractStore.screen = !contractStore.screen;
-                        },
-                      ),
-                    ),
                     SizedBox(
                       width: ScreenUtil.instance.setWidth(100),
                       child: IconButton(
@@ -819,7 +779,44 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     )
                   ],
                 ),
-              )
+              ),
+              Container(
+                margin:
+                    EdgeInsets.only(right: ScreenUtil.instance.setWidth(20)),
+                child: Row(
+                  children: <Widget>[
+
+                    IconButton(
+                      color:
+                          contractStore.open_switch ? Colors.blue : Colors.grey,
+                      icon: Icon(Icons.invert_colors),
+                      onPressed: () {
+                        choose(true);
+                      },
+                    ),
+                    IconButton(
+                      color: !contractStore.open_switch
+                          ? Colors.blue
+                          : Colors.grey,
+                      icon: Icon(Icons.invert_colors_off),
+                      onPressed: () {
+                        choose(false);
+                      },
+                    ),
+                    IconButton(
+                      color: Colors.black54,
+                      icon: Icon(
+                          contractStore.screen
+                              ? Icons.fullscreen_exit
+                              : Icons.fullscreen,
+                          size: 22),
+                      onPressed: () {
+                        contractStore.screen = !contractStore.screen;
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

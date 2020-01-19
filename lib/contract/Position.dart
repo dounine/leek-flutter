@@ -40,6 +40,7 @@ class Position extends StatefulWidget {
   final String symbol;
   final String contractType;
   final String direction;
+
   Position(
       {Key key,
       @required this.symbol,
@@ -74,12 +75,12 @@ class _PositionState extends State<Position> {
     super.dispose();
   }
 
-  Future lightningClose(num volumn) async {
+  Future lightningClose(num volumn,Function fun) async {
     try {
       setState(() {
         _reqStatus = "request";
       });
-      Response response = await Config.dio.delete(
+      Response response = await Config.dio.post(
           "/contract/position/lightning_close/${symbol}/${contractType}/${direction}/${volumn}");
       Map<String, dynamic> data = response.data;
       if (data["status"] == "ok") {
@@ -96,6 +97,9 @@ class _PositionState extends State<Position> {
         Future.delayed(Duration.zero, () {
           ScaffoldUtil.show(_context, data);
         });
+      }
+      if(fun!=null){
+        fun(data["status"]);
       }
     } catch (e) {
       print(e);
@@ -364,9 +368,17 @@ class _PositionState extends State<Position> {
                         content: Text("确定要以最优30档闪电平仓么?"),
                         actions: <Widget>[
                           FlatButton(
-                            child: Text('我确定'),
+                            child: Text('取消'),
                             onPressed: () {
-                              lightningClose(limitOrder.volume);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text('确定'),
+                            onPressed: () {
+                              lightningClose(limitOrder.volume,(String status){
+                                Navigator.of(context).pop();
+                              });
                             },
                           ),
                         ],

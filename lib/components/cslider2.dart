@@ -55,18 +55,18 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
   double _left2 = 0.0;
   double initial = 0.0;
 
-  double pointWidth1 = 30;
+  double pointWidth1 = 20;
   double pointHeight1 = 80;
   double pointBorderWidth1 = 8;
-  double pointBorderRadius1 = 60;
+  double pointBorderRadius1 = 8;
 
   double pointWidth2 = 30;
   double pointHeight2 = 80;
   double pointBorderWidth2 = 8;
   double pointBorderRadius2 = 60;
 
-  Color pointBorderColor1 = Colors.green;
-  Color pointColor1 = Colors.white;
+  Color pointBorderColor1 = Colors.blue;
+  Color pointColor1 = Colors.yellow;
 
   Color pointBorderColor2 = Colors.grey;
   Color pointColor2 = Colors.white;
@@ -206,21 +206,21 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
             color: Colors.transparent,
           ),
         ),
-        value1 != -1
-            ? Positioned(
-                left: left1 -
-                    ScreenUtil.instance.setWidth(pointWidth1) / 2 -
-                    value1.toStringAsFixed(fixed).length *
-                        ScreenUtil.instance.setWidth(20) /
-                        2,
-                top: ScreenUtil.instance
-                    .setWidth(-(pointHeight1 - height) / 2 - pointHeight1),
-                child: TextSize(
-                    pointBorderRadius: pointBorderRadius1,
-                    value: value1,
-                    valueFixed: fixed),
-              )
-            : Container(),
+//        value1 != -1
+//            ? Positioned(
+//                left: left1 -
+//                    ScreenUtil.instance.setWidth(pointWidth1) / 2 -
+//                    value1.toStringAsFixed(fixed).length *
+//                        ScreenUtil.instance.setWidth(20) /
+//                        2,
+//                top: ScreenUtil.instance
+//                    .setWidth(-(pointHeight1 - height) / 2 - pointHeight1),
+//                child: TextSize(
+//                    pointBorderRadius: pointBorderRadius1,
+//                    value: value1,
+//                    valueFixed: fixed),
+//              )
+//            : Container(),
         value2 != -1
             ? Positioned(
                 left: left2 -
@@ -236,29 +236,7 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
                     valueFixed: fixed),
               )
             : Container(),
-        value1 != -1
-            ? Positioned(
-                height: ScreenUtil.instance.setWidth(this.pointHeight1),
-                width: ScreenUtil.instance.setWidth(this.pointWidth1),
-                left: left1 - (ScreenUtil.instance.setWidth(pointWidth1) / 2),
-                top: ScreenUtil.instance.setWidth(-(pointHeight1 - height) / 2),
-                child: GestureDetector(
-                  onPanUpdate: this._onPanUpdate,
-                  onPanStart: this._onPanStart,
-                  onPanEnd: this._onPanEnd,
-                  child: Container(
-                    decoration: new BoxDecoration(
-                        border: Border.all(
-                            color: pointBorderColor1,
-                            width: ScreenUtil.instance
-                                .setWidth(pointBorderWidth1)),
-                        color: pointColor1,
-                        borderRadius: BorderRadius.circular(
-                            ScreenUtil.instance.setWidth(pointBorderRadius1))),
-                  ),
-                ),
-              )
-            : Container(),
+
         value2 != -1
             ? Positioned(
                 height: ScreenUtil.instance.setWidth(this.pointHeight2),
@@ -276,7 +254,34 @@ class _CustomliderState2 extends State<CustomliderWidget2> {
                           ScreenUtil.instance.setWidth(pointBorderRadius2))),
                 ),
               )
-            : Container()
+            : Container(),
+        value1 != -1
+            ? Positioned(
+                height: ScreenUtil.instance.setWidth(this.pointHeight1),
+                width: ScreenUtil.instance.setWidth(this.pointWidth1),
+                left: left1 - (ScreenUtil.instance.setWidth(pointWidth1) / 2),
+                top: ScreenUtil.instance.setWidth(-(pointHeight1 - height) / 2),
+                child: Opacity(
+                  opacity: 0.6,
+                  child: GestureDetector(
+                    onPanUpdate: this._onPanUpdate,
+                    onPanStart: this._onPanStart,
+                    onPanEnd: this._onPanEnd,
+                    child: Container(
+                      decoration: new BoxDecoration(
+                          border: Border.all(
+                              color: pointBorderColor1,
+                              width: ScreenUtil.instance
+                                  .setWidth(pointBorderWidth1)),
+                          color: pointColor1,
+                          borderRadius: BorderRadius.circular(ScreenUtil
+                              .instance
+                              .setWidth(pointBorderRadius1))),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
       ],
     );
   }

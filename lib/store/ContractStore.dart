@@ -127,6 +127,8 @@ class ContractStore extends ChangeNotifier {
     _closeTradeValue = -1;
     _closeTradePrice = -1;
     _closeInitPrice = -1;
+
+    notifyListeners();
   }
 
   set open_rebound_price(num value) {
@@ -175,6 +177,7 @@ class ContractStore extends ChangeNotifier {
 
   set screen(bool value) {
     _screen = value;
+    notifyListeners();
   }
 
   set close_bind(bool value) {
@@ -184,6 +187,7 @@ class ContractStore extends ChangeNotifier {
 
   set close_rebound_price(num value) {
     _close_rebound_price = value;
+
   }
 
   set close_plan_price_spread(num value) {

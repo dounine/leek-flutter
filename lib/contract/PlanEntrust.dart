@@ -37,6 +37,7 @@ class PlanOrder {
 class PlanEntrust extends StatefulWidget {
   final String symbol;
   final String contractType;
+
   PlanEntrust({Key key, @required this.symbol, @required this.contractType})
       : super(key: key);
 
@@ -179,7 +180,9 @@ class _PlanEntrustState extends State<PlanEntrust> {
                       fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  limitOrder.direction == "buy" ? "多" : "空",
+                  limitOrder.offset == "open"
+                      ? (limitOrder.direction == "buy" ? "多" : "空")
+                      : (limitOrder.direction == "buy" ? "空" : "多"),
                   style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
@@ -210,7 +213,7 @@ class _PlanEntrustState extends State<PlanEntrust> {
             ),
             ConstrainedBox(
               constraints: BoxConstraints(
-                  maxWidth: ScreenUtil.instance.setWidth(160),
+                  maxWidth: ScreenUtil.instance.setWidth(180),
                   maxHeight: ScreenUtil.instance.setHeight(60)),
               child: FlatButton(
                 color: Colors.grey[200],
