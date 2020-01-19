@@ -18,6 +18,7 @@ class CustomliderWidget extends StatefulWidget {
   final String eventName;
   final bool animation;
   final int splits;
+  final bool touch;
 
   CustomliderWidget(
       {Key key,
@@ -30,7 +31,8 @@ class CustomliderWidget extends StatefulWidget {
       @required this.onChange,
       @required this.splits,
       this.eventName,
-      this.animation})
+      this.animation,
+      this.touch})
       : super(key: key);
 
   @override
@@ -75,6 +77,7 @@ class _CustomliderState extends State<CustomliderWidget>
   AnimationController controller;
   CurvedAnimation curved;
   bool animation = false;
+  bool touch = true;
   bool enableTouch = true; //是否允许触摸
   double value = 0.0; //默认值
   int fixed = 0;
@@ -106,7 +109,9 @@ class _CustomliderState extends State<CustomliderWidget>
     controller = new AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this); //动画控制器
     curved = new CurvedAnimation(parent: controller, curve: Curves.easeInOut);
-
+    if (widget.touch != null) {
+      touch = widget.touch;
+    }
     fixed = widget.fixed;
     width = widget.width;
     animation = widget.animation;
@@ -153,30 +158,35 @@ class _CustomliderState extends State<CustomliderWidget>
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
-    double moveWidth = details.globalPosition.dx + this.initial;
-    if (moveWidth != 0) {
-      double nextLeft = _left + details.globalPosition.dx - this.initial;
-      double boundaryLeft = nextLeft < (minValue * baseWidth)
-          ? minValue * baseWidth
-          : (nextLeft > width ? width : nextLeft);
-      double nextValue = boundaryLeft / this.baseWidth / this.setup;
-      if (this.value != nextValue.round().toDouble()) {
-        HapticFeedback.lightImpact();
-        widget.onChange(this.value, nextValue.round().toDouble());
+    if (touch) {
+      double moveWidth = details.globalPosition.dx + this.initial;
+      if (moveWidth != 0) {
+        double nextLeft = _left + details.globalPosition.dx - this.initial;
+        double boundaryLeft = nextLeft < (minValue * baseWidth)
+            ? minValue * baseWidth
+            : (nextLeft > width ? width : nextLeft);
+        double nextValue = boundaryLeft / this.baseWidth / this.setup;
+        if (this.value != nextValue.round().toDouble()) {
+          HapticFeedback.lightImpact();
+          widget.onChange(this.value, nextValue.round().toDouble());
+        }
+        setState(() {
+          value = nextValue.round().toDouble();
+          left = boundaryLeft;
+        });
       }
-      setState(() {
-        value = nextValue.round().toDouble();
-        left = boundaryLeft;
-      });
     }
   }
 
   void _onPanEnd(DragEndDetails details) {
-    this.initial = 0.0;
-    this._left = 0.0;
-    if (animation != null && animation) {
-      this.controller.reverse();
+    if (touch) {
+      this.initial = 0.0;
+      this._left = 0.0;
+      if (animation != null && animation) {
+        this.controller.reverse();
+      }
     }
+
 //    double preValue = this.left / this.baseWidth / this.setup;
 //    int latestLeft = preValue.round();
 //    setState(() {
@@ -208,7 +218,7 @@ class _CustomliderState extends State<CustomliderWidget>
                     child: Container(
                       width: this.width,
                       height: ScreenUtil.instance.setWidth(this.sliderHeight),
-                      color: const Color(0xffcfcfc0),
+                      color: touch ? const Color(0xffcfcfc0) : Colors.grey[300],
                     )))),
         Container(
           width: this.width,
@@ -265,15 +275,19 @@ class _CustomliderState extends State<CustomliderWidget>
                     elevation: 4.0,
                     color: Colors.transparent,
                     shadowColor: Colors.green,
-                    child: Container(
-                      decoration: new BoxDecoration(
-                          border: Border.all(
-                              color: pointBorderColor,
-                              width: ScreenUtil.instance
-                                  .setWidth(pointBorderWidth)),
-                          color: pointColor,
-                          borderRadius: BorderRadius.circular(
-                              ScreenUtil.instance.setWidth(pointBorderRadius))),
+                    child: Opacity(
+                      opacity: touch ? 1 : 0.3,
+                      child: Container(
+                        decoration: new BoxDecoration(
+                            border: Border.all(
+                                color: pointBorderColor,
+                                width: ScreenUtil.instance
+                                    .setWidth(pointBorderWidth)),
+                            color: pointColor,
+                            borderRadius: BorderRadius.circular(ScreenUtil
+                                .instance
+                                .setWidth(pointBorderRadius))),
+                      ),
                     ),
                   ),
                 ),

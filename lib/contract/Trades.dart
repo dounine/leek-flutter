@@ -509,18 +509,20 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               ),
               Switch(
                 value: contractStore.close_bind,
-                onChanged: (bool value) {
-                  contractStore.close_bind = value;
-                  socketStore.sendMessage({
-                    "type": "contract_update",
-                    "data": {
-                      "symbol": contractStore.symbol,
-                      "contractType": contractStore.contractType,
-                      "direction": contractStore.direction,
-                      "close_bind": value
-                    }
-                  });
-                },
+                onChanged: true
+                    ? null
+                    : (bool value) {
+                        contractStore.close_bind = value;
+                        socketStore.sendMessage({
+                          "type": "contract_update",
+                          "data": {
+                            "symbol": contractStore.symbol,
+                            "contractType": contractStore.contractType,
+                            "direction": contractStore.direction,
+                            "close_bind": value
+                          }
+                        });
+                      },
               )
             ],
           ),
@@ -717,6 +719,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
             ),
             new CustomliderWidget(
               key: ObjectKey("close_volume"),
+              touch: false,
               splits: 3,
               width: ScreenUtil.instance.setWidth(860),
               minValue: close_volume.minValue,

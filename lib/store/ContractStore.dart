@@ -187,7 +187,6 @@ class ContractStore extends ChangeNotifier {
 
   set close_rebound_price(num value) {
     _close_rebound_price = value;
-
   }
 
   set close_plan_price_spread(num value) {
@@ -310,6 +309,8 @@ class ContractStore extends ChangeNotifier {
         _openEntrustPrice = -1;
         _closeEntrustValue = -1;
         _closeEntrustPrice = -1;
+      } else {
+        _open_enable = d["open_enable"];
       }
       if (d["open_rebound_price"] != null) {
         _open_rebound_price = d["open_rebound_price"];
