@@ -162,7 +162,7 @@ class _CustomliderState extends State<CustomliderWidget>
       double nextValue = boundaryLeft / this.baseWidth / this.setup;
       if (this.value != nextValue.round().toDouble()) {
         HapticFeedback.lightImpact();
-        widget.onChange(this.value, nextValue.toDouble());
+        widget.onChange(this.value, nextValue.round().toDouble());
       }
       setState(() {
         value = nextValue.round().toDouble();
@@ -177,12 +177,12 @@ class _CustomliderState extends State<CustomliderWidget>
     if (animation != null && animation) {
       this.controller.reverse();
     }
-    double preValue = this.left / this.baseWidth / this.setup;
-    int latestLeft = preValue.round();
-    setState(() {
-      pointScale = 1.0;
-      left = latestLeft * this.baseWidth * this.setup;
-    });
+//    double preValue = this.left / this.baseWidth / this.setup;
+//    int latestLeft = preValue.round();
+//    setState(() {
+//      pointScale = 1.0;
+//      left = latestLeft * this.baseWidth * this.setup;
+//    });
   }
 
   @override
