@@ -45,6 +45,7 @@ class ContractStore extends ChangeNotifier {
   bool _close_bind = false;
   num _close_rebound_price = 0;
   num _close_plan_price_spread = 0;
+  num _close_brake = 0;
   num _close_volume = 1;
   Map<String, dynamic> _close_schedue = {"length": 3, "unit": "seconds"};
   Map<String, dynamic> _close_entrust_timeout = {
@@ -106,6 +107,8 @@ class ContractStore extends ChangeNotifier {
 
   num get close_plan_price_spread => _close_plan_price_spread;
 
+  num get close_brake => _close_brake;
+
   num get close_volume => _close_volume;
 
   Map<String, dynamic> get close_schedue => _close_schedue;
@@ -156,11 +159,15 @@ class ContractStore extends ChangeNotifier {
     _open_plan_price_spread = value;
   }
 
+  set close_brake(num value) {
+    _close_brake = value;
+  }
+
   set open_schedue(Map<String, dynamic> value) {
     _open_schedue = value;
   }
 
-  set locked(bool value){
+  set locked(bool value) {
     _locked = value;
     notifyListeners();
   }
@@ -336,6 +343,9 @@ class ContractStore extends ChangeNotifier {
       }
       if (d["close_rebound_price"] != null) {
         _close_rebound_price = d["close_rebound_price"];
+      }
+      if (d["close_brake"] != null) {
+        _close_brake = d["close_brake"];
       }
       if (d["close_plan_price_spread"] != null) {
         _close_plan_price_spread = d["close_plan_price_spread"];

@@ -242,7 +242,7 @@ class _ContractManagerState extends State<ContractManager> {
                                                       context, '/contract-edit',
                                                       arguments:
                                                           ContractManagerOperation(
-                                                              '修改信息', info))
+                                                              '修改${info.symbol}信息', info))
                                                   .then((result) {
                                                 ContractManagerInfo backInfo =
                                                     result;
