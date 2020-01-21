@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
+import 'package:leek/ContractPage.dart';
 import 'package:leek/profile/manager/ContractManagerEdit.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 
 class ConfigEdit extends StatefulWidget {
   final String title;
+
   const ConfigEdit({this.title, Key key}) : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class _ConfigEditState extends State<ConfigEdit> {
         _maxValue = info.maxValue.toString();
         _defaultValue = info.defaultValue.toString();
         _fixed = info.fixed;
+        _user = info.user;
         _setup = info.setup.toString();
       });
     });
@@ -56,30 +59,53 @@ class _ConfigEditState extends State<ConfigEdit> {
       setState(() {
         _reqStatus = "request";
       });
-      Response response = await Config.dio.patch("/config/admin/info", data: {
-        "phone": "",
-        "symbol": _symbol,
-        "keyName": _keyName,
-        "minValue": num.parse(_minValue),
-        "maxValue": num.parse(_maxValue),
-        "defaultValue": num.parse(_defaultValue),
-        "fixed": _fixed,
-        "setup": num.parse(_setup),
-        "user": false
-      });
-      Map<String, dynamic> data = response.data;
-      if (data["status"] == "fail") {
-        HapticFeedback.mediumImpact();
-        ScaffoldUtil.show(_context, data);
-      } else {
-        HapticFeedback.lightImpact();
-        ScaffoldUtil.show(_context, data, msg: "保存成功");
-      }
 
-      setState(() {
-        _reqStatus = data["status"];
-      });
+      if (_user) {
+        Response response = await Config.dio.patch("/config/info/${_symbol}", data: {
+          "keyName": _keyName,
+          "minValue": num.parse(_minValue),
+          "maxValue": num.parse(_maxValue),
+          "defaultValue": num.parse(_defaultValue),
+          "fixed": _fixed,
+          "setup": num.parse(_setup)
+        });
+        Map<String, dynamic> data = response.data;
+        if (data["status"] == "fail") {
+          HapticFeedback.mediumImpact();
+          ScaffoldUtil.show(_context, data);
+        } else {
+          HapticFeedback.lightImpact();
+          ScaffoldUtil.show(_context, data, msg: "保存成功");
+        }
+        setState(() {
+          _reqStatus = data["status"];
+        });
+      } else {
+        Response response = await Config.dio.patch("/config/admin/info", data: {
+          "phone": "",
+          "symbol": _symbol,
+          "keyName": _keyName,
+          "minValue": num.parse(_minValue),
+          "maxValue": num.parse(_maxValue),
+          "defaultValue": num.parse(_defaultValue),
+          "fixed": _fixed,
+          "setup": num.parse(_setup),
+          "user": false
+        });
+        Map<String, dynamic> data = response.data;
+        if (data["status"] == "fail") {
+          HapticFeedback.mediumImpact();
+          ScaffoldUtil.show(_context, data);
+        } else {
+          HapticFeedback.lightImpact();
+          ScaffoldUtil.show(_context, data, msg: "保存成功");
+        }
+        setState(() {
+          _reqStatus = data["status"];
+        });
+      }
     } catch (e) {
+      print(e);
       setState(() {
         _reqStatus = "timeout";
       });
@@ -99,14 +125,15 @@ class _ConfigEditState extends State<ConfigEdit> {
         Navigator.pop(
             context,
             ConfigInfo(
-                _name,
-                _symbol,
-                _keyName,
-                double.parse(_minValue),
-                double.parse(_maxValue),
-                double.parse(_defaultValue),
-                _fixed,
-                double.parse(_setup)));
+              _keyName,
+              double.parse(_minValue),
+              double.parse(_maxValue),
+              double.parse(_defaultValue),
+              _fixed,
+              _name,
+              double.parse(_setup),
+              _symbol,
+            ));
         return false;
       },
       child: new Scaffold(

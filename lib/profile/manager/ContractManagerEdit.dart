@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
+import 'package:leek/ContractPage.dart';
 import 'package:leek/profile/manager/ContractManager.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 
@@ -16,18 +17,18 @@ class ContractManagerEdit extends StatefulWidget {
   }
 }
 
-class ConfigInfo {
-  final String name;
-  final String symbol;
-  final String keyName;
-  final double minValue;
-  final double maxValue;
-  final double defaultValue;
-  final int fixed;
-  final double setup;
-  ConfigInfo(this.name, this.symbol, this.keyName, this.minValue, this.maxValue,
-      this.defaultValue, this.fixed, this.setup);
-}
+//class ConfigInfo {
+//  final String name;
+//  final String symbol;
+//  final String keyName;
+//  final double minValue;
+//  final double maxValue;
+//  final double defaultValue;
+//  final int fixed;
+//  final double setup;
+//  ConfigInfo(this.name, this.symbol, this.keyName, this.minValue, this.maxValue,
+//      this.defaultValue, this.fixed, this.setup);
+//}
 
 class _ContractManagerEditState extends State<ContractManagerEdit> {
   bool passwordHidden = true;

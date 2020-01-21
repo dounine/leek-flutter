@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:leek/Config.dart';
+import 'package:leek/ContractPage.dart';
 import 'package:leek/profile/manager/ContractManagerEdit.dart';
 import 'package:leek/util/ScaffoldUtil.dart';
 
@@ -22,6 +23,7 @@ class ContractManagerInfo {
   final bool nextWeek;
   final bool add;
   final List<ConfigInfo> configs;
+
   ContractManagerInfo(this.symbol, this.quarter, this.thisWeek, this.nextWeek,
       this.configs, this.add);
 }
@@ -29,12 +31,14 @@ class ContractManagerInfo {
 class ContractManagerOperation {
   final String title;
   final ContractManagerInfo info;
+
   ContractManagerOperation(this.title, this.info);
 }
 
 class _ContractManagerState extends State<ContractManager> {
   List<ContractManagerInfo> _listInfos;
   String _reqStatus = "";
+
   @override
   void initState() {
     query();
@@ -59,14 +63,14 @@ class _ContractManagerState extends State<ContractManager> {
           List<dynamic> configs = item["configs"];
           List<ConfigInfo> igs = configs.map((it) {
             return ConfigInfo(
-                it["name"],
-                it["symbol"],
                 it["keyName"],
                 it["minValue"],
                 it["maxValue"],
                 it["defaultValue"],
                 it["fixed"],
-                it["setup"]);
+                it["name"],
+                it["setup"],
+                it["symbol"]);
           }).toList();
           return ContractManagerInfo(item["symbol"], item["quarter"],
               item["thisWeek"], item["nextWeek"], igs, false);
@@ -242,7 +246,8 @@ class _ContractManagerState extends State<ContractManager> {
                                                       context, '/contract-edit',
                                                       arguments:
                                                           ContractManagerOperation(
-                                                              '修改${info.symbol}信息', info))
+                                                              '修改${info.symbol}信息',
+                                                              info))
                                                   .then((result) {
                                                 ContractManagerInfo backInfo =
                                                     result;

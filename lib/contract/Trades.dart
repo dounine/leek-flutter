@@ -79,6 +79,37 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
         .sendMessage({"type": "sub", "channels": _socketMsg});
   }
 
+  void navSetting(String keyName) {
+    HapticFeedback.lightImpact();
+    ConfigInfo configInfo =
+        configs.where((item) => item.keyName == keyName).toList()[0];
+    Navigator.pushNamed(context, '/config-edit',
+            arguments: ConfigInfo(
+                configInfo.keyName,
+                configInfo.minValue,
+                configInfo.maxValue,
+                configInfo.defaultValue,
+                configInfo.fixed,
+                configInfo.name,
+                configInfo.setup,
+                configInfo.symbol,
+                user: true))
+        .then((result) {
+      ConfigInfo configInfo = result;
+      List<ConfigInfo> list = [];
+      configs.forEach((item) {
+        if (item.keyName == configInfo.keyName) {
+          list.add(configInfo);
+        } else {
+          list.add(item);
+        }
+      });
+      setState(() {
+        configs = list;
+      });
+    });
+  }
+
   void choose(bool open) async {
     ContractStore contractStore = Provider.of<ContractStore>(bc);
     List<dynamic> unsub = [
@@ -94,6 +125,12 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     sub(open);
   }
 
+  ConfigInfo getInfo(String keyName) {
+    return configs.where((item) => item.keyName == keyName).toList().isEmpty
+        ? ConfigInfo("", 0, 100, 0, 0, "", 1, "")
+        : configs.where((item) => item.keyName == keyName).toList()[0];
+  }
+
   @override
   Widget build(BuildContext context) {
     bc = context;
@@ -101,50 +138,19 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     SocketStore socketStore = Provider.of<SocketStore>(context);
     ScreenUtil.instance = ScreenUtil.getInstance()..init(context);
 
-    ConfigInfo notFound = ConfigInfo("", 0, 100, 0, 0, "", 1, "");
+    ConfigInfo open_online = getInfo("open_online");
+    ConfigInfo open_rebound_price = getInfo("open_rebound_price");
+    ConfigInfo open_plan_price_spread = getInfo("open_plan_price_spread");
+    ConfigInfo open_schedue = getInfo("open_schedue");
+    ConfigInfo open_entrust_timeout = getInfo("open_entrust_timeout");
+    ConfigInfo open_volume = getInfo("open_volume");
+    ConfigInfo close_online = getInfo("close_online");
+    ConfigInfo close_rebound_price = getInfo("close_rebound_price");
+    ConfigInfo close_plan_price_spread = getInfo("close_plan_price_spread");
+    ConfigInfo close_entrust_timeout = getInfo("close_entrust_timeout");
+    ConfigInfo close_volume = getInfo("close_volume");
+    ConfigInfo close_brake = getInfo("close_brake");
 
-    ConfigInfo open_online =
-        configs.where((item) => item.keyName == "open_online").toList()[0] ??
-            notFound;
-    ConfigInfo open_rebound_price = configs
-            .where((item) => item.keyName == "open_rebound_price")
-            .toList()[0] ??
-        notFound;
-    ConfigInfo open_plan_price_spread = configs
-            .where((item) => item.keyName == "open_plan_price_spread")
-            .toList()[0] ??
-        notFound;
-    ConfigInfo open_schedue =
-        configs.where((item) => item.keyName == "open_schedue").toList()[0] ??
-            notFound;
-    ConfigInfo open_entrust_timeout = configs
-            .where((item) => item.keyName == "open_entrust_timeout")
-            .toList()[0] ??
-        notFound;
-    ConfigInfo open_volume =
-        configs.where((item) => item.keyName == "open_volume").toList()[0] ??
-            notFound;
-    ConfigInfo close_online =
-        configs.where((item) => item.keyName == "close_online").toList()[0] ??
-            notFound;
-    ConfigInfo close_rebound_price = configs
-            .where((item) => item.keyName == "close_rebound_price")
-            .toList()[0] ??
-        notFound;
-    ConfigInfo close_plan_price_spread = configs
-            .where((item) => item.keyName == "close_plan_price_spread")
-            .toList()[0] ??
-        notFound;
-    ConfigInfo close_entrust_timeout = configs
-            .where((item) => item.keyName == "close_entrust_timeout")
-            .toList()[0] ??
-        notFound;
-    ConfigInfo close_volume =
-        configs.where((item) => item.keyName == "close_volume").toList()[0] ??
-            notFound;
-    ConfigInfo close_brake =
-        configs.where((item) => item.keyName == "close_brake").toList()[0] ??
-            notFound;
     List<Widget> openWidgets = [
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -193,9 +199,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.traffic,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  child: Icon(
+                    Icons.traffic,
+                    color: Colors.blueGrey,
+                  ),
+                  onTap: () {
+                    navSetting("open_online");
+                  },
                 )),
             contractStore.openTradeValue == -1
                 ? Expanded(
@@ -238,9 +249,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.directions_car,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  onTap: () {
+                    navSetting("open_rebound_price");
+                  },
+                  child: Icon(
+                    Icons.directions_car,
+                    color: Colors.blueGrey,
+                  ),
                 )),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
@@ -283,7 +299,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(Icons.ev_station, color: Colors.blueGrey)),
+                child: GestureDetector(
+                    onTap: () {
+                      navSetting("open_plan_price_spread");
+                    },
+                    child: Icon(Icons.ev_station, color: Colors.blueGrey))),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
                 key: ObjectKey("open_plan_price_spread"),
@@ -325,9 +345,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               padding: EdgeInsets.only(
                   left: ScreenUtil.instance.setWidth(30),
                   right: ScreenUtil.instance.setWidth(50)),
-              child: Icon(
-                Icons.schedule,
-                color: Colors.blueGrey,
+              child: GestureDetector(
+                onTap: () {
+                  navSetting("open_schedue");
+                },
+                child: Icon(
+                  Icons.schedule,
+                  color: Colors.blueGrey,
+                ),
               ),
             ),
             new Consumer<ContractStore>(builder: (context, cs, child) {
@@ -374,9 +399,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.av_timer,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  onTap: () {
+                    navSetting("open_entrust_timeout");
+                  },
+                  child: Icon(
+                    Icons.av_timer,
+                    color: Colors.blueGrey,
+                  ),
                 )
 //              Text(
 //                "超时",
@@ -427,9 +457,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.local_gas_station,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  onTap: () {
+                    navSetting("open_volume");
+                  },
+                  child: Icon(
+                    Icons.local_gas_station,
+                    color: Colors.blueGrey,
+                  ),
                 )),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
@@ -558,9 +593,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.traffic,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  onTap: () {
+                    navSetting("close_online");
+                  },
+                  child: Icon(
+                    Icons.traffic,
+                    color: Colors.blueGrey,
+                  ),
                 )),
             contractStore.closeTradeValue == -1
                 ? Expanded(
@@ -603,9 +643,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.directions_car,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  onTap: () {
+                    navSetting("close_rebound_price");
+                  },
+                  child: Icon(
+                    Icons.directions_car,
+                    color: Colors.blueGrey,
+                  ),
                 )),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
@@ -647,7 +692,11 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(Icons.ev_station, color: Colors.blueGrey)),
+                child: GestureDetector(
+                    onTap: () {
+                      navSetting("close_plan_price_spread");
+                    },
+                    child: Icon(Icons.ev_station, color: Colors.blueGrey))),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
                 key: ObjectKey("close_plan_price_spread"),
@@ -688,9 +737,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.local_taxi,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  onTap: () {
+                    navSetting("close_brake");
+                  },
+                  child: Icon(
+                    Icons.local_taxi,
+                    color: Colors.blueGrey,
+                  ),
                 )),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
@@ -731,9 +785,14 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 padding: EdgeInsets.only(
                     left: ScreenUtil.instance.setWidth(30),
                     right: ScreenUtil.instance.setWidth(50)),
-                child: Icon(
-                  Icons.av_timer,
-                  color: Colors.blueGrey,
+                child: GestureDetector(
+                  onTap: () {
+                    navSetting("close_entrust_timeout");
+                  },
+                  child: Icon(
+                    Icons.av_timer,
+                    color: Colors.blueGrey,
+                  ),
                 )),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
@@ -808,6 +867,25 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   });
                 },
               );
+            })
+          ],
+        ),
+      ),
+      Container(
+        padding:
+            EdgeInsets.symmetric(vertical: ScreenUtil.instance.setHeight(60)),
+        child: Row(
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.only(
+                    left: ScreenUtil.instance.setWidth(30),
+                    right: ScreenUtil.instance.setWidth(50)),
+                child: Icon(
+                  Icons.attach_money,
+                  color: Colors.blueGrey,
+                )),
+            new Consumer<ContractStore>(builder: (context, cs, child) {
+              return Text(cs.close_profit);
             })
           ],
         ),

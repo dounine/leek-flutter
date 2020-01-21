@@ -31,6 +31,7 @@ class ContractStore extends ChangeNotifier {
   num _closeEntrustPrice = -1;
   num _closeTradeValue = -1;
   num _closeTradePrice = -1;
+  String _close_profit = "";
 
   String _open_status = "--";
   bool _open_enable = false;
@@ -54,6 +55,8 @@ class ContractStore extends ChangeNotifier {
   };
 
   String get err_msg => _err_msg;
+
+  String get close_profit => _close_profit;
 
   bool get push_info => _push_info;
 
@@ -137,6 +140,10 @@ class ContractStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  set close_profit(String value){
+    _close_profit = value;
+  }
+
   set open_rebound_price(num value) {
     _open_rebound_price = value;
   }
@@ -181,6 +188,7 @@ class ContractStore extends ChangeNotifier {
   }
 
   set open_enable(bool value) {
+    HapticFeedback.lightImpact();
     _open_enable = value;
     if (value == false) {
       _openEntrustValue = -1;
@@ -352,6 +360,9 @@ class ContractStore extends ChangeNotifier {
       }
       if (d["close_volume"] != null) {
         _close_volume = d["close_volume"];
+      }
+      if (d["close_profit"] != null) {
+        _close_profit = d["close_profit"];
       }
       if (d["close_status"] != null) {
         _close_status = d["close_status"];

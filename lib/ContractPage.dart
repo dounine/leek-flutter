@@ -29,8 +29,11 @@ class ConfigInfo {
   final String name;
   final num setup;
   final String symbol;
+  bool user = false;
+
   ConfigInfo(this.keyName, this.minValue, this.maxValue, this.defaultValue,
-      this.fixed, this.name, this.setup, this.symbol);
+      this.fixed, this.name, this.setup, this.symbol,
+      {this.user});
 }
 
 class OpenItem {
