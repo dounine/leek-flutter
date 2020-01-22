@@ -361,8 +361,8 @@ class ContractStore extends ChangeNotifier {
       if (d["close_volume"] != null) {
         _close_volume = d["close_volume"];
       }
-      if (d["close_profit"] != null) {
-        _close_profit = d["close_profit"];
+      if (d["close_profit_str"] != null) {
+        _close_profit = d["close_profit_str"];
       }
       if (d["close_status"] != null) {
         _close_status = d["close_status"];

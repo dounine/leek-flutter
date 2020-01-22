@@ -21,6 +21,7 @@ class ContractPage extends StatefulWidget {
 }
 
 class ConfigInfo {
+  //1
   final String keyName;
   final num minValue;
   final num maxValue;

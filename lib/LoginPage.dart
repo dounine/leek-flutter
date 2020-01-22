@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage>
         if (data["status"] == "ok") {
           HapticFeedback.lightImpact();
           String token = data["data"]["token"];
-          await sharedPreferences.setString("token", data["data"]["token"]);
+          await sharedPreferences.setString("token", token);
           Config.setDioHeaderToken(token);
           HapticFeedback.lightImpact();
           _controller.forward();

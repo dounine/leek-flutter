@@ -19,6 +19,7 @@ class SocketStore extends ChangeNotifier {
   SocketStatus _status = SocketStatus.closed;
   Map<String, Function> _funs = Map();
   Map<String, Function> _connectedFuns = Map();
+  bool _isConnect = false;
 
   get status => _status;
 
@@ -28,19 +29,21 @@ class SocketStore extends ChangeNotifier {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String token = sharedPreferences.getString("token");
     String platform = "unkown";
-    if(Platform.isAndroid){
+    if (Platform.isAndroid) {
       platform = "android";
-    }else if(Platform.isIOS){
+    } else if (Platform.isIOS) {
       platform = "ios";
-    }else if(Platform.isMacOS){
+    } else if (Platform.isMacOS) {
       platform = "macOs";
-    }else if(Platform.isLinux){
+    } else if (Platform.isLinux) {
       platform = "linux";
     }
-    if (token != "") {
-      _channel = IOWebSocketChannel.connect("${Config.wsUrl}/ws?platform=${platform}&token=$token");
+    if (token != null && token != "") {
+      _channel = IOWebSocketChannel.connect(
+          "${Config.wsUrl}/ws?platform=${platform}&token=$token");
     } else {
-      _channel = IOWebSocketChannel.connect("${Config.wsUrl}/ws?platform=${platform}");
+      _channel =
+          IOWebSocketChannel.connect("${Config.wsUrl}/ws?platform=${platform}");
     }
     _channel.stream.listen(this.onData, onError: onError, onDone: onDone);
   }
@@ -102,7 +105,7 @@ class SocketStore extends ChangeNotifier {
       print("socket 关闭重新连接");
       HapticFeedback.mediumImpact();
       _status = SocketStatus.closed;
-      notifyListeners();  
+      notifyListeners();
       init();
     });
   }
