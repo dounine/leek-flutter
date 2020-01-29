@@ -29,6 +29,7 @@ dependencies:
   flutter_screenutil: 0.7.0
   flutter_svg: 0.15.0
   dson: 0.16.0
+  jpush_flutter: 0.1.0
   web_socket_channel: 1.1.0
   event_bus: 1.1.0
   fl_chart: 0.6.0
