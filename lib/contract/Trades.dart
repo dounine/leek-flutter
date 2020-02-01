@@ -233,7 +233,16 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       eventName:
                           "online_open_entrust_price,online_open_trade_price",
                       onChange: (double oldValue, double newValue) {
-                        print(newValue + cs.openInitPrice);
+                        socketStore.sendMessage({
+                          "type": "contract_update",
+                          "data": {
+                            "symbol": cs.symbol,
+                            "contractType": cs.contractType,
+                            "direction": cs.direction,
+                            "open_plan_price": (newValue + cs.openInitPrice)
+                                .toStringAsFixed(open_online.fixed)
+                          }
+                        });
                       },
                     );
                   })
@@ -627,7 +636,18 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         fixed: close_online.fixed,
                         eventName:
                             "online_close_entrust_price,online_close_trade_price",
-                        onChange: (double oldValue, double newValue) => {},
+                        onChange: (double oldValue, double newValue) {
+                          socketStore.sendMessage({
+                            "type": "contract_update",
+                            "data": {
+                              "symbol": cs.symbol,
+                              "contractType": cs.contractType,
+                              "direction": cs.direction,
+                              "close_plan_price": (newValue + cs.closeInitPrice)
+                                  .toStringAsFixed(close_online.fixed)
+                            }
+                          });
+                        },
                       );
                     },
                   )

@@ -67,6 +67,7 @@ class UserStore extends ChangeNotifier {
   void _startupJpush() async {
     print("初始化jpush");
     JPush jpush = new JPush();
+    jpush.setBadge(0);
     jpush.applyPushAuthority();
     jpush.addEventHandler(
       // 接收通知回调方法。
