@@ -10,6 +10,9 @@ import 'package:leek/Screen.dart';
 import 'package:leek/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jpush_flutter/jpush_flutter.dart';
+
+const bool inProduction = const bool.fromEnvironment("dart.vm.product");
+
 class UserStore extends ChangeNotifier {
   UserStore() {
     init();
@@ -65,32 +68,34 @@ class UserStore extends ChangeNotifier {
   String get phone => _phone;
 
   void _startupJpush() async {
-    print("初始化jpush");
-    JPush jpush = new JPush();
-    jpush.setBadge(0);
-    jpush.applyPushAuthority();
-    jpush.addEventHandler(
-      // 接收通知回调方法。
-      onReceiveNotification: (Map<String, dynamic> message) async {
-        print("flutter onReceiveNotification: $message");
-      },
-      // 点击通知回调方法。
-      onOpenNotification: (Map<String, dynamic> message) async {
-        print("flutter onOpenNotification: $message");
-      },
-      // 接收自定义消息回调方法。
-      onReceiveMessage: (Map<String, dynamic> message) async {
-        print("flutter onReceiveMessage: $message");
-      },
-    );
-    jpush.setup(
-      appKey: Config.jpushAppKey,
-      channel: "developer-default",
-      production: true,
-      debug: true, // 设置是否打印 debug 日志
-    );
-    jpush.setAlias(_phone).then((map) { });
-    print("初始化jpush成功");
+    if (inProduction) {
+      print("初始化jpush");
+      JPush jpush = new JPush();
+      jpush.applyPushAuthority();
+      jpush.addEventHandler(
+        // 接收通知回调方法。
+        onReceiveNotification: (Map<String, dynamic> message) async {
+          print("flutter onReceiveNotification: $message");
+        },
+        // 点击通知回调方法。
+        onOpenNotification: (Map<String, dynamic> message) async {
+          print("flutter onOpenNotification: $message");
+        },
+        // 接收自定义消息回调方法。
+        onReceiveMessage: (Map<String, dynamic> message) async {
+          print("flutter onReceiveMessage: $message");
+        },
+      );
+      jpush.setup(
+        appKey: Config.jpushAppKey,
+        channel: "developer-default",
+        production: true,
+        debug: true, // 设置是否打印 debug 日志
+      );
+      jpush.setBadge(0);
+      jpush.setAlias(_phone).then((map) {});
+      print("初始化jpush成功");
+    }
   }
 
   void init() async {

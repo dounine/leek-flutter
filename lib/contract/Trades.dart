@@ -149,7 +149,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
     ConfigInfo close_plan_price_spread = getInfo("close_plan_price_spread");
     ConfigInfo close_entrust_timeout = getInfo("close_entrust_timeout");
     ConfigInfo close_volume = getInfo("close_volume");
-    ConfigInfo close_brake = getInfo("close_brake");
+    ConfigInfo close_boarding = getInfo("close_boarding");
 
     List<Widget> openWidgets = [
       Row(
@@ -233,6 +233,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                       eventName:
                           "online_open_entrust_price,online_open_trade_price",
                       onChange: (double oldValue, double newValue) {
+                        cs.openEntrustValue = newValue;
                         socketStore.sendMessage({
                           "type": "contract_update",
                           "data": {
@@ -587,6 +588,36 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
               )
             ],
           ),
+          Row(
+            children: <Widget>[
+              Container(
+                  padding: EdgeInsets.only(
+                      left: ScreenUtil.instance.setWidth(30),
+                      right: ScreenUtil.instance.setWidth(30)),
+                  child: Text("下车")),
+              contractStore.close_getoff == null
+                  ? Text("--")
+                  : Switch(
+                      value: contractStore.close_getoff == null
+                          ? false
+                          : contractStore.close_getoff,
+                      onChanged: true
+                          ? null
+                          : (bool value) {
+                              contractStore.close_bind = value;
+                              socketStore.sendMessage({
+                                "type": "contract_update",
+                                "data": {
+                                  "symbol": contractStore.symbol,
+                                  "contractType": contractStore.contractType,
+                                  "direction": contractStore.direction,
+                                  "close_getoff": value
+                                }
+                              });
+                            },
+                    )
+            ],
+          ),
           Container(
             padding: EdgeInsets.only(right: ScreenUtil.instance.setWidth(60)),
             child: Text(contractStore.close_status),
@@ -637,6 +668,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                         eventName:
                             "online_close_entrust_price,online_close_trade_price",
                         onChange: (double oldValue, double newValue) {
+                          cs.closeEntrustValue = newValue;
                           socketStore.sendMessage({
                             "type": "contract_update",
                             "data": {
@@ -759,7 +791,7 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                     right: ScreenUtil.instance.setWidth(50)),
                 child: GestureDetector(
                   onTap: () {
-                    navSetting("close_brake");
+                    navSetting("close_boarding");
                   },
                   child: Icon(
                     Icons.local_taxi,
@@ -768,26 +800,27 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                 )),
             new Consumer<ContractStore>(builder: (context, cs, child) {
               return CustomliderWidget(
-                key: ObjectKey("close_brake"),
+                key: ObjectKey("close_boarding"),
                 splits: 3,
                 touch: !cs.locked,
                 width: ScreenUtil.instance.setWidth(860),
-                minValue: close_brake.minValue,
-                maxValue: close_brake.maxValue,
-                defaultValue: cs.close_brake,
-                setup: close_brake.setup,
-                fixed: close_brake.fixed,
-                eventName: "close_brake",
+                minValue: close_boarding.minValue,
+                maxValue: close_boarding.maxValue,
+                defaultValue: cs.close_boarding,
+                setup: close_boarding.setup,
+                fixed: close_boarding.fixed,
+                eventName: "close_boarding",
                 onChange: (num oldValue, num newValue) {
-                  contractStore.close_brake =
-                      double.parse(newValue.toStringAsFixed(close_brake.fixed));
+                  contractStore.close_boarding = double.parse(
+                      newValue.toStringAsFixed(close_boarding.fixed));
                   socketStore.sendMessage({
                     "type": "contract_update",
                     "data": {
                       "symbol": cs.symbol,
                       "contractType": cs.contractType,
                       "direction": cs.direction,
-                      "close_brake": newValue.toStringAsFixed(close_brake.fixed)
+                      "close_boarding":
+                          newValue.toStringAsFixed(close_boarding.fixed)
                     }
                   });
                 },

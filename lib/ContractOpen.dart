@@ -79,7 +79,7 @@ class _ContractOpenState extends State<ContractOpen>
         });
       } else if (data["status"] == "ok" && data["data"] != null) {
         setState(() {
-          _agree = (data["data"]["agree"] ?? "").toString();
+          _agree = data["data"]["agree"].toString();
           _reqStatus = data["status"];
         });
       } else {

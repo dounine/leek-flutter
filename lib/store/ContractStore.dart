@@ -44,9 +44,10 @@ class ContractStore extends ChangeNotifier {
 
   String _close_status = "--";
   bool _close_bind = false;
+  bool _close_getoff;
   num _close_rebound_price = 0;
   num _close_plan_price_spread = 0;
-  num _close_brake = 0;
+  num _close_boarding = 0;
   num _close_volume = 1;
   Map<String, dynamic> _close_schedue = {"length": 3, "unit": "seconds"};
   Map<String, dynamic> _close_entrust_timeout = {
@@ -106,11 +107,13 @@ class ContractStore extends ChangeNotifier {
 
   bool get close_bind => _close_bind;
 
+  bool get close_getoff => _close_getoff;
+
   num get close_rebound_price => _close_rebound_price;
 
   num get close_plan_price_spread => _close_plan_price_spread;
 
-  num get close_brake => _close_brake;
+  num get close_boarding => _close_boarding;
 
   num get close_volume => _close_volume;
 
@@ -140,12 +143,16 @@ class ContractStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  set close_profit(String value){
+  set close_profit(String value) {
     _close_profit = value;
   }
 
   set open_rebound_price(num value) {
     _open_rebound_price = value;
+  }
+
+  set openEntrustValue(num value) {
+    _openEntrustValue = value;
   }
 
   set open_switch(bool value) {
@@ -157,6 +164,10 @@ class ContractStore extends ChangeNotifier {
     _err_msg = value;
   }
 
+  set closeEntrustValue(num value) {
+    _closeEntrustValue = value;
+  }
+
   set open_lever_rate(int value) {
     _open_lever_rate = value;
     notifyListeners();
@@ -166,8 +177,8 @@ class ContractStore extends ChangeNotifier {
     _open_plan_price_spread = value;
   }
 
-  set close_brake(num value) {
-    _close_brake = value;
+  set close_boarding(num value) {
+    _close_boarding = value;
   }
 
   set open_schedue(Map<String, dynamic> value) {
@@ -205,6 +216,11 @@ class ContractStore extends ChangeNotifier {
 
   set close_bind(bool value) {
     _close_bind = value;
+    notifyListeners();
+  }
+
+  set close_getoff(bool value) {
+    _close_getoff = value;
     notifyListeners();
   }
 
@@ -349,11 +365,14 @@ class ContractStore extends ChangeNotifier {
       if (d["close_bind"] != null) {
         _close_bind = d["close_bind"];
       }
+      if (d["close_getoff"] != null) {
+        _close_getoff = d["close_getoff"];
+      }
       if (d["close_rebound_price"] != null) {
         _close_rebound_price = d["close_rebound_price"];
       }
-      if (d["close_brake"] != null) {
-        _close_brake = d["close_brake"];
+      if (d["close_boarding"] != null) {
+        _close_boarding = d["close_boarding"];
       }
       if (d["close_plan_price_spread"] != null) {
         _close_plan_price_spread = d["close_plan_price_spread"];

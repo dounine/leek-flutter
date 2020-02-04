@@ -12,8 +12,8 @@ class PushEvent {
 class Config {
 //  static final String httpUrl = "http://localhost:9000";
 //  static final String wsUrl = "ws://localhost:9000";
-   static final String httpUrl = "http://leek.dounine.com:9000";
-   static final String wsUrl = "ws://leek.dounine.com:9000";
+   static final String httpUrl = "http://47.56.91.160:9000";
+   static final String wsUrl = "ws://47.56.91.160:9000";
    static final String jpushAppKey = "94e0bca22f1bce7715299715";
   static final EventBus eventBus = EventBus();
   static final Dio dio = new Dio(BaseOptions(
