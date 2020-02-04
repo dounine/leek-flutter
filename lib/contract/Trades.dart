@@ -594,9 +594,15 @@ class _TradesState extends State<Trades> with SingleTickerProviderStateMixin {
                   padding: EdgeInsets.only(
                       left: ScreenUtil.instance.setWidth(30),
                       right: ScreenUtil.instance.setWidth(30)),
-                  child: Text("下车")),
+                  child: Icon(
+                    Icons.accessible_forward,
+                    color: Colors.blueGrey,
+                  )),
               contractStore.close_getoff == null
-                  ? Text("--")
+                  ? Text(
+                      "--",
+                      style: TextStyle(color: Colors.grey),
+                    )
                   : Switch(
                       value: contractStore.close_getoff == null
                           ? false

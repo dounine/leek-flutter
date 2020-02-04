@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:leek/ContractOpen.dart';
 import 'package:leek/ContractPage.dart';
-import 'package:leek/contract/Contrast.dart';
 import 'package:leek/contract/Entrust.dart';
 import 'package:leek/contract/Position.dart';
 import 'package:leek/contract/Trades.dart';
@@ -142,8 +141,7 @@ class _ContractTradeState extends State<ContractTrade>
           symbol: contractStore.symbol,
           contractType: contractStore.contractType,
           direction: contractStore.direction,
-        ),
-        "多空": Contrast()
+        )
       };
     }
 

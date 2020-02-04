@@ -16,7 +16,7 @@ class Entrust extends StatefulWidget {
 }
 
 class _EntrustState extends State<Entrust> {
-  String type = "limit";
+  String type = "plan";
   @override
   void initState() {
     super.initState();
@@ -36,17 +36,6 @@ class _EntrustState extends State<Entrust> {
         Row(
           children: <Widget>[
             FlatButton(
-              textColor: type == "limit" ? Colors.black87 : Colors.grey,
-              onPressed: () {
-                setState(() {
-                  type = "limit";
-                });
-                HapticFeedback.selectionClick();
-              },
-              child:
-                  Text("限价委托", style: TextStyle(fontWeight: FontWeight.w500)),
-            ),
-            FlatButton(
               textColor: type == "plan" ? Colors.black87 : Colors.grey,
               onPressed: () {
                 setState(() {
@@ -56,6 +45,17 @@ class _EntrustState extends State<Entrust> {
               },
               child:
                   Text("计划委托", style: TextStyle(fontWeight: FontWeight.w500)),
+            ),
+            FlatButton(
+              textColor: type == "limit" ? Colors.black87 : Colors.grey,
+              onPressed: () {
+                setState(() {
+                  type = "limit";
+                });
+                HapticFeedback.selectionClick();
+              },
+              child:
+              Text("限价委托", style: TextStyle(fontWeight: FontWeight.w500)),
             ),
           ],
         ),
